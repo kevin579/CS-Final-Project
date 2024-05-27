@@ -9,8 +9,8 @@ public class MainFrame extends JFrame implements ActionListener {
     String difficult = difficulties[0];
     JButton startButton;
     JPanel mainPanel;
-    int panelWidth = 1500;
-    int panelHeight = 800;
+    static int panelWidth = 1500;
+    static int panelHeight = 800;
     TextLabel infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7;
 
     //The parameter of enemy, can be modified
