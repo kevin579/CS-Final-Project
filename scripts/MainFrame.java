@@ -9,8 +9,8 @@ public class MainFrame extends JFrame implements ActionListener {
     String difficult = difficulties[0];
     JButton startButton;
     JPanel mainPanel;
-    static int panelWidth = 1500;
-    static int panelHeight = 800;
+    static int panelWidth = 1707;
+    static int panelHeight = 1067;
     TextLabel infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7;
 
     // The parameter of enemy, can be modified
@@ -29,9 +29,10 @@ public class MainFrame extends JFrame implements ActionListener {
     MainFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("SetUp");
-
+        this.setSize(new Dimension(panelWidth,panelHeight));
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setUndecorated(true);
+        
 
         // This is the main panel that is borderlayout
         mainPanel = new JPanel();
@@ -116,6 +117,9 @@ public class MainFrame extends JFrame implements ActionListener {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+        panelWidth = this.getWidth();
+        panelHeight = this.getHeight();
+        
 
     }
 
