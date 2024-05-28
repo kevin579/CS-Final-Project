@@ -64,9 +64,9 @@ class TowerIcon extends Rectangle{
     int number, cost;
     String text;
     TowerIcon(int number,int cost){
-        super(MainFrame.panelWidth/20*number,GameFrame.buttomY+GameFrame.buttomHeight/5,GameFrame.blockSize,GameFrame.blockSize);
+        super(MainFrame.panelWidth/20*number,GameFrame.buttomY+GameFrame.buttomHeight/5,(int)(GameFrame.blockSize*1.5),(int)(GameFrame.blockSize*1.5));
         this.number = number;
         this.cost = cost;
-        this.text = String.valueOf(cost);
+        this.text = "$" + String.valueOf(cost);
     }
 }

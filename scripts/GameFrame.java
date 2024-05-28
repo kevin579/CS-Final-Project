@@ -79,9 +79,24 @@ public class GameFrame extends JFrame implements ActionListener {
         // initialize variables
         blocks = new ArrayList<Block>();
         towerIcons = new ArrayList<TowerIcon>();
-        // TowerIcon block = new Rectangle(1,100);
-        
-        // towerIcons.add(block);
+        TowerIcon block = new TowerIcon(1,10);
+        TowerIcon t1 = new TowerIcon(2,10);
+        TowerIcon t2 = new TowerIcon(3,10);
+        TowerIcon t3 = new TowerIcon(4,10);
+        TowerIcon t4 = new TowerIcon(5,10);
+        TowerIcon t5 = new TowerIcon(6,10);
+        TowerIcon t6 = new TowerIcon(7,10);
+        TowerIcon t7 = new TowerIcon(8,10);
+        TowerIcon t8 = new TowerIcon(9,10);
+        towerIcons.add(block);
+        towerIcons.add(t1);
+        towerIcons.add(t2);
+        towerIcons.add(t3);
+        towerIcons.add(t4);
+        towerIcons.add(t5);
+        towerIcons.add(t6);
+        towerIcons.add(t7);
+        towerIcons.add(t8);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -204,16 +219,20 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
 
             //Draw Buttom Panel
-            gc.setColor(Color.GREEN);
-            for (Rectangle icon:towerIcons ){
+            gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+            for (TowerIcon icon:towerIcons ){
+                gc.setColor(Color.GREEN);
                 gc.fillRect(icon.x,icon.y,icon.width,icon.height);
+                gc.setColor(Color.BLACK);
+                gc.drawString(icon.text, icon.x, (int)(icon.y+blockSize*2.5));
             }
 
             //Draw Blocks
             gc.setColor(Color.BLACK);
-            for (Block block : blocks)
+            for (Block block : blocks){
                 gc.fillRect(block.x, block.y, block.width, block.height);
-                gc.drawString("Tower", EXIT_ON_CLOSE, buttomY);
+                
+            }
             mouseClick = false;
             mouseX = mouseY = 0;
 
