@@ -4,7 +4,8 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 
 public class Ranking extends JFrame implements ActionListener {
-	private JPanel rankPanel, btnPanel;
+	private JSplitPane mainPanel;
+    private JPanel rankPanel, btnPanel;
 	private JLabel title, ranks;
 	private JButton mainMenu;
 	
@@ -22,7 +23,7 @@ public class Ranking extends JFrame implements ActionListener {
         this.setSize(new Dimension(1500, 800));
         
         //Main Panel
-        JSplitPane mainPanel = new JSplitPane();
+        mainPanel = new JSplitPane();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setDividerLocation(760);
         
