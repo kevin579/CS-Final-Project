@@ -30,8 +30,18 @@ public class MainFrame extends JFrame implements ActionListener {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("SetUp");
 
+        // max w and h, makes the frame cover the whole screen
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setUndecorated(true);
+
+        // keys to quit
+        this.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    System.exit(0);
+                }
+            }
+        });
 
         // This is the main panel that is borderlayout
         mainPanel = new JPanel();
@@ -116,6 +126,13 @@ public class MainFrame extends JFrame implements ActionListener {
         this.pack();
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+
+        // make sure frame can receive key events
+        this.setFocusable(true);
+        this.requestFocusInWindow(true);
+
+        panelWidth = this.getWidth();
+        panelHeight = this.getHeight();
 
     }
 
