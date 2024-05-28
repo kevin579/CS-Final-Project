@@ -29,6 +29,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     // variables for block and tower
     ArrayList<Block> blocks;
+    ArrayList<Tower> towers;
     ArrayList<TowerIcon> towerIcons;
     static int selectNum = 0;
     int cash = 100;
@@ -79,6 +80,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // initialize variables
         blocks = new ArrayList<Block>();
+        towers = new ArrayList<Tower>();
         towerIcons = new ArrayList<TowerIcon>();
         TowerIcon block = new TowerIcon(1, MainFrame.costs[0]);
         TowerIcon t1 = new TowerIcon(2, MainFrame.costs[1]);
@@ -141,6 +143,8 @@ public class GameFrame extends JFrame implements ActionListener {
                         else{
                             cash-= MainFrame.costs[selectNum-1];
                             towerGrid[gridY][gridX] =selectNum;
+                            Tower tower = new Tower(gridX,gridY,selectNum-1);
+                            towers.add(tower);
                         }
                     }
                 } else if (mouseY > buttomY) {
@@ -276,6 +280,10 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.setColor(Color.BLACK);
             for (Block block : blocks) {
                 gc.fillRect(block.x, block.y, block.width, block.height);
+
+            }
+            for (Tower tower : towers) {
+                gc.drawImage(tower.image,tower.x, tower.y, tower.width, tower.height,null);
 
             }
             mouseClick = false;

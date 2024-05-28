@@ -21,7 +21,7 @@ public class Tower extends Rectangle {
 	        this.freq = 8;
 	        this.speed = 3;
 	        this.cost = costs[0];
-	        this.image = loadImage("tower_1.png");
+	        this.image = loadImage("scripts\\Images\\tower_1.png");
 	        
 		}
 		else if (type == 2){
