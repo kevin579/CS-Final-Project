@@ -14,6 +14,7 @@ public class MainFrame extends JFrame implements ActionListener {
     TextLabel infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7;
 
     // The parameter of enemy, can be modified
+    // including health, speed, bullet speed, dmg, attack rate, spawnspeed, and score
     static int enemyHP = 5;
     static double enemySpeed = 1;
     static double enemyBulletSpeed = 5;
