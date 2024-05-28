@@ -29,6 +29,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     // variables for block and tower
     ArrayList<Block> blocks;
+    ArrayList<Rectangle> towerIcons;
 
     GameFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,6 +78,10 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // initialize variables
         blocks = new ArrayList<Block>();
+        towerIcons = new ArrayList<Rectangle>();
+        Rectangle block = new Rectangle(panelWidth/20,buttomY+buttomHeight/5,blockSize,blockSize);
+        
+        towerIcons.add(block);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -180,6 +185,7 @@ public class GameFrame extends JFrame implements ActionListener {
             Graphics2D gc = (Graphics2D) g;
             gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+            //Draw Grid
             gc.setColor(Color.GRAY);
             gc.fillRect(0, titleHeight, leftMargin, gridHeight);
             gc.fillRect(panelWidth - rightMargin, titleHeight, rightMargin, gridHeight);
@@ -192,12 +198,18 @@ public class GameFrame extends JFrame implements ActionListener {
             for (int i = 0; i <= row; i++) {
                 gc.drawLine(0, i * blockSize + titleHeight, panelWidth, i * blockSize + titleHeight);
             }
-
             gc.setColor(Color.RED);
             gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
             gc.setColor(Color.BLUE);
             gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
 
+            //Draw Buttom Panel
+            gc.setColor(Color.GREEN);
+            for (Rectangle icon:towerIcons ){
+                gc.fillRect(icon.x,icon.y,icon.width,icon.height);
+            }
+
+            //Draw Blocks
             gc.setColor(Color.BLACK);
             for (Block block : blocks)
                 gc.fillRect(block.x, block.y, block.width, block.height);
