@@ -45,7 +45,6 @@ public class Tower extends Rectangle {
         this.freq = 1;
         this.speed = 10;
 	}
-	
 	}
 }
 
