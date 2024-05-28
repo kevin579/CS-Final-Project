@@ -22,7 +22,7 @@ public class MainFrame extends JFrame implements ActionListener {
     static int enemyGenerateSpeed = 500;
     static int scoreRate = 1;
 
-    static int[] costs = {10,20,30,40,50,60,70,80,90,100};
+    static int[] costs = {10,20,30,40,50,60};
 
     public static void main(String[] args) {
         new MainFrame();
