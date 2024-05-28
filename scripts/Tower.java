@@ -17,3 +17,14 @@ class Block extends Rectangle{
         this.cost = cost;
     }
 }
+
+class TowerIcon extends Rectangle{
+    int number, cost;
+    String text;
+    TowerIcon(int number,int cost){
+        super(MainFrame.panelWidth/20*number,GameFrame.buttomY+GameFrame.buttomHeight/5,GameFrame.blockSize,GameFrame.blockSize);
+        this.number = number;
+        this.cost = cost;
+        this.text = String.valueOf(cost);
+    }
+}
