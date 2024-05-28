@@ -3,7 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.*;
 
-public class Ranking extends JFrame implements ActionListener {
+public class RankingFrame extends JFrame implements ActionListener {
 	private JSplitPane mainPanel;
     private JPanel rankPanel, btnPanel;
 	private JLabel title, ranks;
@@ -17,7 +17,7 @@ public class Ranking extends JFrame implements ActionListener {
 		});
 	}
 	
-	public Ranking() {
+	public RankingFrame() {
 		this.setTitle("Rankings");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(new Dimension(1500, 800));
