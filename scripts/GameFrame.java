@@ -87,8 +87,7 @@ public class GameFrame extends JFrame implements ActionListener {
         TowerIcon t4 = new TowerIcon(5, MainFrame.costs[4]);
         TowerIcon t5 = new TowerIcon(6, MainFrame.costs[5]);
         TowerIcon t6 = new TowerIcon(7, MainFrame.costs[6]);
-        TowerIcon t7 = new TowerIcon(8, MainFrame.costs[7]);
-        TowerIcon t8 = new TowerIcon(9, MainFrame.costs[8]);
+       
         towerIcons.add(block);
         towerIcons.add(t1);
         towerIcons.add(t2);
@@ -96,8 +95,7 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t4);
         towerIcons.add(t5);
         towerIcons.add(t6);
-        towerIcons.add(t7);
-        towerIcons.add(t8);
+        
     }
 
     public void actionPerformed(ActionEvent e) {

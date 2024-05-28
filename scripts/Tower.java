@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class Tower extends Rectangle {
 	int type, range, damage, freq, speed,cost;
-	int costs[] = {10,20,30,40,50,60};
+	int costs[] = {20,30,40,50,60,70};
 	BufferedImage image;
 	
 	public Tower(int gridX, int gridY, int type) {
