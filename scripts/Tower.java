@@ -1,10 +1,15 @@
 import javax.swing.*;
 import java.util.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 public class Tower extends Rectangle {
 	int type, range, damage, freq, speed,cost;
 	int costs[] = {10,20,30,40,50,60};
+	BufferedImage image;
 	
 	public Tower(int gridX, int gridY, int type) {
 		super(gridX*GameFrame.blockSize+GameFrame.leftMargin,gridY*GameFrame.blockSize+GameFrame.topMargin,GameFrame.blockSize,GameFrame.blockSize);
@@ -16,6 +21,8 @@ public class Tower extends Rectangle {
 	        this.freq = 8;
 	        this.speed = 3;
 	        this.cost = costs[0];
+	        this.image = loadImage("tower_1.png");
+	        
 		}
 		else if (type == 2){
 			this.range = 6;
@@ -23,6 +30,7 @@ public class Tower extends Rectangle {
 	        this.freq = 2;
 	        this.speed = 4;
 	        this.cost = costs[1];
+	        this.image = loadImage("tower_2.png");
 		}
 		else if (type == 3) {
 			this.range = 7;
@@ -30,6 +38,7 @@ public class Tower extends Rectangle {
 	        this.freq = 1;
 	        this.speed = 5;
 	        this.cost = costs[2];
+	        this.image = loadImage("tower_3.png");
 		}
 		else if (type == 4) {
 			this.range = 8;
@@ -37,6 +46,7 @@ public class Tower extends Rectangle {
 	        this.freq = 10;
 	        this.speed = 6;
 	        this.cost = costs[3];
+	        this.image = loadImage("tower_4.png");
 		}
 		else if (type == 5) {
 			this.range = 8;
@@ -44,6 +54,7 @@ public class Tower extends Rectangle {
 	        this.freq = 4;
 	        this.speed = 8;
 	        this.cost = costs[4];
+	        this.image = loadImage("tower_5.png");
 		}
 		else if (type == 6) {
 			this.range = 10;
@@ -51,8 +62,20 @@ public class Tower extends Rectangle {
 	        this.freq = 1;
 	        this.speed = 10;
 	        this.cost = costs[5];
+	        this.image = loadImage("tower_6.png");
 		}
 	}
+	
+	static BufferedImage loadImage(String filename) {
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(filename));
+        } catch (IOException e) {
+            System.out.println(e.toString());
+            JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        return img;
+    }
 }
 
 /**
