@@ -3,7 +3,7 @@ import java.util.*;
 import java.awt.*;
 
 public class Tower extends Rectangle {
-	int type, range, damage, freq, speed;
+	int type, range, damage, freq, speed,cost;
 	
 	public Tower(int gridX, int gridY, int type) {
 		super(gridX*GameFrame.blockSize+GameFrame.leftMargin,gridY*GameFrame.blockSize+GameFrame.topMargin,GameFrame.blockSize,GameFrame.blockSize);
@@ -14,6 +14,7 @@ public class Tower extends Rectangle {
         this.damage = 4;
         this.freq = 8;
         this.speed = 3;
+        this.cost = MainFrame.costs[0];
 	}
 	else if (type == 2){
 		this.range = 6;
