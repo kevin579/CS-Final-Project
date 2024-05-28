@@ -29,7 +29,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     // variables for block and tower
     ArrayList<Block> blocks;
-    ArrayList<Rectangle> towerIcons;
+    ArrayList<TowerIcon> towerIcons;
 
     GameFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,10 +78,10 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // initialize variables
         blocks = new ArrayList<Block>();
-        towerIcons = new ArrayList<Rectangle>();
-        Rectangle block = new Rectangle(panelWidth/20,buttomY+buttomHeight/5,blockSize,blockSize);
+        towerIcons = new ArrayList<TowerIcon>();
+        // TowerIcon block = new Rectangle(1,100);
         
-        towerIcons.add(block);
+        // towerIcons.add(block);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -213,6 +213,7 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.setColor(Color.BLACK);
             for (Block block : blocks)
                 gc.fillRect(block.x, block.y, block.width, block.height);
+                gc.drawString("Tower", EXIT_ON_CLOSE, buttomY);
             mouseClick = false;
             mouseX = mouseY = 0;
 
