@@ -30,8 +30,8 @@ public class GameFrame extends JFrame implements ActionListener {
     // variables for block and tower
     ArrayList<Block> blocks;
     ArrayList<TowerIcon> towerIcons;
-    int selectNum = 0;
-
+    static int selectNum = 0;
+    int cash = 100;
     GameFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(MAXIMIZED_BOTH);
@@ -105,14 +105,15 @@ public class GameFrame extends JFrame implements ActionListener {
             if (mouseClick) {
                 if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
                         && mouseY < buttomY) {
+                    int gridX = (mouseX - leftMargin) / blockSize;
+                    int gridY = (mouseY - topMargin) / blockSize;
                     if (selectNum == 1) {
                         for (int i = 0; i < pathGrid.length; i++) {
                             for (int j = 0; j < pathGrid[0].length; j++) {
                                 pathGrid[i][j] = '+';
                             }
                         }
-                        int gridX = (mouseX - leftMargin) / blockSize;
-                        int gridY = (mouseY - topMargin) / blockSize;
+
                         towerGrid[gridY][gridX] = 1;
                         if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)) {
                             for (int i = 0; i < pathGrid.length; i++) {
@@ -123,10 +124,25 @@ public class GameFrame extends JFrame implements ActionListener {
                             }
                             Block block = new Block(gridX, gridY, 10);
                             blocks.add(block);
-                            // spend money
+                            cash-=MainFrame.costs[0];
                         } else {
                             System.out.println("Not avaliabe");
                             towerGrid[gridY][gridX] = 0;
+                        }
+                    }
+                    else if(selectNum>1){
+                        if (cash<MainFrame.costs[selectNum-1]){
+                            System.out.println("Not enough money");
+                        }
+                        else if (towerGrid[gridY][gridX]==0){
+                            System.out.println("Requires block");
+                        }
+                        else if (towerGrid[gridY][gridX]>1){
+                            System.out.println("Already exist tower");
+                        }
+                        else{
+                            cash-= MainFrame.costs[selectNum-1];
+                            towerGrid[gridY][gridX] =selectNum;
                         }
                     }
                 } else if (mouseY > buttomY) {
@@ -141,6 +157,15 @@ public class GameFrame extends JFrame implements ActionListener {
                             selectNum = icon.number;
                         }
                     }
+                }
+            }
+            for (int i = 0; i<towerIcons.size(); i++){
+
+                if (i+1 ==selectNum){
+                    towerIcons.get(i).select = true;
+                }
+                else{
+                    towerIcons.get(i).select = false;
                 }
             }
         }
@@ -247,6 +272,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.setColor(Color.BLACK);
                 gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
             }
+            gc.drawString("Cash: "+String.valueOf(cash), panelWidth/10*9, buttomY+buttomHeight/2);
 
             // Draw Blocks
             gc.setColor(Color.BLACK);
@@ -270,6 +296,34 @@ class KeyInput extends KeyAdapter {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             GameFrame.edit = false;
         }
+        if (e.getKeyCode()==KeyEvent.VK_1){
+            GameFrame.selectNum = 1;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_2){
+            GameFrame.selectNum = 2;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_3){
+            GameFrame.selectNum = 3;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_4){
+            GameFrame.selectNum = 4;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_5){
+            GameFrame.selectNum = 5;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_6){
+            GameFrame.selectNum = 6;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_7){
+            GameFrame.selectNum = 7;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_8){
+            GameFrame.selectNum = 8;
+        }
+        if (e.getKeyCode()==KeyEvent.VK_9){
+            GameFrame.selectNum = 9;
+        }
+
     }
 }
 
