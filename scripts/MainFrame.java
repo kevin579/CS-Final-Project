@@ -9,8 +9,8 @@ public class MainFrame extends JFrame implements ActionListener {
     String difficult = difficulties[0];
     JButton startButton;
     JPanel mainPanel;
-    static int panelWidth = 1500;
-    static int panelHeight = 800;
+    static int panelWidth = 1707;
+    static int panelHeight = 1070;
     TextLabel infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7;
 
     // The parameter of enemy, can be modified
@@ -22,6 +22,8 @@ public class MainFrame extends JFrame implements ActionListener {
     static int enemyAttackRate = 50;
     static int enemyGenerateSpeed = 500;
     static int scoreRate = 1;
+
+    static int[] costs = {10,20,30,40,50,60};
 
     public static void main(String[] args) {
         new MainFrame();
