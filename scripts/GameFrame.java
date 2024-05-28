@@ -16,16 +16,19 @@ public class GameFrame extends JFrame implements ActionListener {
     static boolean edit = true;
     static int mouseX, mouseY;
     static boolean mouseClick = false;
+
+    // Variables for grid and panel
     int panelWidth, panelHeight;
     int row;
     int col = 50;
     int[][] towerGrid;
     char[][] pathGrid;
-    int blockSize;
-    int titleHeight, buttomHeight, buttomY, gridHeight;
-    int topMargin;
-    int leftMargin;
-    int rightMargin;
+    static int blockSize;
+    static int titleHeight, buttomHeight, buttomY, gridHeight;
+    static int topMargin, leftMargin, rightMargin;
+
+    // variables for block and tower
+    ArrayList<Block> blocks;
 
     GameFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -72,9 +75,38 @@ public class GameFrame extends JFrame implements ActionListener {
         leftMargin = (panelWidth - col * blockSize) / 2;
         rightMargin = panelWidth - col * blockSize - leftMargin;
 
+        // initialize variables
+        blocks = new ArrayList<Block>();
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (edit) {
+            if (mouseClick) {
+                for (int i = 0; i < pathGrid.length; i++) {
+                    for (int j = 0; j < pathGrid[0].length; j++) {
+                        pathGrid[i][j] = '+';
+                    }
+                }
+                int gridX = (mouseX - leftMargin) / blockSize;
+                int gridY = (mouseY - topMargin) / blockSize;
+                towerGrid[gridY][gridX] = 1;
+                if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)) {
+                    for (int i = 0; i < pathGrid.length; i++) {
+                        for (int j = 0; j < pathGrid[0].length; j++) {
+                            System.out.print(pathGrid[i][j] + " ");
+                        }
+                        System.out.println();
+                    }
+                    Block block = new Block(gridX, gridY, 10);
+                    blocks.add(block);
+                    //spend money
+                }
+                else{
+                    System.out.println("Not avaliabel");
+                    towerGrid[gridY][gridX] = 0;
+                }
+            }
+        }
 
         gamePanel.repaint();
 
@@ -91,7 +123,7 @@ public class GameFrame extends JFrame implements ActionListener {
      * to reach (26,13)
      * 
      */
-    private void findPath(int[][] grid, int x1, int y1, char[][] pathArray) {
+    private boolean findPath(int[][] grid, int x1, int y1, char[][] pathArray) {
         int[][] directions = { { 0, 1 }, { 1, 0 }, { 0, -1 }, { -1, 0 } };
 
         // Corresponding arrows for directions: right, down, left, up
@@ -107,7 +139,7 @@ public class GameFrame extends JFrame implements ActionListener {
         System.out.println(y1);
         visited[x1][y1] = true;
         pathArray[x1][y1] = 'E'; // Mark the start point
-        char[] arrows = { '<', '^', '>', 'v' };
+        char[] arrows = { '←', '↑', '→', '↓' };
 
         // Perform BFS
         while (!queue.isEmpty()) {
@@ -127,6 +159,11 @@ public class GameFrame extends JFrame implements ActionListener {
                     pathArray[newX][newY] = arrows[i];
                 }
             }
+        }
+        if (pathArray[row / 2][col / 2 - 1] != '+') {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -161,26 +198,11 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.setColor(Color.BLUE);
             gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
 
-            if (edit) {
-                if (mouseClick) {
-                    
-                    int gridX = (mouseX-leftMargin)/blockSize;
-                    int gridY = (mouseY-topMargin)/blockSize;
-                    towerGrid[gridY][gridX] = 1;
-                    findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
-                    for (int i = 0; i < pathGrid.length; i++) {
-                        for (int j = 0; j < pathGrid[0].length; j++) {
-                            System.out.print(pathGrid[i][j] + " ");
-                        }
-                        System.out.println();
-                    }
-                    gc.setColor(Color.BLACK);
-                    gc.fillRect(gridX*blockSize+leftMargin, gridY*blockSize+topMargin, blockSize, blockSize);
-                    mouseClick = false;
-                    mouseX = mouseY = 0;
-
-                }
-            }
+            gc.setColor(Color.BLACK);
+            for (Block block : blocks)
+                gc.fillRect(block.x, block.y, block.width, block.height);
+            mouseClick = false;
+            mouseX = mouseY = 0;
 
         }
     }
