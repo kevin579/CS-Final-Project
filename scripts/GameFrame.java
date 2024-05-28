@@ -30,6 +30,7 @@ public class GameFrame extends JFrame implements ActionListener {
     // variables for block and tower
     ArrayList<Block> blocks;
     ArrayList<TowerIcon> towerIcons;
+    int selectNum = 0;
 
     GameFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,15 +80,15 @@ public class GameFrame extends JFrame implements ActionListener {
         // initialize variables
         blocks = new ArrayList<Block>();
         towerIcons = new ArrayList<TowerIcon>();
-        TowerIcon block = new TowerIcon(1,10);
-        TowerIcon t1 = new TowerIcon(2,10);
-        TowerIcon t2 = new TowerIcon(3,10);
-        TowerIcon t3 = new TowerIcon(4,10);
-        TowerIcon t4 = new TowerIcon(5,10);
-        TowerIcon t5 = new TowerIcon(6,10);
-        TowerIcon t6 = new TowerIcon(7,10);
-        TowerIcon t7 = new TowerIcon(8,10);
-        TowerIcon t8 = new TowerIcon(9,10);
+        TowerIcon block = new TowerIcon(1, MainFrame.costs[0]);
+        TowerIcon t1 = new TowerIcon(2, MainFrame.costs[1]);
+        TowerIcon t2 = new TowerIcon(3, MainFrame.costs[2]);
+        TowerIcon t3 = new TowerIcon(4, MainFrame.costs[3]);
+        TowerIcon t4 = new TowerIcon(5, MainFrame.costs[4]);
+        TowerIcon t5 = new TowerIcon(6, MainFrame.costs[5]);
+        TowerIcon t6 = new TowerIcon(7, MainFrame.costs[6]);
+        TowerIcon t7 = new TowerIcon(8, MainFrame.costs[7]);
+        TowerIcon t8 = new TowerIcon(9, MainFrame.costs[8]);
         towerIcons.add(block);
         towerIcons.add(t1);
         towerIcons.add(t2);
@@ -102,28 +103,44 @@ public class GameFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (edit) {
             if (mouseClick) {
-                for (int i = 0; i < pathGrid.length; i++) {
-                    for (int j = 0; j < pathGrid[0].length; j++) {
-                        pathGrid[i][j] = '+';
-                    }
-                }
-                int gridX = (mouseX - leftMargin) / blockSize;
-                int gridY = (mouseY - topMargin) / blockSize;
-                towerGrid[gridY][gridX] = 1;
-                if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)) {
-                    for (int i = 0; i < pathGrid.length; i++) {
-                        for (int j = 0; j < pathGrid[0].length; j++) {
-                            System.out.print(pathGrid[i][j] + " ");
+                if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
+                        && mouseY < buttomY) {
+                    if (selectNum == 1) {
+                        for (int i = 0; i < pathGrid.length; i++) {
+                            for (int j = 0; j < pathGrid[0].length; j++) {
+                                pathGrid[i][j] = '+';
+                            }
                         }
-                        System.out.println();
+                        int gridX = (mouseX - leftMargin) / blockSize;
+                        int gridY = (mouseY - topMargin) / blockSize;
+                        towerGrid[gridY][gridX] = 1;
+                        if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)) {
+                            for (int i = 0; i < pathGrid.length; i++) {
+                                for (int j = 0; j < pathGrid[0].length; j++) {
+                                    System.out.print(pathGrid[i][j] + " ");
+                                }
+                                System.out.println();
+                            }
+                            Block block = new Block(gridX, gridY, 10);
+                            blocks.add(block);
+                            // spend money
+                        } else {
+                            System.out.println("Not avaliabe");
+                            towerGrid[gridY][gridX] = 0;
+                        }
                     }
-                    Block block = new Block(gridX, gridY, 10);
-                    blocks.add(block);
-                    //spend money
-                }
-                else{
-                    System.out.println("Not avaliabel");
-                    towerGrid[gridY][gridX] = 0;
+                } else if (mouseY > buttomY) {
+                    for (TowerIcon icon : towerIcons) {
+                        if (icon.contains(mouseX, mouseY)) {
+                            // remove the mark of the old selected icon
+                            for (TowerIcon i : towerIcons) {
+                                i.select = false;
+                            }
+                            // mark the selected icon
+                            icon.select = true;
+                            selectNum = icon.number;
+                        }
+                    }
                 }
             }
         }
@@ -200,7 +217,7 @@ public class GameFrame extends JFrame implements ActionListener {
             Graphics2D gc = (Graphics2D) g;
             gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            //Draw Grid
+            // Draw Grid
             gc.setColor(Color.GRAY);
             gc.fillRect(0, titleHeight, leftMargin, gridHeight);
             gc.fillRect(panelWidth - rightMargin, titleHeight, rightMargin, gridHeight);
@@ -218,20 +235,24 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.setColor(Color.BLUE);
             gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
 
-            //Draw Buttom Panel
+            // Draw Buttom Panel
             gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
-            for (TowerIcon icon:towerIcons ){
+            for (TowerIcon icon : towerIcons) {
+                gc.setColor(Color.WHITE);
+                if (icon.select) {
+                    gc.fillRect(icon.x - 2, icon.y - 2, icon.width + 4, icon.height + 4);
+                }
                 gc.setColor(Color.GREEN);
-                gc.fillRect(icon.x,icon.y,icon.width,icon.height);
+                gc.fillRect(icon.x, icon.y, icon.width, icon.height);
                 gc.setColor(Color.BLACK);
-                gc.drawString(icon.text, icon.x, (int)(icon.y+blockSize*2.5));
+                gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
             }
 
-            //Draw Blocks
+            // Draw Blocks
             gc.setColor(Color.BLACK);
-            for (Block block : blocks){
+            for (Block block : blocks) {
                 gc.fillRect(block.x, block.y, block.width, block.height);
-                
+
             }
             mouseClick = false;
             mouseX = mouseY = 0;

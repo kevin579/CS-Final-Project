@@ -64,10 +64,12 @@ class Block extends Rectangle{
 class TowerIcon extends Rectangle{
     int number, cost;
     String text;
+    boolean select;
     TowerIcon(int number,int cost){
         super(MainFrame.panelWidth/20*number,GameFrame.buttomY+GameFrame.buttomHeight/5,(int)(GameFrame.blockSize*1.5),(int)(GameFrame.blockSize*1.5));
         this.number = number;
         this.cost = cost;
         this.text = "$" + String.valueOf(cost);
+        this.select = false;
     }
 }
