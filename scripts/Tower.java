@@ -1,5 +1,4 @@
 import javax.swing.*;
-// import java.util.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -23,7 +22,6 @@ public class Tower extends Rectangle {
 	        this.cost = costs[0];
 	        this.image = loadImage("scripts\\Images\\tower_1.png");
             this.angle = 0;
-
 	        
 		}
 		else if (type == 2){
@@ -32,7 +30,7 @@ public class Tower extends Rectangle {
 	        this.freq = 2;
 	        this.speed = 4;
 	        this.cost = costs[1];
-	        this.image = loadImage("tower_2.png");
+	        this.image = loadImage("scripts\\Images\\tower_2.png");
 		}
 		else if (type == 3) {
 			this.range = 7;
@@ -40,7 +38,7 @@ public class Tower extends Rectangle {
 	        this.freq = 1;
 	        this.speed = 5;
 	        this.cost = costs[2];
-	        this.image = loadImage("tower_3.png");
+	        this.image = loadImage("scripts\\Images\\tower_3.png");
 		}
 		else if (type == 4) {
 			this.range = 8;
@@ -48,7 +46,7 @@ public class Tower extends Rectangle {
 	        this.freq = 10;
 	        this.speed = 6;
 	        this.cost = costs[3];
-	        this.image = loadImage("tower_4.png");
+	        this.image = loadImage("scripts\\Images\\tower_4.png");
 		}
 		else if (type == 5) {
 			this.range = 8;
@@ -56,7 +54,7 @@ public class Tower extends Rectangle {
 	        this.freq = 4;
 	        this.speed = 8;
 	        this.cost = costs[4];
-	        this.image = loadImage("tower_5.png");
+	        this.image = loadImage("scripts\\Images\\tower_5.png");
 		}
 		else if (type == 6) {
 			this.range = 10;
@@ -64,7 +62,7 @@ public class Tower extends Rectangle {
 	        this.freq = 1;
 	        this.speed = 10;
 	        this.cost = costs[5];
-	        this.image = loadImage("tower_6.png");
+	        this.image = loadImage("scripts\\Images\\tower_6.png");
 		}
 	}
     public void aim(){
