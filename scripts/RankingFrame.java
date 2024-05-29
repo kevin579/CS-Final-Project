@@ -26,12 +26,14 @@ public class RankingFrame extends JFrame implements ActionListener {
         mainPanel = new JSplitPane();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setDividerLocation(760);
-        
+        mainPanel.setBackground(new Color(255, 240, 255));  // Set background color
+
         //Rank Panel
         rankPanel = new JPanel();
         rankPanel.setLayout(new BoxLayout(rankPanel, BoxLayout.PAGE_AXIS));
         rankPanel.setPreferredSize(new Dimension(1500, 750));
-        
+        rankPanel.setBackground(new Color(255, 240, 255));  // Set background color
+
         title = new JLabel("Rankings");
         rankPanel.add(title);
         
@@ -42,7 +44,8 @@ public class RankingFrame extends JFrame implements ActionListener {
         btnPanel = new JPanel();
         btnPanel.setLayout(new BorderLayout(10, 10));
         btnPanel.setPreferredSize(new Dimension(1500, 40));
-        
+        btnPanel.setBackground(new Color(255, 240, 255));  // Set background color
+
         mainMenu = new JButton("Return to Main Menu");
         mainMenu.setActionCommand("return");
         mainMenu.addActionListener(this);
