@@ -122,7 +122,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
         if (time % 1000 == 0) {
-            Enemy enemy = new Enemy(1);
+            Enemy enemy = new Enemy(7);
             enemys.add(enemy);
         }
         if (edit) {
