@@ -23,7 +23,7 @@ public class GameFrame extends JFrame implements ActionListener {
     int panelWidth, panelHeight;
     static int row;
     static int col = 50;
-    int[][] towerGrid;
+    static int[][] towerGrid;
     static char[][] pathGrid;
     static int blockSize;
     static int titleHeight, buttomHeight, buttomY, gridHeight;
@@ -31,9 +31,9 @@ public class GameFrame extends JFrame implements ActionListener {
     static int startX, startY, endX, endY;
 
     // variables for block and tower
-    ArrayList<Block> blocks;
-    ArrayList<Tower> towers;
-    ArrayList<Enemy> enemys;
+    static ArrayList<Block> blocks;
+    static ArrayList<Tower> towers;
+    static ArrayList<Enemy> enemys;
     ArrayList<TowerIcon> towerIcons;
     static int selectNum = 0;
 
@@ -131,7 +131,7 @@ public class GameFrame extends JFrame implements ActionListener {
                         && mouseY < buttomY) {
                     int gridX = (mouseX - leftMargin) / blockSize;
                     int gridY = (mouseY - topMargin) / blockSize;
-                    if (selectNum == 1) {
+                    if (selectNum == 1 && cash>=MainFrame.costs[0]) {
                         for (int i = 0; i < pathGrid.length; i++) {
                             for (int j = 0; j < pathGrid[0].length; j++) {
                                 pathGrid[i][j] = '+';
@@ -191,6 +191,9 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         }
         if (!edit) {
+            for (Tower tower:towers){
+                tower.aim();
+            }
             ArrayList<Enemy> tempEnemys = new ArrayList<Enemy>(enemys);
             for (Enemy enemy : tempEnemys) {
                 enemy.move();
