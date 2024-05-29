@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
 import java.util.*;
 import java.util.Queue;
 
@@ -13,26 +14,36 @@ public class GameFrame extends JFrame implements ActionListener {
 
     GamePanel gamePanel;
     Timer timer;
+    int time = 0;
     static boolean edit = true;
     static int mouseX, mouseY;
     static boolean mouseClick = false;
 
     // Variables for grid and panel
     int panelWidth, panelHeight;
-    int row;
-    int col = 50;
+    static int row;
+    static int col = 50;
     int[][] towerGrid;
-    char[][] pathGrid;
+    static char[][] pathGrid;
     static int blockSize;
     static int titleHeight, buttomHeight, buttomY, gridHeight;
     static int topMargin, leftMargin, rightMargin;
+    static int startX, startY, endX, endY;
 
     // variables for block and tower
     ArrayList<Block> blocks;
     ArrayList<Tower> towers;
+    ArrayList<Enemy> enemys;
     ArrayList<TowerIcon> towerIcons;
     static int selectNum = 0;
+
+
+    //Game variables
+    static int playerHP = 20;
     int cash = 100;
+
+
+
     GameFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(MAXIMIZED_BOTH);
@@ -78,10 +89,17 @@ public class GameFrame extends JFrame implements ActionListener {
         leftMargin = (panelWidth - col * blockSize) / 2;
         rightMargin = panelWidth - col * blockSize - leftMargin;
 
+        startX = (col / 2 - 1) * blockSize + leftMargin;
+        startY = (row / 2) * blockSize + topMargin;
+        endX = (col / 2 + 1) * blockSize + leftMargin;
+        endY = (row / 2) * blockSize + topMargin;
+
         // initialize variables
         blocks = new ArrayList<Block>();
         towers = new ArrayList<Tower>();
+        enemys = new ArrayList<Enemy>();
         towerIcons = new ArrayList<TowerIcon>();
+
         TowerIcon block = new TowerIcon(1, MainFrame.costs[0]);
         TowerIcon t1 = new TowerIcon(2, MainFrame.costs[1]);
         TowerIcon t2 = new TowerIcon(3, MainFrame.costs[2]);
@@ -89,7 +107,7 @@ public class GameFrame extends JFrame implements ActionListener {
         TowerIcon t4 = new TowerIcon(5, MainFrame.costs[4]);
         TowerIcon t5 = new TowerIcon(6, MainFrame.costs[5]);
         TowerIcon t6 = new TowerIcon(7, MainFrame.costs[6]);
-       
+
         towerIcons.add(block);
         towerIcons.add(t1);
         towerIcons.add(t2);
@@ -97,10 +115,16 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t4);
         towerIcons.add(t5);
         towerIcons.add(t6);
-        
+
+        findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
+
     }
 
     public void actionPerformed(ActionEvent e) {
+        if (time % 1000 == 0) {
+            Enemy enemy = new Enemy(1);
+            enemys.add(enemy);
+        }
         if (edit) {
             if (mouseClick) {
                 if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
@@ -124,26 +148,22 @@ public class GameFrame extends JFrame implements ActionListener {
                             }
                             Block block = new Block(gridX, gridY, 10);
                             blocks.add(block);
-                            cash-=MainFrame.costs[0];
+                            cash -= MainFrame.costs[0];
                         } else {
                             System.out.println("Not avaliabe");
                             towerGrid[gridY][gridX] = 0;
                         }
-                    }
-                    else if(selectNum>1){
-                        if (cash<MainFrame.costs[selectNum-1]){
+                    } else if (selectNum > 1) {
+                        if (cash < MainFrame.costs[selectNum - 1]) {
                             System.out.println("Not enough money");
-                        }
-                        else if (towerGrid[gridY][gridX]==0){
+                        } else if (towerGrid[gridY][gridX] == 0) {
                             System.out.println("Requires block");
-                        }
-                        else if (towerGrid[gridY][gridX]>1){
+                        } else if (towerGrid[gridY][gridX] > 1) {
                             System.out.println("Already exist tower");
-                        }
-                        else{
-                            cash-= MainFrame.costs[selectNum-1];
-                            towerGrid[gridY][gridX] =selectNum;
-                            Tower tower = new Tower(gridX,gridY,selectNum-1);
+                        } else {
+                            cash -= MainFrame.costs[selectNum - 1];
+                            towerGrid[gridY][gridX] = selectNum;
+                            Tower tower = new Tower(gridX, gridY, selectNum - 1);
                             towers.add(tower);
                         }
                     }
@@ -161,18 +181,28 @@ public class GameFrame extends JFrame implements ActionListener {
                     }
                 }
             }
-            for (int i = 0; i<towerIcons.size(); i++){
+            for (int i = 0; i < towerIcons.size(); i++) {
 
-                if (i+1 ==selectNum){
+                if (i + 1 == selectNum) {
                     towerIcons.get(i).select = true;
-                }
-                else{
+                } else {
                     towerIcons.get(i).select = false;
                 }
             }
         }
-
+        if (!edit) {
+            ArrayList<Enemy> tempEnemys = new ArrayList<Enemy>(enemys);
+            for (Enemy enemy : tempEnemys) {
+                enemy.move();
+                if (enemy.hp<=0){
+                    enemys.remove(enemy);
+                }
+            }
+        }
+        time++;
         gamePanel.repaint();
+        mouseClick = false;
+        mouseX = mouseY = 0;
 
     }
 
@@ -199,8 +229,7 @@ public class GameFrame extends JFrame implements ActionListener {
         // Queue for BFS
         Queue<int[]> queue = new LinkedList<>();
         queue.add(new int[] { x1, y1 });
-        System.out.println(x1);
-        System.out.println(y1);
+
         visited[x1][y1] = true;
         pathArray[x1][y1] = 'E'; // Mark the start point
         char[] arrows = { '←', '↑', '→', '↓' };
@@ -274,20 +303,42 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.setColor(Color.BLACK);
                 gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
             }
-            gc.drawString("Cash: "+String.valueOf(cash), panelWidth/10*9, buttomY+buttomHeight/2);
+            gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
+            gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3*2);
 
-            // Draw Blocks
+            // Draw Blocks and towers
             gc.setColor(Color.BLACK);
             for (Block block : blocks) {
                 gc.fillRect(block.x, block.y, block.width, block.height);
 
             }
             for (Tower tower : towers) {
-                gc.drawImage(tower.image,tower.x, tower.y, tower.width, tower.height,null);
+                
+                int cx = tower.x + blockSize / 2;
+                int cy = tower.y + blockSize / 2;
+                AffineTransform transform = new AffineTransform();
+                transform.translate(cx, cy);
+                transform.rotate(Math.toRadians(tower.angle));
+                transform.translate(-blockSize / 2, -blockSize / 2);
+                transform.scale(blockSize/1500.0, blockSize/1500.0);
+                gc.drawImage(tower.image, transform, null);
 
             }
-            mouseClick = false;
-            mouseX = mouseY = 0;
+
+            // Draw Enemies
+            for (Enemy enemy : enemys) {
+                
+                
+                int cx = enemy.x + blockSize / 2;
+                int cy = enemy.y + blockSize / 2;
+                AffineTransform transform = new AffineTransform();
+                
+                transform.translate(cx, cy);
+                transform.rotate(Math.toRadians(enemy.angle));
+                transform.translate(-blockSize / 2, -blockSize / 2);
+                transform.scale(blockSize/348.0, blockSize/348.0);
+                gc.drawImage(enemy.image, transform, null);
+            }
 
         }
     }
@@ -302,31 +353,31 @@ class KeyInput extends KeyAdapter {
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
             GameFrame.edit = false;
         }
-        if (e.getKeyCode()==KeyEvent.VK_1){
+        if (e.getKeyCode() == KeyEvent.VK_1) {
             GameFrame.selectNum = 1;
         }
-        if (e.getKeyCode()==KeyEvent.VK_2){
+        if (e.getKeyCode() == KeyEvent.VK_2) {
             GameFrame.selectNum = 2;
         }
-        if (e.getKeyCode()==KeyEvent.VK_3){
+        if (e.getKeyCode() == KeyEvent.VK_3) {
             GameFrame.selectNum = 3;
         }
-        if (e.getKeyCode()==KeyEvent.VK_4){
+        if (e.getKeyCode() == KeyEvent.VK_4) {
             GameFrame.selectNum = 4;
         }
-        if (e.getKeyCode()==KeyEvent.VK_5){
+        if (e.getKeyCode() == KeyEvent.VK_5) {
             GameFrame.selectNum = 5;
         }
-        if (e.getKeyCode()==KeyEvent.VK_6){
+        if (e.getKeyCode() == KeyEvent.VK_6) {
             GameFrame.selectNum = 6;
         }
-        if (e.getKeyCode()==KeyEvent.VK_7){
+        if (e.getKeyCode() == KeyEvent.VK_7) {
             GameFrame.selectNum = 7;
         }
-        if (e.getKeyCode()==KeyEvent.VK_8){
+        if (e.getKeyCode() == KeyEvent.VK_8) {
             GameFrame.selectNum = 8;
         }
-        if (e.getKeyCode()==KeyEvent.VK_9){
+        if (e.getKeyCode() == KeyEvent.VK_9) {
             GameFrame.selectNum = 9;
         }
 

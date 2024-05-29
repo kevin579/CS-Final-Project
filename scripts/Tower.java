@@ -1,5 +1,5 @@
 import javax.swing.*;
-import java.util.*;
+// import java.util.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class Tower extends Rectangle {
-	int type, range, damage, freq, speed,cost;
+	int type, range, damage, freq, speed,cost,angle;
 	int costs[] = {20,30,40,50,60,70};
 	BufferedImage image;
 	
@@ -22,6 +22,8 @@ public class Tower extends Rectangle {
 	        this.speed = 3;
 	        this.cost = costs[0];
 	        this.image = loadImage("scripts\\Images\\tower_1.png");
+            this.angle = 0;
+
 	        
 		}
 		else if (type == 2){
@@ -65,6 +67,9 @@ public class Tower extends Rectangle {
 	        this.image = loadImage("tower_6.png");
 		}
 	}
+    public void aim(){
+
+    }
 	
 	static BufferedImage loadImage(String filename) {
         BufferedImage img = null;
