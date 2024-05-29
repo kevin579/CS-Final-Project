@@ -6,12 +6,11 @@ import java.io.File;
 import java.io.IOException;
 public class Bullet extends Rectangle{
 	int type,speed,damage;
-	double angle,speedx,speedy;
+	double speedx,speedy;
 	Tower parent;
-	public Bullet(Tower parent,int x, int y, int type, int size, int speed,double angle,int damage){
+	public Bullet(Tower parent,int x, int y, int type, int size, int speed,int damage){
 		super(x,y,size,size);
 		this.type = type;
-		this.angle = angle;
 		this.speed = speed;
 		this.damage= damage;
 		this.parent = parent;

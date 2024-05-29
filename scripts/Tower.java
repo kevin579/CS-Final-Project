@@ -83,7 +83,7 @@ public class Tower extends Rectangle {
 		}
     }
 	public void shoot(){
-		Bullet bullet = new Bullet(this.px+this.width/2,this.py+this.height/2,type,type*2,speed,angle*Math.PI/180,damage);
+		Bullet bullet = new Bullet(this,this.px+this.width/2,this.py+this.height/2,type,type*2,speed,damage);
 		GameFrame.bullets.add(bullet);
 	}
 
