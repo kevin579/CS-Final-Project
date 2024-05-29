@@ -20,7 +20,6 @@ public class Enemy extends Rectangle {
             this.hp = 10;
             this.speed = 1;
             this.image = loadImage("scripts/Images/enemy_2.png");
-            // this.image = image.getScaledInstance(GameFrame.blockSize, GameFrame.blockSize, Image.SCALE_DEFAULT);
         }
     }
 

@@ -34,6 +34,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static ArrayList<Block> blocks;
     static ArrayList<Tower> towers;
     static ArrayList<Enemy> enemys;
+    static ArrayList<Bullet> bullets;
     ArrayList<TowerIcon> towerIcons;
     static int selectNum = 0;
 
@@ -98,6 +99,7 @@ public class GameFrame extends JFrame implements ActionListener {
         blocks = new ArrayList<Block>();
         towers = new ArrayList<Tower>();
         enemys = new ArrayList<Enemy>();
+        bullets = new ArrayList<Bullet>();
         towerIcons = new ArrayList<TowerIcon>();
 
         TowerIcon block = new TowerIcon(1, MainFrame.costs[0]);
@@ -193,13 +195,21 @@ public class GameFrame extends JFrame implements ActionListener {
         if (!edit) {
             for (Tower tower:towers){
                 tower.aim();
+                if (time%tower.freq==0){
+                    tower.shoot();
+                }
             }
+            
             ArrayList<Enemy> tempEnemys = new ArrayList<Enemy>(enemys);
             for (Enemy enemy : tempEnemys) {
                 enemy.move();
                 if (enemy.hp<=0){
                     enemys.remove(enemy);
                 }
+            }
+            ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
+            for (Bullet bullet: tempBullets){
+                bullet.move();
             }
         }
         time++;
@@ -315,6 +325,10 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.fillRect(block.x, block.y, block.width, block.height);
 
             }
+            for (Bullet bullet: bullets){
+                gc.fillRect(bullet.x,bullet.y,bullet.width,bullet.height);
+            }
+            
             for (Tower tower : towers) {
                 
                 int cx = tower.x + blockSize / 2;
