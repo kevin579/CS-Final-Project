@@ -22,10 +22,16 @@ public class Enemy extends Rectangle {
         super(GameFrame.startX, GameFrame.startY, GameFrame.blockSize, GameFrame.blockSize);
         this.factor = factor;
         if (type == 1) {
+
         	this.image = loadImage("scripts/Images/enemy_2.png");
             this.hp = 5*factor;
             this.speed = 1.5;
             
+
+            this.hp = 10;
+            this.speed = 1;
+            this.image = loadImage("scripts/Images/enemy_2.png");
+
         }
         else if (type == 2) {
         	this.image = loadImage("scripts/Images/enemy_3.png");
