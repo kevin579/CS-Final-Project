@@ -9,14 +9,19 @@ import java.awt.image.BufferedImage;
 
 
 public class Enemy extends Rectangle {
-    int hp;
     int factor;
     double speed;
     double speedX = 0;
 	double speedY = 0, angle = 0;
+	double hp;
+    double maxHp;
     BufferedImage image;
     boolean changeBlock = true;
+    Rectangle rect;
     Rectangle hpBar;
+    Rectangle hpNow;
+    Color red;
+    Color green;
 
     Enemy(int type, int factor) {
         super(GameFrame.startX, GameFrame.startY, GameFrame.blockSize, GameFrame.blockSize);
@@ -28,13 +33,6 @@ public class Enemy extends Rectangle {
             this.hp = 5*factor;
             this.speed = 1.5;
             
-
-            this.hp = 10;
-            this.speed = 1;
-
-            this.image = loadImage("scripts/Images/enemy_2.png");
-
-
         }
         else if (type == 2) {
         	this.image = loadImage("scripts/Images/enemy_3.png");
@@ -71,7 +69,13 @@ public class Enemy extends Rectangle {
             this.hp = 15*factor;
             this.speed = 2.0;
         }
-        this.hpBar = new Rectangle(0, 0, (int) (GameFrame.blockSize * 0.6), 5);
+        
+        this.maxHp = this.hp;
+        this.rect = new Rectangle(0, 0, GameFrame.blockSize, GameFrame.blockSize);
+        this.red = new Color(255, 0, 0);
+        this.green = new Color(0, 255, 0);
+        this.hpBar = new Rectangle(0, 0, (int) (GameFrame.blockSize), 5);
+        updateHp();
     }
 
     public void move() {
@@ -110,9 +114,20 @@ public class Enemy extends Rectangle {
         else changeBlock = true;
         this.x+=this.speedX;
         this.y+=this.speedY;
+        this.rect.setLocation((int) this.x, (int) this.y);
+        this.hpBar.setLocation((int) this.rect.getX(), (int) this.rect.getY() - 10);
+        updateHp();
         
     }
-    
+    public void updateHp() {
+    	this.hpNow = new Rectangle(this.hpBar.x, this.hpBar.y, (int) (GameFrame.blockSize * (this.hp / this.maxHp)), 5);
+    }
+    public void drawHP(Graphics g) {
+        g.setColor(this.green);
+        g.fillRect(this.hpBar.x, this.hpBar.y, this.hpBar.width, this.hpBar.height);
+        g.setColor(this.red);
+        g.fillRect(this.hpNow.x, this.hpNow.y, this.hpNow.width, this.hpNow.height);
+    }
 
     static BufferedImage loadImage(String filename) {
         BufferedImage img = null;

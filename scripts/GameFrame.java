@@ -247,6 +247,7 @@ public class GameFrame extends JFrame implements ActionListener {
         mouseX = mouseY = 0;
 
     }
+   
 
     /**
      * It will update the 2D array pathGrid.
@@ -390,6 +391,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 Enemytransform.translate(-blockSize / 2, -blockSize / 2);
                 Enemytransform.scale(blockSize/348.0, blockSize/348.0);
                 gc.drawImage(enemy.image, Enemytransform, null);
+                enemy.drawHP(gc);
             }
 
         }
