@@ -34,7 +34,7 @@ public class Enemy extends Rectangle {
             char direction = GameFrame.pathGrid[gridY][gridX];
             // char[] arrows = { '←', '↑', '→', '↓' };
             // System.out.println(direction);
-            System.out.printf("%d,%d. ",gridX,gridY);
+            // System.out.printf("%d,%d. ",gridX,gridY);
             if (direction == '→') {
                 this.speedX = this.speed;
                 this.speedY =0;

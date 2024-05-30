@@ -321,24 +321,26 @@ public class GameFrame extends JFrame implements ActionListener {
 
             // Draw Blocks and towers
             gc.setColor(Color.BLACK);
+            for (Bullet bullet: bullets){
+                gc.fillRect(bullet.x,bullet.y,bullet.width,bullet.height);
+            }
+
             for (Block block : blocks) {
                 gc.fillRect(block.x, block.y, block.width, block.height);
 
             }
-            for (Bullet bullet: bullets){
-                gc.fillRect(bullet.x,bullet.y,bullet.width,bullet.height);
-            }
+            
             
             for (Tower tower : towers) {
                 
                 int cx = tower.x + blockSize / 2;
                 int cy = tower.y + blockSize / 2;
-                AffineTransform transform = new AffineTransform();
-                transform.translate(cx, cy);
-                transform.rotate(Math.toRadians(tower.angle));
-                transform.translate(-blockSize / 2, -blockSize / 2);
-                transform.scale(blockSize/1500.0, blockSize/1500.0);
-                gc.drawImage(tower.image, transform, null);
+                AffineTransform Towertransform = new AffineTransform();
+                Towertransform.translate(cx, cy);
+                Towertransform.rotate(Math.toRadians(tower.angle));
+                Towertransform.translate(-blockSize / 2, -blockSize / 2);
+                Towertransform.scale(blockSize/1500.0, blockSize/1500.0);
+                gc.drawImage(tower.image, Towertransform, null);
 
             }
 
@@ -348,13 +350,13 @@ public class GameFrame extends JFrame implements ActionListener {
                 
                 int cx = enemy.x + blockSize / 2;
                 int cy = enemy.y + blockSize / 2;
-                AffineTransform transform = new AffineTransform();
+                AffineTransform Enemytransform = new AffineTransform();
                 
-                transform.translate(cx, cy);
-                transform.rotate(Math.toRadians(enemy.angle));
-                transform.translate(-blockSize / 2, -blockSize / 2);
-                transform.scale(blockSize/348.0, blockSize/348.0);
-                gc.drawImage(enemy.image, transform, null);
+                Enemytransform.translate(cx, cy);
+                Enemytransform.rotate(Math.toRadians(enemy.angle));
+                Enemytransform.translate(-blockSize / 2, -blockSize / 2);
+                Enemytransform.scale(blockSize/348.0, blockSize/348.0);
+                gc.drawImage(enemy.image, Enemytransform, null);
             }
 
         }
@@ -404,7 +406,7 @@ class KeyInput extends KeyAdapter {
 class MouseInput extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.printf("%d,%d", e.getX(), e.getY());
+        // System.out.printf("%d,%d", e.getX(), e.getY());
         GameFrame.mouseClick = true;
         GameFrame.mouseX = e.getX();
         GameFrame.mouseY = e.getY();

@@ -5,18 +5,25 @@ import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 public class Bullet extends Rectangle{
-	int type,speed,damage;
-	double speedx,speedy;
-	Tower parent;
-	public Bullet(Tower parent,int x, int y, int type, int size, int speed,int damage){
+	int type,damage;
+	double xx,yy,speedX,speedY,targetX, targetY;
+	public Bullet(int x, int y, int type, int size, double speed,double targetX,double targetY, double dis, int damage){
 		super(x,y,size,size);
+		this.xx = x;
+		this.yy = y;
+		this.x = x;
+		this.y = y;
 		this.type = type;
-		this.speed = speed;
 		this.damage= damage;
-		this.parent = parent;
+		this.speedX = speed*(targetX-x)/(dis);
+		this.speedY = speed*(targetY-y)/(dis);
+		System.out.println(dis);
 	}
 	public void move(){
-		this.x+=speed*Math.sin(parent.angle*Math.PI/180);
-		this.y+=speed*Math.sin(parent.angle*Math.PI/180);
+		this.xx+=this.speedX;
+		this.yy+=this.speedY;
+		this.x = (int)this.xx;
+		this.y = (int)this.yy;
+		
 	}
 }
