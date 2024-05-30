@@ -51,6 +51,8 @@ public class GameFrame extends JFrame implements ActionListener {
     static int waveNum = -1;
     static int pointer = 0;
     static int delay;
+    static int enemyNum = 0;
+    static boolean allOut = false;
 
     // Game variables
     static int playerHP = 20;
@@ -157,7 +159,6 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-
         if (edit) {
             if (mouseClick) {
                 if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
@@ -224,22 +225,30 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         }
         if (!edit) {
-            if (time % 10 == 0 && pointer < wave[waveNum].length) {
+            System.out.println(wave[waveNum].length);
+            
+            if (time % 25 == 0 && pointer < wave[waveNum].length) {
                 if (delay > 0) {
                     delay--;
                 }else{
                     char element = wave[waveNum][pointer];
                     int elementNum = Character.getNumericValue(element);
                     if (elementNum < 10) {
-                        System.out.printf("wait for %d seconds", elementNum);
                         delay = elementNum;
                     } else {
                         Enemy enemy = new Enemy(elementNum - 9, 1);
                         enemys.add(enemy);
+                        enemyNum++;
                     }
                     pointer++;
                 }
+                if (pointer == wave[waveNum].length){
+                    allOut = true;
+                }
 
+            }
+            if (allOut && enemyNum==0){
+                edit = true;
             }
             for (Tower tower : towers) {
                 tower.aim();
@@ -253,7 +262,9 @@ public class GameFrame extends JFrame implements ActionListener {
             for (Enemy enemy : tempEnemys) {
                 enemy.move();
                 if (enemy.hp <= 0) {
+                    enemy.die();
                     enemys.remove(enemy);
+                    
                 }
                 for (Bullet bullet : tempBullets) {
                     bullet.move();
@@ -356,9 +367,19 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
             gc.setColor(Color.BLUE);
             gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
-
-            // Draw Buttom Panel
+            gc.setColor(Color.BLACK);
+            //Draw top panel
             gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+            if (edit){
+                gc.drawString("Edit Mode", 100, titleHeight/2);
+            }
+            else{
+                gc.drawString("Play Mode", 100, titleHeight/2);
+            }
+            gc.drawString("Wave: " + String.valueOf(waveNum+1), 300, titleHeight/2);
+            
+            // Draw Buttom Panel
+            
             for (TowerIcon icon : towerIcons) {
                 gc.setColor(Color.WHITE);
                 if (icon.select) {
@@ -454,10 +475,13 @@ class KeyInput extends KeyAdapter {
             System.exit(0);
         }
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            System.out.println("saf");
             GameFrame.time = 0;
             GameFrame.edit = false;
             GameFrame.pointer = 0;
             GameFrame.waveNum++;
+            GameFrame.delay =0;
+            GameFrame.allOut = false;
         }
         if (e.getKeyCode() == KeyEvent.VK_1) {
             GameFrame.selectNum = 1;

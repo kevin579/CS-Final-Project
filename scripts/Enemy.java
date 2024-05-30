@@ -84,8 +84,9 @@ public class Enemy extends Rectangle {
                 this.speedY = this.speed;
                 this.speedX =0;
             } else {
-                this.hp = 0;
+                this.hp =0;
                 GameFrame.playerHP--;
+                
             }
         }
         this.angle+=8;
@@ -95,6 +96,11 @@ public class Enemy extends Rectangle {
         else changeBlock = true;
         this.x+=this.speedX;
         this.y+=this.speedY;
+        
+    }
+    public void die(){
+        this.hp = 0;
+        GameFrame.enemyNum--;
         
     }
     
