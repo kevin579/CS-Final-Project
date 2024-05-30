@@ -1,0 +1,30 @@
+1a1a
+1aa2abb
+1ab5abb7bbb 
+1 b b b b b 3 b b b b 5 b b b b b b b b 
+1 b b b b 1 b b b 1 b b b 1 b b b b 1 b b b b b 1 b b b b b 
+1 b b c b b b b b b b b b b b b b c b b b b b b b b b b b 
+1 a a b b 1 b b a a a 1 c c 
+1 b b b b b 1 c c 1 d d d 
+1 c c b b b 1 c c b b b b b 1 c c c b b b b b b 
+1 c c d d b b b 5 c c d d d d b b b b b b b b 1 d d d d d d d 
+1 c d c d c d d d d 5 d d d d d d d d d 8 d d d d d d d d d d d d d d 
+1 d d d d d d d d d d d d d d d d d d d 10 d d d d d d d d d d d d d d d d d d d 
+1 d d d d d d d d d d d d d d d d d d d d d d d d d d d d 
+1 d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d 
+1 d d d d e e 2 d d d d e e e e 
+1 d e d e d e d e d e d e d e d e 
+1 d d d d e e 3 e e e e f f 5 e e f f f f 
+1 a a a a a a 2 b b b b b b 3 c c c c c c 4 d d d d d d d 5 e e e e e e e 6 f f f f f f 
+1 f f f f f f 5 f f f f f f 5 f f f f f f 5 f f f f f f f f f f f 
+1 e e f f g 3 e e f f g g 5 g g g 
+1 f f f f f f f f f f f f f f f 10 g g g g g g g g 
+1 e e e e e e e e 3 f f f f f f f f f f 5 g g g g g g g g g g g g g g g 
+1 f f f f f f f f f 5 g g g g g g g g g g g g g g g 5 h h h 
+1 f f f f f f f f f 10 g g g g 3 g g g g 3 h h h h 3 h h h h h 3 h h h h h 3 h h h h 
+1 f f f f f f 3 f f f f f 5 h h h h h h h h h h h h h h h h h h h h h h h h h h h 
+1 f f f f f f f f f f f f f f f f 5 h h h h h h h h h h h h h h h h h h h h h h h h h h h 
+1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 1 f 
+1 e e e e e e e e e e 3 f f f f f f f f f 10 g g g g g g g g g g g g g g g g g g g g 5 h h h h h h h h h h h h h h h h h h h h h h h h h 
+1 h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h h 
+1 j

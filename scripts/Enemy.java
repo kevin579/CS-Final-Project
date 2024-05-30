@@ -29,43 +29,40 @@ public class Enemy extends Rectangle {
         this.image = GameFrame.enemyImages.get(type-1);
         if (type == 1) {
 
-        	this.image = loadImage("scripts/Images/enemy_2.png");
             this.hp = 5*factor;
+
             this.speed = 1.5;
             
+
+            this.speed = 1.2;
+
+
         }
         else if (type == 2) {
-        	this.image = loadImage("scripts/Images/enemy_3.png");
             this.hp = 8*factor;
-            this.speed = 1.2;
+            this.speed = 1.5;
         }
         else if (type == 3) {
-        	this.image = loadImage("scripts/Images/enemy_4.png");
             this.hp = 10*factor;
             this.speed = 1;
         }
         else if (type == 4) {
-        	this.image = loadImage("scripts/Images/enemy_5.png");
             this.hp = 13*factor;
             this.speed = 1;
         }
         else if (type == 5) {
-        	this.image = loadImage("scripts/Images/enemy_6.png");
             this.hp = 15*factor;
             this.speed = 0.8;
         }
         else if (type == 6) {
-        	this.image = loadImage("scripts/Images/enemy_7.png");
             this.hp = 20*factor;
             this.speed = 0.5;
         }
         else if (type == 7) {
-        	this.image = loadImage("scripts/Images/enemy_8.png");
             this.hp = 12*factor;
             this.speed = 2.0;
         }
         else if (type == 8) {
-        	this.image = loadImage("scripts/Images/enemy_9.png");
             this.hp = 15*factor;
             this.speed = 2.0;
         }
@@ -103,8 +100,9 @@ public class Enemy extends Rectangle {
                 this.speedY = this.speed;
                 this.speedX =0;
             } else {
-                this.hp = 0;
+                this.hp =0;
                 GameFrame.playerHP--;
+                
             }
         }
         this.angle+=8;
@@ -119,6 +117,7 @@ public class Enemy extends Rectangle {
         updateHp();
         
     }
+
     public void updateHp() {
     	this.hpNow = new Rectangle(this.hpBar.x, this.hpBar.y, (int) (GameFrame.blockSize * (this.hp / this.maxHp)), 5);
     }
@@ -128,6 +127,14 @@ public class Enemy extends Rectangle {
         g.setColor(this.red);
         g.fillRect(this.hpNow.x, this.hpNow.y, this.hpNow.width, this.hpNow.height);
     }
+
+    public void die(){
+        this.hp = 0;
+        GameFrame.enemyNum--;
+        
+    }
+    
+
 
     static BufferedImage loadImage(String filename) {
         BufferedImage img = null;
