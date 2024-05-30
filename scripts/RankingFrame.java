@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.*;
+
 import javax.swing.*;
 
 public class RankingFrame extends JFrame implements ActionListener {
@@ -20,7 +22,25 @@ public class RankingFrame extends JFrame implements ActionListener {
 	public RankingFrame() {
 		this.setTitle("Rankings");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(new Dimension(1500, 800));
+        
+        //Maximize the window
+        this.setExtendedState(MAXIMIZED_BOTH);
+        this.setUndecorated(true);
+
+        //press esc to exit
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getID() == KeyEvent.KEY_PRESSED && e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    System.exit(0);
+                }
+                return false;
+            }
+        });
+
+        //Set the font to be bigger
+        //Change the margin and style of button
+        //Create method to read file record.txt
         
         //Main Panel
         mainPanel = new JSplitPane();
