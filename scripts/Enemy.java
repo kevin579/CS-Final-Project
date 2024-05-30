@@ -16,10 +16,11 @@ public class Enemy extends Rectangle {
 
     Enemy(int type) {
         super(GameFrame.startX, GameFrame.startY, GameFrame.blockSize, GameFrame.blockSize);
+        this.image = GameFrame.enemyImages.get(type-1);
         if (type == 1) {
             this.hp = 10;
             this.speed = 1;
-            this.image = loadImage("scripts/Images/enemy_2.png");
+            
         }
     }
 
