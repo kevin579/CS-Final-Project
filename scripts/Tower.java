@@ -22,7 +22,7 @@ public class Tower extends Rectangle {
 		this.image = GameFrame.towerImages.get(type);
 		if (type == 1) {
 			this.range = 5;
-			this.damage = 4;
+			this.damage = 2;
 			this.freq = 14;
 			this.speed = 5;
 			this.cost = costs[0];
