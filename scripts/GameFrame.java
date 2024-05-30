@@ -20,7 +20,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     GamePanel gamePanel;
     Timer timer;
-    int time = 0;
+    static int time = 0;
     static boolean edit = true;
     static int mouseX, mouseY;
     static boolean mouseClick = false;
@@ -46,16 +46,15 @@ public class GameFrame extends JFrame implements ActionListener {
     static ArrayList<BufferedImage> enemyImages;
     static int selectNum = 0;
 
-    //wave variables
+    // wave variables
     static char[][] wave = new char[100][100];
-    static int waveNum = 0;
+    static int waveNum = -1;
+    static int pointer = 0;
+    static int delay;
 
-
-    //Game variables
+    // Game variables
     static int playerHP = 20;
     int cash = 100;
-
-
 
     GameFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -77,7 +76,6 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     public void setup() {
-        
 
         // Find a suitable size for the top and buttom panel based on the screen size
         topMargin = titleHeight = panelHeight / 15;
@@ -147,11 +145,9 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t4);
         towerIcons.add(t5);
         towerIcons.add(t6);
-        
 
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
         loadWave();
-        System.out.println(wave[0][1]);
 
         // Start the timer
         timer = new Timer(16, this);
@@ -161,17 +157,14 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (time % 1000 == 0) {
-            Enemy enemy = new Enemy(1,1);
-            enemys.add(enemy);
-        }
+
         if (edit) {
             if (mouseClick) {
                 if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
                         && mouseY < buttomY) {
                     int gridX = (mouseX - leftMargin) / blockSize;
                     int gridY = (mouseY - topMargin) / blockSize;
-                    if (selectNum == 1 && cash>=MainFrame.costs[0]) {
+                    if (selectNum == 1 && cash >= MainFrame.costs[0]) {
                         for (int i = 0; i < pathGrid.length; i++) {
                             for (int j = 0; j < pathGrid[0].length; j++) {
                                 pathGrid[i][j] = '+';
@@ -181,10 +174,10 @@ public class GameFrame extends JFrame implements ActionListener {
                         towerGrid[gridY][gridX] = 1;
                         if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)) {
                             // for (int i = 0; i < pathGrid.length; i++) {
-                            //     for (int j = 0; j < pathGrid[0].length; j++) {
-                            //         System.out.print(pathGrid[i][j] + " ");
-                            //     }
-                            //     System.out.println();
+                            // for (int j = 0; j < pathGrid[0].length; j++) {
+                            // System.out.print(pathGrid[i][j] + " ");
+                            // }
+                            // System.out.println();
                             // }
                             Block block = new Block(gridX, gridY, 10);
                             blocks.add(block);
@@ -231,30 +224,46 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         }
         if (!edit) {
-            for (Tower tower:towers){
+            if (time % 10 == 0 && pointer < wave[waveNum].length) {
+                if (delay > 0) {
+                    delay--;
+                }else{
+                    char element = wave[waveNum][pointer];
+                    int elementNum = Character.getNumericValue(element);
+                    if (elementNum < 10) {
+                        System.out.printf("wait for %d seconds", elementNum);
+                        delay = elementNum;
+                    } else {
+                        Enemy enemy = new Enemy(elementNum - 9, 1);
+                        enemys.add(enemy);
+                    }
+                    pointer++;
+                }
+
+            }
+            for (Tower tower : towers) {
                 tower.aim();
-                if (time%tower.freq==0){
+                if (time % tower.freq == 0) {
                     tower.shoot();
                 }
             }
-            
+
             ArrayList<Enemy> tempEnemys = new ArrayList<Enemy>(enemys);
             ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
             for (Enemy enemy : tempEnemys) {
                 enemy.move();
-                if (enemy.hp<=0){
+                if (enemy.hp <= 0) {
                     enemys.remove(enemy);
                 }
-                for (Bullet bullet: tempBullets){
+                for (Bullet bullet : tempBullets) {
                     bullet.move();
-                    if(bullet.intersects(enemy)){
-                        enemy.hp-=bullet.damage;
+                    if (bullet.intersects(enemy)) {
+                        enemy.hp -= bullet.damage;
                         bullets.remove(bullet);
                     }
                 }
             }
-            
-            
+
         }
         time++;
         gamePanel.repaint();
@@ -357,84 +366,82 @@ public class GameFrame extends JFrame implements ActionListener {
                 }
                 // gc.setColor(Color.BLACK);
                 // gc.fillRect(icon.x, icon.y, icon.width, icon.height);
-                gc.drawImage(icon.icon,icon.x,icon.y,icon.width,icon.height,null);
-                
+                gc.drawImage(icon.icon, icon.x, icon.y, icon.width, icon.height, null);
+
                 gc.setColor(Color.BLACK);
                 gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
             }
             gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
-            gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3*2);
+            gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3 * 2);
 
             // Draw Blocks and towers
             gc.setColor(Color.BLACK);
-            for (Bullet bullet: bullets){
-                gc.fillRect(bullet.x,bullet.y,bullet.width,bullet.height);
+            for (Bullet bullet : bullets) {
+                gc.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
             }
 
             for (Block block : blocks) {
                 // gc.fillRect(block.x, block.y, block.width, block.height);
-                gc.drawImage(block.image,block.x, block.y, block.width, block.height,null);
+                gc.drawImage(block.image, block.x, block.y, block.width, block.height, null);
 
             }
-            
-            
+
             for (Tower tower : towers) {
-                
+
                 int cx = tower.x + blockSize / 2;
                 int cy = tower.y + blockSize / 2;
                 AffineTransform Towertransform = new AffineTransform();
                 Towertransform.translate(cx, cy);
                 Towertransform.rotate(Math.toRadians(tower.angle));
                 Towertransform.translate(-blockSize / 2, -blockSize / 2);
-                Towertransform.scale(blockSize/1500.0, blockSize/1500.0);
+                Towertransform.scale(blockSize / 1500.0, blockSize / 1500.0);
                 gc.drawImage(tower.image, Towertransform, null);
 
             }
-            
 
             // Draw Enemies
             for (Enemy enemy : enemys) {
-                
-                
+
                 int cx = enemy.x + blockSize / 2;
                 int cy = enemy.y + blockSize / 2;
                 AffineTransform Enemytransform = new AffineTransform();
-                
+
                 Enemytransform.translate(cx, cy);
                 Enemytransform.rotate(Math.toRadians(enemy.angle));
                 Enemytransform.translate(-blockSize / 2, -blockSize / 2);
-                Enemytransform.scale(blockSize/348.0, blockSize/348.0);
+                Enemytransform.scale(blockSize / 348.0, blockSize / 348.0);
                 gc.drawImage(enemy.image, Enemytransform, null);
             }
 
         }
     }
-    static BufferedImage loadImage(String filename) {
-		BufferedImage img = null;
-		try {
-			img = ImageIO.read(new File(filename));
-		} catch (IOException e) {
-			System.out.println(e.toString());
-			JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		return img;
-	}
 
-    static void loadWave(){
-        try{
+    static BufferedImage loadImage(String filename) {
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(filename));
+        } catch (IOException e) {
+            System.out.println(e.toString());
+            JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        return img;
+    }
+
+    static void loadWave() {
+        try {
             File file = new File("scripts/wave.txt");
             FileReader in = new FileReader(file);
             BufferedReader fileReader = new BufferedReader(in);
             String text;
             int w = 0;
-            while ( (text = fileReader.readLine())!=null){
+            while ((text = fileReader.readLine()) != null) {
                 wave[w] = text.toCharArray();
                 w++;
             }
             fileReader.close();
             in.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             System.out.println("cannot find file");
         }
     }
@@ -447,7 +454,10 @@ class KeyInput extends KeyAdapter {
             System.exit(0);
         }
         if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            GameFrame.time = 0;
             GameFrame.edit = false;
+            GameFrame.pointer = 0;
+            GameFrame.waveNum++;
         }
         if (e.getKeyCode() == KeyEvent.VK_1) {
             GameFrame.selectNum = 1;
