@@ -1,7 +1,11 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.Queue;
 
@@ -35,7 +39,9 @@ public class GameFrame extends JFrame implements ActionListener {
     static ArrayList<Tower> towers;
     static ArrayList<Enemy> enemys;
     static ArrayList<Bullet> bullets;
-    ArrayList<TowerIcon> towerIcons;
+    static ArrayList<TowerIcon> towerIcons;
+    static ArrayList<BufferedImage> towerImages;
+    static ArrayList<BufferedImage> enemyImages;
     static int selectNum = 0;
 
 
@@ -65,9 +71,7 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     public void setup() {
-        // Start the timer
-        timer = new Timer(16, this);
-        timer.start();
+        
 
         // Find a suitable size for the top and buttom panel based on the screen size
         topMargin = titleHeight = panelHeight / 15;
@@ -101,6 +105,26 @@ public class GameFrame extends JFrame implements ActionListener {
         enemys = new ArrayList<Enemy>();
         bullets = new ArrayList<Bullet>();
         towerIcons = new ArrayList<TowerIcon>();
+        towerImages = new ArrayList<BufferedImage>();
+        enemyImages = new ArrayList<BufferedImage>();
+
+        enemyImages.add(loadImage("scripts/Images/enemy_2.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_3.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_4.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_5.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_6.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_7.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_8.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_9.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_10.png"));
+
+        towerImages.add(loadImage("scripts/Images/block.png"));
+        towerImages.add(loadImage("scripts/Images/tower_1.png"));
+        towerImages.add(loadImage("scripts/Images/tower_2.png"));
+        towerImages.add(loadImage("scripts/Images/tower_3.png"));
+        towerImages.add(loadImage("scripts/Images/tower_4.png"));
+        towerImages.add(loadImage("scripts/Images/tower_5.png"));
+        towerImages.add(loadImage("scripts/Images/tower_6.png"));
 
         TowerIcon block = new TowerIcon(1, MainFrame.costs[0]);
         TowerIcon t1 = new TowerIcon(2, MainFrame.costs[1]);
@@ -117,8 +141,13 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t4);
         towerIcons.add(t5);
         towerIcons.add(t6);
+        
 
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
+
+        // Start the timer
+        timer = new Timer(16, this);
+        timer.start();
 
     }
 
@@ -178,7 +207,7 @@ public class GameFrame extends JFrame implements ActionListener {
                             }
                             // mark the selected icon
                             icon.select = true;
-                            selectNum = icon.number;
+                            selectNum = icon.type;
                         }
                     }
                 }
@@ -311,36 +340,42 @@ public class GameFrame extends JFrame implements ActionListener {
                 if (icon.select) {
                     gc.fillRect(icon.x - 2, icon.y - 2, icon.width + 4, icon.height + 4);
                 }
-                gc.setColor(Color.GREEN);
-                gc.fillRect(icon.x, icon.y, icon.width, icon.height);
+                // gc.setColor(Color.BLACK);
+                // gc.fillRect(icon.x, icon.y, icon.width, icon.height);
+                gc.drawImage(icon.icon,icon.x,icon.y,icon.width,icon.height,null);
+                
                 gc.setColor(Color.BLACK);
                 gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
             }
+            System.out.println(towerIcons.size());
             gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
             gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3*2);
 
             // Draw Blocks and towers
             gc.setColor(Color.BLACK);
+            for (Bullet bullet: bullets){
+                gc.fillRect(bullet.x,bullet.y,bullet.width,bullet.height);
+            }
+
             for (Block block : blocks) {
                 gc.fillRect(block.x, block.y, block.width, block.height);
 
             }
-            for (Bullet bullet: bullets){
-                gc.fillRect(bullet.x,bullet.y,bullet.width,bullet.height);
-            }
+            
             
             for (Tower tower : towers) {
                 
                 int cx = tower.x + blockSize / 2;
                 int cy = tower.y + blockSize / 2;
-                AffineTransform transform = new AffineTransform();
-                transform.translate(cx, cy);
-                transform.rotate(Math.toRadians(tower.angle));
-                transform.translate(-blockSize / 2, -blockSize / 2);
-                transform.scale(blockSize/1500.0, blockSize/1500.0);
-                gc.drawImage(tower.image, transform, null);
+                AffineTransform Towertransform = new AffineTransform();
+                Towertransform.translate(cx, cy);
+                Towertransform.rotate(Math.toRadians(tower.angle));
+                Towertransform.translate(-blockSize / 2, -blockSize / 2);
+                Towertransform.scale(blockSize/1500.0, blockSize/1500.0);
+                gc.drawImage(tower.image, Towertransform, null);
 
             }
+            
 
             // Draw Enemies
             for (Enemy enemy : enemys) {
@@ -348,17 +383,28 @@ public class GameFrame extends JFrame implements ActionListener {
                 
                 int cx = enemy.x + blockSize / 2;
                 int cy = enemy.y + blockSize / 2;
-                AffineTransform transform = new AffineTransform();
+                AffineTransform Enemytransform = new AffineTransform();
                 
-                transform.translate(cx, cy);
-                transform.rotate(Math.toRadians(enemy.angle));
-                transform.translate(-blockSize / 2, -blockSize / 2);
-                transform.scale(blockSize/348.0, blockSize/348.0);
-                gc.drawImage(enemy.image, transform, null);
+                Enemytransform.translate(cx, cy);
+                Enemytransform.rotate(Math.toRadians(enemy.angle));
+                Enemytransform.translate(-blockSize / 2, -blockSize / 2);
+                Enemytransform.scale(blockSize/348.0, blockSize/348.0);
+                gc.drawImage(enemy.image, Enemytransform, null);
             }
 
         }
     }
+    static BufferedImage loadImage(String filename) {
+		BufferedImage img = null;
+		try {
+			img = ImageIO.read(new File(filename));
+		} catch (IOException e) {
+			System.out.println(e.toString());
+			JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		return img;
+	}
 }
 
 class KeyInput extends KeyAdapter {
@@ -404,7 +450,7 @@ class KeyInput extends KeyAdapter {
 class MouseInput extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
-        System.out.printf("%d,%d", e.getX(), e.getY());
+        // System.out.printf("%d,%d", e.getX(), e.getY());
         GameFrame.mouseClick = true;
         GameFrame.mouseX = e.getX();
         GameFrame.mouseY = e.getY();
