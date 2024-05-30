@@ -4,7 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 import java.util.Queue;
@@ -43,6 +45,10 @@ public class GameFrame extends JFrame implements ActionListener {
     static ArrayList<BufferedImage> towerImages;
     static ArrayList<BufferedImage> enemyImages;
     static int selectNum = 0;
+
+    //wave variables
+    static char[][] wave = new char[100][100];
+    static int waveNum = 0;
 
 
     //Game variables
@@ -144,6 +150,8 @@ public class GameFrame extends JFrame implements ActionListener {
         
 
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
+        loadWave();
+        System.out.println(wave[0][1]);
 
         // Start the timer
         timer = new Timer(16, this);
@@ -172,12 +180,12 @@ public class GameFrame extends JFrame implements ActionListener {
 
                         towerGrid[gridY][gridX] = 1;
                         if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)) {
-                            for (int i = 0; i < pathGrid.length; i++) {
-                                for (int j = 0; j < pathGrid[0].length; j++) {
-                                    System.out.print(pathGrid[i][j] + " ");
-                                }
-                                System.out.println();
-                            }
+                            // for (int i = 0; i < pathGrid.length; i++) {
+                            //     for (int j = 0; j < pathGrid[0].length; j++) {
+                            //         System.out.print(pathGrid[i][j] + " ");
+                            //     }
+                            //     System.out.println();
+                            // }
                             Block block = new Block(gridX, gridY, 10);
                             blocks.add(block);
                             cash -= MainFrame.costs[0];
@@ -354,7 +362,6 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.setColor(Color.BLACK);
                 gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
             }
-            System.out.println(towerIcons.size());
             gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
             gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3*2);
 
@@ -413,6 +420,24 @@ public class GameFrame extends JFrame implements ActionListener {
 		}
 		return img;
 	}
+
+    static void loadWave(){
+        try{
+            File file = new File("scripts/wave.txt");
+            FileReader in = new FileReader(file);
+            BufferedReader fileReader = new BufferedReader(in);
+            String text;
+            int w = 0;
+            while ( (text = fileReader.readLine())!=null){
+                wave[w] = text.toCharArray();
+                w++;
+            }
+            fileReader.close();
+            in.close();
+        }catch(Exception e){
+            System.out.println("cannot find file");
+        }
+    }
 }
 
 class KeyInput extends KeyAdapter {
