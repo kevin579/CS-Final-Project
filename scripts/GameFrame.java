@@ -147,13 +147,14 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // Start the timer
         timer = new Timer(16, this);
+        timer.setInitialDelay(1000);
         timer.start();
 
     }
 
     public void actionPerformed(ActionEvent e) {
         if (time % 1000 == 0) {
-            Enemy enemy = new Enemy(7,1);
+            Enemy enemy = new Enemy(1,1);
             enemys.add(enemy);
         }
         if (edit) {
@@ -230,16 +231,22 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             
             ArrayList<Enemy> tempEnemys = new ArrayList<Enemy>(enemys);
+            ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
             for (Enemy enemy : tempEnemys) {
                 enemy.move();
                 if (enemy.hp<=0){
                     enemys.remove(enemy);
                 }
+                for (Bullet bullet: tempBullets){
+                    bullet.move();
+                    if(bullet.intersects(enemy)){
+                        enemy.hp-=bullet.damage;
+                        bullets.remove(bullet);
+                    }
+                }
             }
-            ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
-            for (Bullet bullet: tempBullets){
-                bullet.move();
-            }
+            
+            
         }
         time++;
         gamePanel.repaint();
@@ -358,7 +365,8 @@ public class GameFrame extends JFrame implements ActionListener {
             }
 
             for (Block block : blocks) {
-                gc.fillRect(block.x, block.y, block.width, block.height);
+                // gc.fillRect(block.x, block.y, block.width, block.height);
+                gc.drawImage(block.image,block.x, block.y, block.width, block.height,null);
 
             }
             
