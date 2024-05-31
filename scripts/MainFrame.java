@@ -24,7 +24,9 @@ public class MainFrame extends JFrame implements ActionListener {
     static int enemyGenerateSpeed = 500;
     static int scoreRate = 1;
 
-    static int[] costs = {10,20,30,40,50,60,70,80,90};
+    static int[] costs = {10,20,50,180,200,1000,1500,80,90};
+    static int[] enemyHPs = {5,8,10,13,15,20,12,15};
+    static double[] enemySpeeds = {1.2,1.5,1,1,0.8,0.5,2,2.5};
 
     public static void main(String[] args) {
         new MainFrame();

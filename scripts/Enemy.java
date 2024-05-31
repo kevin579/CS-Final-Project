@@ -9,10 +9,10 @@ import java.awt.image.BufferedImage;
 
 
 public class Enemy extends Rectangle {
-    int factor;
+    int factor,type;
     double speed;
-    double speedX = 0;
-	double speedY = 0, angle = 0;
+    double xx, yy;
+    double speedX = 0,speedY = 0, angle = 0;
 	double hp;
     double maxHp;
     BufferedImage image;
@@ -25,48 +25,13 @@ public class Enemy extends Rectangle {
 
     Enemy(int type, int factor) {
         super(GameFrame.startX, GameFrame.startY, GameFrame.blockSize, GameFrame.blockSize);
+        this.xx = this.x;
+        this.yy = this.y;
         this.factor = factor;
         this.image = GameFrame.enemyImages.get(type-1);
-        if (type == 1) {
-
-            this.hp = 5*factor;
-
-            this.speed = 1.5;
-            
-
-            this.speed = 1.2;
-
-
-        }
-        else if (type == 2) {
-            this.hp = 8*factor;
-            this.speed = 1.5;
-        }
-        else if (type == 3) {
-            this.hp = 10*factor;
-            this.speed = 1;
-        }
-        else if (type == 4) {
-            this.hp = 13*factor;
-            this.speed = 1;
-        }
-        else if (type == 5) {
-            this.hp = 15*factor;
-            this.speed = 0.8;
-        }
-        else if (type == 6) {
-            this.hp = 20*factor;
-            this.speed = 0.5;
-        }
-        else if (type == 7) {
-            this.hp = 12*factor;
-            this.speed = 2.0;
-        }
-        else if (type == 8) {
-            this.hp = 15*factor;
-            this.speed = 2.0;
-        }
-        
+        this.type = type;
+        this.hp = MainFrame.enemyHPs[type-1]*factor;
+        this.speed = MainFrame.enemySpeeds[type-1];        
         this.maxHp = this.hp;
         this.rect = new Rectangle(0, 0, GameFrame.blockSize, GameFrame.blockSize);
         this.red = new Color(255, 0, 0);
@@ -110,8 +75,10 @@ public class Enemy extends Rectangle {
             this.angle = 0;
         }
         else changeBlock = true;
-        this.x+=this.speedX;
-        this.y+=this.speedY;
+        this.xx+=this.speedX;
+        this.yy+=this.speedY;
+        this.x = (int) this.xx;
+        this.y = (int)this. yy;
         this.rect.setLocation((int) this.x, (int) this.y);
         this.hpBar.setLocation((int) this.rect.getX(), (int) this.rect.getY() - 10);
         updateHp();
