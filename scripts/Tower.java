@@ -12,6 +12,7 @@ public class Tower extends Rectangle {
 	BufferedImage image;
 	int px, py;
 	Enemy target;
+	int level = 0;
 
 	public Tower(int gridX, int gridY, int type) {
 		super(gridX * GameFrame.blockSize + GameFrame.leftMargin, gridY * GameFrame.blockSize + GameFrame.topMargin,
@@ -22,44 +23,11 @@ public class Tower extends Rectangle {
 		this.px = gridX * GameFrame.blockSize + GameFrame.leftMargin;
 		this.py = gridY * GameFrame.blockSize + GameFrame.topMargin;
 		this.image = GameFrame.towerImages.get(type);
-		if (type == 1) {
-			this.range = 5;
-			this.damage = 2;
-			this.freq = 15;
-			this.speed = 5;
-			this.cost = costs[0];
-
-		} else if (type == 2) {
-			this.range = 6;
-			this.damage = 4;
-			this.freq = 10;
-			this.speed = 4;
-			this.cost = costs[1];
-		} else if (type == 3) {
-			this.range = 7;
-			this.damage = 8;
-			this.freq = 5;
-			this.speed = 5;
-			this.cost = costs[2];
-		} else if (type == 4) {
-			this.range = 8;
-			this.damage = 5;
-			this.freq = 20;
-			this.speed = 6;
-			this.cost = costs[3];
-		} else if (type == 5) {
-			this.range = 8;
-			this.damage = 12;
-			this.freq = 15;
-			this.speed = 8;
-			this.cost = costs[4];
-		} else if (type == 6) {
-			this.range = 10;
-			this.damage = 30;
-			this.freq = 2;
-			this.speed = 10;
-			this.cost = costs[5];
-		}
+		this.cost = MainFrame.towerCosts[type-1];
+		this.speed = MainFrame.towerSpeed[type-1];
+		this.freq = MainFrame.towerFreq[type-1];
+		this.damage = MainFrame.towerDamage[type-1];
+		this.range = MainFrame.towerRange[type-1];
 	}
 
 	public void aim() {
@@ -79,7 +47,7 @@ public class Tower extends Rectangle {
 	}
 
 	public void shoot() {
-		if (this.target != null) {
+		if (this.target != null &&this.target.hp>0) {
 			Bullet bullet = new Bullet(this.px + this.width / 2, this.py + this.height / 2, type, type * 3, speed,
 					this.target.x + this.target.width / 2 + this.target.speedX * estimateTime,
 					this.target.y + this.target.height / 2 + this.target.speedY * estimateTime, dis, damage);
@@ -134,13 +102,13 @@ class TowerPanel extends Rectangle {
 	TowerPanel(int type, int gridX, int gridY) {
 		super((gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin,
 				gridY * GameFrame.blockSize + GameFrame.topMargin,
-				GameFrame.blockSize * 2, GameFrame.blockSize * 2);
+				GameFrame.blockSize * 2, GameFrame.blockSize * 3);
 		this.type = type;
 		this.gridX = gridX;
 		this.gridY = gridY;
 		this.sellButton = new SellButton(this.gridX, this.gridY);
 		this.upgradeButton = new UpgradePanel(this.gridX, this.gridY);
-		this.color = new Color(0, 0, 0);
+		this.color = Color.WHITE;
 	}
 
 	public void update(int type, int gridX, int gridY) {
@@ -159,7 +127,7 @@ class UpgradePanel extends Rectangle {
 
 	UpgradePanel(int gridX, int gridY) {
 		super((gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin,
-				gridY * GameFrame.blockSize + GameFrame.topMargin,
+				(gridY+1) * GameFrame.blockSize + GameFrame.topMargin,
 				GameFrame.blockSize * 2, GameFrame.blockSize);
 		this.color = new Color(0, 250, 0);
 	}
@@ -176,7 +144,7 @@ class SellButton extends Rectangle {
 
 	SellButton(int gridX, int gridY) {
 		super((gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin,
-				(gridY + 1) * GameFrame.blockSize + GameFrame.topMargin,
+				(gridY + 2) * GameFrame.blockSize + GameFrame.topMargin,
 				GameFrame.blockSize * 2, GameFrame.blockSize);
 		this.color = new Color(250, 0, 0);
 	}

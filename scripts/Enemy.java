@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 
 
 public class Enemy extends Rectangle {
-    int factor,type;
+    int type;
     double speed;
     double xx, yy;
     double speedX = 0,speedY = 0, angle = 0;
@@ -23,11 +23,10 @@ public class Enemy extends Rectangle {
     Color red;
     Color green;
 
-    Enemy(int type, int factor) {
+    Enemy(int type, double factor) {
         super(GameFrame.startX, GameFrame.startY, GameFrame.blockSize, GameFrame.blockSize);
         this.xx = this.x;
         this.yy = this.y;
-        this.factor = factor;
         this.image = GameFrame.enemyImages.get(type-1);
         this.type = type;
         this.hp = MainFrame.enemyHPs[type-1]*factor;
@@ -101,8 +100,6 @@ public class Enemy extends Rectangle {
         
     }
     
-
-
     static BufferedImage loadImage(String filename) {
         BufferedImage img = null;
         try {
