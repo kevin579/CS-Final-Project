@@ -1,9 +1,5 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
+
 public class Bullet extends Rectangle{
 	int type,damage;
 	double xx,yy,speedX,speedY,targetX, targetY;
@@ -17,7 +13,6 @@ public class Bullet extends Rectangle{
 		this.damage= damage;
 		this.speedX = speed*(targetX-x)/(dis);
 		this.speedY = speed*(targetY-y)/(dis);
-		System.out.println(dis);
 	}
 	public void move(){
 		this.xx+=this.speedX;

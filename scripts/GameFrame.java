@@ -35,6 +35,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static int titleHeight, buttomHeight, buttomY, gridHeight;
     static int topMargin, leftMargin, rightMargin;
     static int startX, startY, endX, endY;
+    static int gridX, gridY;
 
     // variables for block and tower
     static ArrayList<Block> blocks;
@@ -167,6 +168,7 @@ public class GameFrame extends JFrame implements ActionListener {
         selectedBlock = null;
         selectedTower = null;
         if (towerPanel != null) {
+
             for (Tower tower : towers) {
                 if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
                     selectedTower = tower;
@@ -189,14 +191,14 @@ public class GameFrame extends JFrame implements ActionListener {
 
                 if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
                         && mouseY < buttomY) {
-                    int gridX = (mouseX - leftMargin) / blockSize;
-                    int gridY = (mouseY - topMargin) / blockSize;
+                    gridX = (mouseX - leftMargin) / blockSize;
+                    gridY = (mouseY - topMargin) / blockSize;
                     if (towerPanel != null) {
                         if (towerPanel.upgradeButton.contains(mouseX, mouseY)) {
                             if (towerPanel.type != 1) {
                                 for (Tower tower : towers) {
                                     if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
-                                        if (cash >= MainFrame.towerCosts[towerPanel.type - 1] / 2) {
+                                        if (cash >= MainFrame.towerCosts[towerPanel.type - 1] / 2 && tower.level < 5) {
                                             tower.damage += tower.type;
                                             tower.level++;
                                             cash -= MainFrame.towerCosts[towerPanel.type - 1] / 2;
@@ -229,7 +231,7 @@ public class GameFrame extends JFrame implements ActionListener {
                                 for (Tower tower : tempTowers) {
                                     if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
                                         towers.remove(tower);
-                                        cash += MainFrame.towerCosts[towerPanel.type - 1];
+                                        cash += MainFrame.towerCosts[towerPanel.type - 1] * (1 + tower.level / 2.0);
                                         towerGrid[towerPanel.gridY][towerPanel.gridX] = 1;
                                         break;
                                     }
@@ -246,8 +248,9 @@ public class GameFrame extends JFrame implements ActionListener {
                             } else {
                                 if (gridX == towerPanel.gridX && gridY == towerPanel.gridY) {
                                     towerPanel = null;
-                                } else
-                                    towerPanel.update(1, gridX, gridY);
+                                } else {
+                                    towerPanel.update(towerGrid[gridY][gridX], gridX, gridY);
+                                }
                             }
                         } else {
                             towerPanel = null;
@@ -281,6 +284,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
                         if (towerGrid[gridY][gridX] == 0) {
                             System.out.println("Requires block");
+                            towerPanel = null;
                         } else if (towerGrid[gridY][gridX] > 1) {
                             if (towerPanel == null) {
                                 towerPanel = new TowerPanel(towerGrid[gridY][gridX], gridX, gridY);
@@ -288,8 +292,11 @@ public class GameFrame extends JFrame implements ActionListener {
                             } else {
                                 if (gridX == towerPanel.gridX && gridY == towerPanel.gridY) {
                                     towerPanel = null;
-                                } else
-                                    towerPanel.update(1, gridX, gridY);
+
+                                } else {
+                                    towerPanel.update(towerGrid[gridY][gridX], gridX, gridY);
+                                }
+
                             }
 
                         } else if (cash >= MainFrame.towerCosts[selectNum - 1]) {
@@ -328,8 +335,8 @@ public class GameFrame extends JFrame implements ActionListener {
         for (Bullet bullet : tempBullets) {
             bullet.move();
         }
+
         if (!edit) {
-            System.out.println(wave[waveNum].length);
 
             if (time % 25 == 0 && pointer < wave[waveNum].length) {
                 if (delay > 0) {
@@ -340,7 +347,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     if (elementNum < 10) {
                         delay = elementNum;
                     } else {
-                        Enemy enemy = new Enemy(elementNum - 9, 1.0*waveNum/5.0);
+                        Enemy enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) / 5.0));
                         enemys.add(enemy);
                         enemyNum++;
                     }
@@ -511,7 +518,6 @@ public class GameFrame extends JFrame implements ActionListener {
             }
 
             for (Tower tower : towers) {
-
                 int cx = tower.x + blockSize / 2;
                 int cy = tower.y + blockSize / 2;
                 AffineTransform Towertransform = new AffineTransform();
@@ -520,6 +526,26 @@ public class GameFrame extends JFrame implements ActionListener {
                 Towertransform.translate(-blockSize / 2, -blockSize / 2);
                 Towertransform.scale(blockSize / 1500.0, blockSize / 1500.0);
                 gc.drawImage(tower.image, Towertransform, null);
+
+                gc.setColor(Color.YELLOW);
+                // gc.fillRect(tower.x,tower.y,blockSize/5,blockSize/5);
+                for (int i = 0; i < tower.level; i++) {
+                    double centerX = tower.x + blockSize / 5 + blockSize / 5 * i;
+                    double centerY = tower.y + blockSize / 5;
+                    double outerRadius = blockSize / 5;
+                    double innerRadius = outerRadius / 2.5;
+
+                    Polygon star = new Polygon();
+                    for (int u = 0; u < 10; u++) {
+                        double angle = Math.PI / 5 * u + Math.PI / 2;
+                        double radius = (u % 2 == 0) ? outerRadius : innerRadius;
+                        int dx = (int) (centerX + Math.cos(angle) * radius);
+                        int dy = (int) (centerY - Math.sin(angle) * radius);
+                        star.addPoint(dx, dy);
+                    }
+
+                    gc.fill(star);
+                }
 
             }
 
@@ -619,8 +645,7 @@ class KeyInput extends KeyAdapter {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             System.exit(0);
         }
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            System.out.println("saf");
+        if (e.getKeyCode() == KeyEvent.VK_ENTER && GameFrame.edit == true) {
             GameFrame.time = 0;
             GameFrame.edit = false;
             GameFrame.pointer = 0;

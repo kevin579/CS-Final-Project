@@ -1,10 +1,5 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
+
 import java.awt.*;
-
-import java.io.File;
-import java.io.IOException;
-
 import java.awt.image.BufferedImage;
 
 
@@ -100,15 +95,4 @@ public class Enemy extends Rectangle {
         
     }
     
-    static BufferedImage loadImage(String filename) {
-        BufferedImage img = null;
-        try {
-            img = ImageIO.read(new File(filename));
-        } catch (IOException e) {
-            System.out.println(e.toString());
-            JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        return img;
-    }
 }

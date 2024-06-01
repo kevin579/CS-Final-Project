@@ -1,9 +1,6 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
+
 
 public class Tower extends Rectangle {
 	int gridX, gridY, type, range, damage, freq, cost;
@@ -112,11 +109,13 @@ class TowerPanel extends Rectangle {
 	}
 
 	public void update(int type, int gridX, int gridY) {
+		this.gridX = gridX;
+		this.gridY = gridY;
 		this.type = type;
 		this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
 		this.y = gridY * GameFrame.blockSize + GameFrame.topMargin;
-		this.sellButton.update(gridX, gridY);
-		this.upgradeButton.update(gridX, gridY);
+		this.sellButton.update(this.gridX, this.gridY);
+		this.upgradeButton.update(this.gridX, this.gridY);
 	}
 
 }
@@ -133,8 +132,10 @@ class UpgradePanel extends Rectangle {
 	}
 
 	public void update(int gridX, int gridY) {
+		this.gridX = gridX;
+		this.gridY = gridY;
 		this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
-		this.y = gridY * GameFrame.blockSize + GameFrame.topMargin;
+		this.y = (gridY+1) * GameFrame.blockSize + GameFrame.topMargin;
 	}
 }
 
@@ -150,8 +151,10 @@ class SellButton extends Rectangle {
 	}
 
 	public void update(int gridX, int gridY) {
+		this.gridX = gridX;
+		this.gridY = gridY;
 		this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
-		this.y = gridY * GameFrame.blockSize + GameFrame.topMargin;
+		this.y = (gridY+2) * GameFrame.blockSize + GameFrame.topMargin;
 
 	}
 }
