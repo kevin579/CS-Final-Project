@@ -1,16 +1,30 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GameFrame extends JFrame implements ActionListener {
@@ -62,8 +76,10 @@ public class GameFrame extends JFrame implements ActionListener {
     static int playerHP = 20;
     int cash = 5000;
 
+    // panel variables
     static Tower selectedTower;
     static Block selectedBlock;
+    static boolean panelOperation;
 
     GameFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -123,6 +139,9 @@ public class GameFrame extends JFrame implements ActionListener {
         bulletImages = new ArrayList<BufferedImage>();
 
         explodeImage = GameFrame.loadImage("scripts/Images/explosions.png");
+        bulletImages.add(loadImage("scripts/Images/bullet.png"));
+        bulletImages.add(loadImage("scripts/Images/boom.png"));
+        bulletImages.add(loadImage("scripts/Images/missle.png"));
 
         enemyImages.add(loadImage("scripts/Images/enemy_2.png"));
         enemyImages.add(loadImage("scripts/Images/enemy_3.png"));
@@ -171,7 +190,65 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        boolean panelOperation = false;
+
+        // Is there a panel for the tower
+        getPanelItem();
+        panelOperation = false;
+        // get which tower the player wants to put
+        getSelectedTower();
+
+        // If the game is at edit mode
+        if (edit) {
+            // remove all bullets from previous wave
+            bullets.clear();
+            if (mouseClick) {
+                // If the player clicked on the game area
+                if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
+                        && mouseY < buttomY) {
+
+                    // Identify which block the player is clicking.
+                    gridX = (mouseX - leftMargin) / blockSize;
+                    gridY = (mouseY - topMargin) / blockSize;
+
+                    // Check if the user clicked on the tower panel and do the corresponding actions
+                    excutePanelOperations();
+
+                    // If the user did not click on the tower panel
+                    if (panelOperation == false) {
+                        if (selectNum == 1) {// the player select block
+                            addBlock();
+                        } else if (selectNum > 1) {// the player select player
+                            addTower();
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        // When the games quits edit mode and starts a wave
+        else {
+            // Make the towers aim and shoot
+            excuteTowerOperation();
+
+            // Generate enemy based on the wave number.
+            generateEnemy();
+
+            excuteEnemyOperations();
+
+            // Make the bullets move, track, explode
+            excuteBulletOperation();
+
+        }
+        time++;
+        mouseClick = false;
+        mouseX = mouseY = 0;
+        gamePanel.repaint();
+
+    }
+
+    private void getPanelItem() {
         selectedBlock = null;
         selectedTower = null;
         if (towerPanel != null) {
@@ -193,167 +270,167 @@ public class GameFrame extends JFrame implements ActionListener {
                 }
             }
         }
-        if (edit) {
-            if (mouseClick) {
+    }
 
-                if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
-                        && mouseY < buttomY) {
-                    gridX = (mouseX - leftMargin) / blockSize;
-                    gridY = (mouseY - topMargin) / blockSize;
-                    if (towerPanel != null) {
-                        if (towerPanel.upgradeButton.contains(mouseX, mouseY)) {
-                            if (towerPanel.type != 1) {
-                                for (Tower tower : towers) {
-                                    if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
-                                        if (cash >= MainFrame.towerCosts[towerPanel.type - 1] / 2 && tower.level < 5) {
-                                            tower.damage += tower.type;
-                                            tower.level++;
-                                            cash -= MainFrame.towerCosts[towerPanel.type - 1] / 2;
-                                        }
-                                        break;
-                                    }
-                                }
+    private void excutePanelOperations() {
+        if (towerPanel != null) {
+            if (towerPanel.upgradeButton.contains(mouseX, mouseY)) {
+                if (towerPanel.type != 1) {
+                    for (Tower tower : towers) {
+                        if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
+                            if (cash >= MainFrame.towerCosts[towerPanel.type - 1] / 2 && tower.level < 5) {
+                                tower.damage += tower.type;
+                                tower.level++;
+                                cash -= MainFrame.towerCosts[towerPanel.type - 1] / 2;
                             }
-                            towerPanel = null;
-                            panelOperation = true;
-                        } else if (towerPanel.sellButton.contains(mouseX, mouseY)) {
-
-                            if (towerPanel.type == 1) {
-
-                                ArrayList<Block> tempBlocks = new ArrayList<Block>(blocks);
-
-                                for (Block block : tempBlocks) {
-                                    if (block.gridX == towerPanel.gridX && block.gridY == towerPanel.gridY) {
-                                        blocks.remove(block);
-                                        cash += MainFrame.towerCosts[0];
-                                        towerGrid[towerPanel.gridY][towerPanel.gridX] = 0;
-                                        findPath(towerGrid, row / 2, col / 2, pathGrid);
-
-                                        break;
-                                    }
-                                }
-                            } else {
-                                ArrayList<Tower> tempTowers = new ArrayList<Tower>(towers);
-
-                                for (Tower tower : tempTowers) {
-                                    if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
-                                        towers.remove(tower);
-                                        cash += MainFrame.towerCosts[towerPanel.type - 1] * (1 + tower.level / 2.0);
-                                        towerGrid[towerPanel.gridY][towerPanel.gridX] = 1;
-                                        break;
-                                    }
-                                }
-                            }
-                            towerPanel = null;
-                            panelOperation = true;
-                        }
-                    }
-                    if (selectNum == 1 && panelOperation == false) {
-                        if (towerGrid[gridY][gridX] != 0) {
-                            if (towerPanel == null) {
-                                towerPanel = new TowerPanel(towerGrid[gridY][gridX], gridX, gridY);
-                            } else {
-                                if (gridX == towerPanel.gridX && gridY == towerPanel.gridY) {
-                                    towerPanel = null;
-                                } else {
-                                    towerPanel.update(towerGrid[gridY][gridX], gridX, gridY);
-                                }
-                            }
-                        } else {
-                            towerPanel = null;
-                            if (cash >= MainFrame.towerCosts[0]) {
-                                for (int i = 0; i < pathGrid.length; i++) {
-                                    for (int j = 0; j < pathGrid[0].length; j++) {
-                                        pathGrid[i][j] = '+';
-                                    }
-                                }
-
-                                towerGrid[gridY][gridX] = 1;
-                                if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)
-                                        && (gridY != 12 || gridX != 26)) {
-                                    // for (int i = 0; i < pathGrid.length; i++) {
-                                    // for (int j = 0; j < pathGrid[0].length; j++) {
-                                    // System.out.print(pathGrid[i][j] + " ");
-                                    // }
-                                    // System.out.println();
-                                    // }
-                                    cash -= MainFrame.towerCosts[0];
-                                    Block block = new Block(gridX, gridY, 10);
-                                    blocks.add(block);
-                                } else {
-                                    System.out.println("Not avaliabe");
-                                    towerGrid[gridY][gridX] = 0;
-                                }
-                            }
-                        }
-
-                    } else if (selectNum > 1 && panelOperation == false) {
-
-                        if (towerGrid[gridY][gridX] == 0) {
-                            System.out.println("Requires block");
-                            towerPanel = null;
-                        } else if (towerGrid[gridY][gridX] > 1) {
-                            if (towerPanel == null) {
-                                towerPanel = new TowerPanel(towerGrid[gridY][gridX], gridX, gridY);
-
-                            } else {
-                                if (gridX == towerPanel.gridX && gridY == towerPanel.gridY) {
-                                    towerPanel = null;
-
-                                } else {
-                                    towerPanel.update(towerGrid[gridY][gridX], gridX, gridY);
-                                }
-
-                            }
-
-                        } else if (cash >= MainFrame.towerCosts[selectNum - 1]) {
-                            towerPanel = null;
-                            cash -= MainFrame.towerCosts[selectNum - 1];
-                            towerGrid[gridY][gridX] = selectNum;
-                            Tower tower;
-                            if (selectNum ==5){
-                                tower = new PenetrateTower(gridX, gridY, selectNum-1);
-                            }
-                            else if (selectNum == 6) {
-                                tower = new MissleTower(gridX, gridY, selectNum - 1);
-
-                            }
-                            else if (selectNum == 7) {
-                                tower = new BoomTower(gridX, gridY, selectNum - 1);
-
-                            } else if (selectNum == 8) {
-                                tower = new RingTower(gridX, gridY, selectNum - 1);
-                            } else {
-                                tower = new Tower(gridX, gridY, selectNum - 1);
-                            }
-                            towers.add(tower);
-                        }
-                    }
-                } else if (mouseY > buttomY) {
-                    for (TowerIcon icon : towerIcons) {
-                        if (icon.contains(mouseX, mouseY)) {
-                            // remove the mark of the old selected icon
-                            for (TowerIcon i : towerIcons) {
-                                i.select = false;
-                            }
-                            // mark the selected icon
-                            icon.select = true;
-                            selectNum = icon.type;
+                            break;
                         }
                     }
                 }
-            }
-            for (int i = 0; i < towerIcons.size(); i++) {
+                towerPanel = null;
+                panelOperation = true;
+            } else if (towerPanel.sellButton.contains(mouseX, mouseY)) {
 
-                if (i + 1 == selectNum) {
-                    towerIcons.get(i).select = true;
+                if (towerPanel.type == 1) {
+
+                    ArrayList<Block> tempBlocks = new ArrayList<Block>(blocks);
+
+                    for (Block block : tempBlocks) {
+                        if (block.gridX == towerPanel.gridX && block.gridY == towerPanel.gridY) {
+                            blocks.remove(block);
+                            cash += MainFrame.towerCosts[0];
+                            towerGrid[towerPanel.gridY][towerPanel.gridX] = 0;
+                            findPath(towerGrid, row / 2, col / 2, pathGrid);
+
+                            break;
+                        }
+                    }
                 } else {
-                    towerIcons.get(i).select = false;
+                    ArrayList<Tower> tempTowers = new ArrayList<Tower>(towers);
+
+                    for (Tower tower : tempTowers) {
+                        if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
+                            towers.remove(tower);
+                            cash += MainFrame.towerCosts[towerPanel.type - 1] * (1 + tower.level / 2.0);
+                            towerGrid[towerPanel.gridY][towerPanel.gridX] = 1;
+                            break;
+                        }
+                    }
+                }
+                towerPanel = null;
+                panelOperation = true;
+            }
+        }
+    }
+
+    private void addBlock() {
+        if (towerGrid[gridY][gridX] != 0) {
+            if (towerPanel == null) {
+                towerPanel = new TowerPanel(towerGrid[gridY][gridX], gridX, gridY);
+            } else {
+                if (gridX == towerPanel.gridX && gridY == towerPanel.gridY) {
+                    towerPanel = null;
+                } else {
+                    towerPanel.update(towerGrid[gridY][gridX], gridX, gridY);
+                }
+            }
+        } else {
+            towerPanel = null;
+            if (cash >= MainFrame.towerCosts[0]) {
+                for (int i = 0; i < pathGrid.length; i++) {
+                    for (int j = 0; j < pathGrid[0].length; j++) {
+                        pathGrid[i][j] = '+';
+                    }
+                }
+
+                towerGrid[gridY][gridX] = 1;
+                if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)
+                        && (gridY != 12 || gridX != 26)) {
+                    // for (int i = 0; i < pathGrid.length; i++) {
+                    // for (int j = 0; j < pathGrid[0].length; j++) {
+                    // System.out.print(pathGrid[i][j] + " ");
+                    // }
+                    // System.out.println();
+                    // }
+                    cash -= MainFrame.towerCosts[0];
+                    Block block = new Block(gridX, gridY, 10);
+                    blocks.add(block);
+                } else {
+                    System.out.println("Not avaliabe");
+                    towerGrid[gridY][gridX] = 0;
                 }
             }
         }
-        ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
+    }
 
+    private void addTower() {
+        if (towerGrid[gridY][gridX] == 0) {
+            System.out.println("Requires block");
+            towerPanel = null;
+        } else if (towerGrid[gridY][gridX] > 1) {
+            if (towerPanel == null) {
+                towerPanel = new TowerPanel(towerGrid[gridY][gridX], gridX, gridY);
+
+            } else {
+                if (gridX == towerPanel.gridX && gridY == towerPanel.gridY) {
+                    towerPanel = null;
+
+                } else {
+                    towerPanel.update(towerGrid[gridY][gridX], gridX, gridY);
+                }
+
+            }
+
+        } else if (cash >= MainFrame.towerCosts[selectNum - 1]) {
+            towerPanel = null;
+            cash -= MainFrame.towerCosts[selectNum - 1];
+            towerGrid[gridY][gridX] = selectNum;
+            Tower tower;
+            if (selectNum == 5) {
+                tower = new PenetrateTower(gridX, gridY, selectNum - 1);
+            } else if (selectNum == 6) {
+                tower = new MissleTower(gridX, gridY, selectNum - 1);
+
+            } else if (selectNum == 7) {
+                tower = new BoomTower(gridX, gridY, selectNum - 1);
+
+            } else if (selectNum == 8) {
+                tower = new RingTower(gridX, gridY, selectNum - 1);
+            } else {
+                tower = new Tower(gridX, gridY, selectNum - 1);
+            }
+            towers.add(tower);
+        }
+    }
+
+    private void getSelectedTower() {
+
+        // Select by mouse click
+        for (TowerIcon icon : towerIcons) {
+            if (icon.contains(mouseX, mouseY)) {
+                // remove the highlignht of the old selected icon
+                for (TowerIcon i : towerIcons) {
+                    i.select = false;
+                }
+                // mark the selected icon
+                icon.select = true;
+                selectNum = icon.type;
+            }
+        }
+
+        // select by keyboard input, coop with keyadaptor;
+        for (int i = 0; i < towerIcons.size(); i++) {
+
+            if (i + 1 == selectNum) {
+                towerIcons.get(i).select = true;
+            } else {
+                towerIcons.get(i).select = false;
+            }
+        }
+    }
+
+    private void excuteBulletOperation() {
+        ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
         for (Bullet bullet : tempBullets) {
             bullet.move();
             // Remove out of boundet
@@ -377,69 +454,288 @@ public class GameFrame extends JFrame implements ActionListener {
             }
 
         }
-        if (!edit) {
+    }
 
-            if (time % 25 == 0 && pointer < wave[waveNum].length) {
-                if (delay > 0) {
-                    delay--;
+    private void generateEnemy() {
+        if (time % 15 == 0 && pointer < wave[waveNum].length) {
+            if (delay > 0) {
+                delay--;
+            } else {
+                char element = wave[waveNum][pointer];
+                int elementNum = Character.getNumericValue(element);
+                if (elementNum < 10) {
+                    delay = elementNum;
                 } else {
-                    char element = wave[waveNum][pointer];
-                    int elementNum = Character.getNumericValue(element);
-                    if (elementNum < 10) {
-                        delay = elementNum;
-                    } else {
-                        Enemy enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) / 5.0));
-                        enemys.add(enemy);
-                        enemyNum++;
-                    }
-                    pointer++;
+                    Enemy enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) / 5.0));
+                    enemys.add(enemy);
+                    enemyNum++;
                 }
-                if (pointer == wave[waveNum].length) {
-                    allOut = true;
-                }
-
+                pointer++;
             }
-            if (allOut && enemyNum == 0) {
-                edit = true;
-            }
-            for (Tower tower : towers) {
-                tower.aim();
-                if (time % tower.freq == 0) {
-                    tower.shoot();
-                }
-            }
-
-            ArrayList<Enemy> tempEnemys = new ArrayList<Enemy>(enemys);
-
-            for (Enemy enemy : tempEnemys) {
-                enemy.move();
-                
-                for (Bullet bullet : tempBullets) {
-                    if (bullet.intersects(enemy )&&bullet.explodeTime<0) {
-                        enemy.hp -= bullet.damage;
-                        if (!bullet.penetrate) {
-                            if (bullet.explodeRadius > 0) {
-                                bullet.explode();
-                            } else {
-                                bullets.remove(bullet);
-                            }
-                        }
-                    }
-                }
-                if (enemy.hp <= 0) {
-                    enemy.die();
-                    enemys.remove(enemy);
-                    cash += enemy.type * 10;
-
-                }
+            if (pointer == wave[waveNum].length) {
+                allOut = true;
             }
 
         }
-        time++;
-        gamePanel.repaint();
-        mouseClick = false;
-        mouseX = mouseY = 0;
+        if (allOut && enemyNum == 0) {
+            edit = true;
+        }
+    }
 
+    private void excuteTowerOperation() {
+        for (Tower tower : towers) {
+            tower.aim();
+            if (time % tower.freq == 0) {
+                tower.shoot();
+            }
+        }
+    }
+
+    private void excuteEnemyOperations() {
+        ArrayList<Enemy> tempEnemys = new ArrayList<Enemy>(enemys);
+
+        for (Enemy enemy : tempEnemys) {
+            enemy.move();
+            ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
+            for (Bullet bullet : tempBullets) {
+                if (bullet.intersects(enemy) && bullet.explodeTime < 0) {
+                    enemy.hp -= bullet.damage;
+                    if (!bullet.penetrate) {
+                        if (bullet.explodeRadius > 0) {
+                            bullet.explode();
+                        } else {
+                            bullets.remove(bullet);
+                        }
+                    }
+                }
+            }
+            if (enemy.hp <= 0) {
+                enemy.die();
+                enemys.remove(enemy);
+                cash += enemy.type * 10;
+
+            }
+        }
+    }
+
+    private class GamePanel extends JPanel {
+
+        GamePanel() {
+            this.setPreferredSize(new Dimension(panelWidth, panelHeight));
+            this.setBackground(Color.WHITE);
+
+        }
+
+        public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D gc = (Graphics2D) g;
+            gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            drawGrid(gc);
+            drawTower(gc);
+            drawEnemy(gc);
+            drawBullet(gc);
+            drawTowerPanel(gc);
+
+        }
+
+        public void drawGrid(Graphics2D gc) {
+            gc.setColor(Color.GRAY);
+            gc.fillRect(0, titleHeight, leftMargin, gridHeight);
+            gc.fillRect(panelWidth - rightMargin, titleHeight, rightMargin, gridHeight);
+            gc.fillRect(0, 0, panelWidth, titleHeight);
+            gc.fillRect(0, buttomY, panelWidth, buttomHeight);
+
+            for (int i = 0; i <= col; i++) {
+                gc.drawLine(i * blockSize + leftMargin, 0, i * blockSize + leftMargin, buttomY);
+            }
+            for (int i = 0; i <= row; i++) {
+                gc.drawLine(0, i * blockSize + titleHeight, panelWidth, i * blockSize + titleHeight);
+            }
+            gc.setColor(Color.RED);
+            gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
+            gc.setColor(Color.BLUE);
+            gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
+            gc.setColor(Color.BLACK);
+            // Draw top panel
+            gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
+            if (edit) {
+                gc.drawString("Edit Mode", 100, titleHeight / 2);
+            } else {
+                gc.drawString("Play Mode", 100, titleHeight / 2);
+            }
+            gc.drawString("Wave: " + String.valueOf(waveNum + 1), 300, titleHeight / 2);
+
+            // Draw Buttom Panel
+
+            for (TowerIcon icon : towerIcons) {
+                gc.setColor(Color.WHITE);
+                if (icon.select) {
+                    gc.fillRect(icon.x - 2, icon.y - 2, icon.width + 4, icon.height + 4);
+                }
+                // gc.setColor(Color.BLACK);
+                // gc.fillRect(icon.x, icon.y, icon.width, icon.height);
+                gc.drawImage(icon.icon, icon.x, icon.y, icon.width, icon.height, null);
+
+                gc.setColor(Color.BLACK);
+                gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
+            }
+            gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
+            gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3 * 2);
+        }
+
+        public void drawTower(Graphics2D gc) {
+            for (Block block : blocks) {
+                gc.drawImage(block.image, block.x, block.y, block.width, block.height, null);
+
+            }
+            for (Tower tower : towers) {
+                int cx = tower.x + blockSize / 2;
+                int cy = tower.y + blockSize / 2;
+                AffineTransform Towertransform = new AffineTransform();
+                Towertransform.translate(cx, cy);
+                Towertransform.rotate(Math.toRadians(tower.angle));
+                Towertransform.translate(-blockSize / 2, -blockSize / 2);
+                Towertransform.scale(blockSize / 1500.0, blockSize / 1500.0);
+                gc.drawImage(tower.image, Towertransform, null);
+
+                gc.setColor(Color.YELLOW);
+                // gc.fillRect(tower.x,tower.y,blockSize/5,blockSize/5);
+                for (int i = 0; i < tower.level; i++) {
+                    double centerX = tower.x + blockSize / 5 + blockSize / 5 * i;
+                    double centerY = tower.y + blockSize / 5;
+                    double outerRadius = blockSize / 5;
+                    double innerRadius = outerRadius / 2.5;
+
+                    Polygon star = new Polygon();
+                    for (int u = 0; u < 10; u++) {
+                        double angle = Math.PI / 5 * u + Math.PI / 2;
+                        double radius = (u % 2 == 0) ? outerRadius : innerRadius;
+                        int dx = (int) (centerX + Math.cos(angle) * radius);
+                        int dy = (int) (centerY - Math.sin(angle) * radius);
+                        star.addPoint(dx, dy);
+                    }
+
+                    gc.fill(star);
+
+                }
+
+            }
+        }
+
+        public void drawBullet(Graphics2D gc) {
+            for (Bullet bullet : bullets) {
+                // draw explsion animation
+                if (bullet.explodeRadius > 0 && bullet.explodeTime >= 0) {
+                    gc.drawImage(explodeImage, bullet.x - bullet.explodeRadius / 2, bullet.y - bullet.explodeRadius / 2,
+                            bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
+                            bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
+                }
+                // Draw Missle with correct direction
+                if (bullet.explodeTime < 0 && bullet.transform != null) {
+
+                    gc.drawImage(bullet.image, bullet.transform, null);
+                    // gc.fillRect(bullet.x, bullet.y, bullet.size, bullet.size);
+                }
+
+            }
+        }
+
+        public void drawEnemy(Graphics2D gc) {
+            for (Enemy enemy : enemys) {
+
+                int cx = enemy.x + blockSize / 2;
+                int cy = enemy.y + blockSize / 2;
+                AffineTransform Enemytransform = new AffineTransform();
+
+                Enemytransform.translate(cx, cy);
+                Enemytransform.rotate(Math.toRadians(enemy.angle));
+                Enemytransform.translate(-blockSize / 2, -blockSize / 2);
+                Enemytransform.scale(blockSize / 348.0, blockSize / 348.0);
+                gc.drawImage(enemy.image, Enemytransform, null);
+                enemy.drawHP(gc);
+            }
+        }
+
+        public void drawTowerPanel(Graphics2D gc) {
+            if (towerPanel != null) {
+
+                gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+                if (selectedTower != null) {
+                    gc.setColor(towerPanel.color);
+                    gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
+                    gc.setColor(towerPanel.upgradeButton.color);
+                    gc.fillRect(towerPanel.upgradeButton.x, towerPanel.upgradeButton.y, towerPanel.upgradeButton.width,
+                            towerPanel.upgradeButton.height);
+                    gc.setColor(towerPanel.sellButton.color);
+                    gc.fillRect(towerPanel.sellButton.x, towerPanel.sellButton.y, towerPanel.sellButton.width,
+                            towerPanel.sellButton.height);
+                    gc.setColor(Color.BLACK);
+                    gc.drawString("lv " + String.valueOf(selectedTower.level),
+                            towerPanel.x,
+                            towerPanel.y + blockSize * 2 / 3);
+                    gc.drawString("↑ - " + String.valueOf(MainFrame.towerCosts[towerPanel.type - 1] / 2),
+                            towerPanel.upgradeButton.x,
+                            towerPanel.upgradeButton.y + blockSize * 2 / 3);
+                    gc.drawString(
+                            "x + " + String.valueOf(
+                                    MainFrame.towerCosts[towerPanel.type - 1] * (1 + selectedTower.level / 2.0)),
+                            towerPanel.sellButton.x,
+                            towerPanel.sellButton.y + blockSize * 2 / 3);
+                }
+                if (selectedBlock != null) {
+                    gc.setColor(towerPanel.color);
+                    gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
+                    gc.setColor(towerPanel.sellButton.color);
+                    gc.fillRect(towerPanel.sellButton.x, towerPanel.sellButton.y, towerPanel.sellButton.width,
+                            towerPanel.sellButton.height);
+                    gc.setColor(Color.BLACK);
+                    gc.drawString("Cannot",
+                            towerPanel.x,
+                            towerPanel.y + blockSize * 2 / 3);
+                    gc.drawString("Upgrade",
+                            towerPanel.upgradeButton.x,
+                            towerPanel.upgradeButton.y + blockSize * 2 / 3);
+                    gc.drawString(
+                            "x + " + String
+                                    .valueOf(MainFrame.towerCosts[0]),
+                            towerPanel.sellButton.x,
+                            towerPanel.sellButton.y + blockSize * 2 / 3);
+
+                }
+
+            }
+        }
+    }
+
+    static BufferedImage loadImage(String filename) {
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(filename));
+        } catch (IOException e) {
+            System.out.println(e.toString());
+            JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        return img;
+    }
+
+    static void loadWave() {
+        try {
+            File file = new File("scripts/wave.txt");
+            FileReader in = new FileReader(file);
+            BufferedReader fileReader = new BufferedReader(in);
+            String text;
+            int w = 0;
+            while ((text = fileReader.readLine()) != null) {
+                wave[w] = text.toCharArray();
+                w++;
+            }
+            fileReader.close();
+            in.close();
+        } catch (Exception e) {
+            System.out.println("cannot find file");
+        }
     }
 
     /**
@@ -493,210 +789,6 @@ public class GameFrame extends JFrame implements ActionListener {
             return true;
         } else {
             return false;
-        }
-    }
-
-    private class GamePanel extends JPanel {
-
-        GamePanel() {
-            this.setPreferredSize(new Dimension(panelWidth, panelHeight));
-            this.setBackground(Color.WHITE);
-
-        }
-
-        public void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            Graphics2D gc = (Graphics2D) g;
-            gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-            // Draw Grid
-            gc.setColor(Color.GRAY);
-            gc.fillRect(0, titleHeight, leftMargin, gridHeight);
-            gc.fillRect(panelWidth - rightMargin, titleHeight, rightMargin, gridHeight);
-            gc.fillRect(0, 0, panelWidth, titleHeight);
-            gc.fillRect(0, buttomY, panelWidth, buttomHeight);
-
-            for (int i = 0; i <= col; i++) {
-                gc.drawLine(i * blockSize + leftMargin, 0, i * blockSize + leftMargin, buttomY);
-            }
-            for (int i = 0; i <= row; i++) {
-                gc.drawLine(0, i * blockSize + titleHeight, panelWidth, i * blockSize + titleHeight);
-            }
-            gc.setColor(Color.RED);
-            gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
-            gc.setColor(Color.BLUE);
-            gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
-            gc.setColor(Color.BLACK);
-            // Draw top panel
-            gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
-            if (edit) {
-                gc.drawString("Edit Mode", 100, titleHeight / 2);
-            } else {
-                gc.drawString("Play Mode", 100, titleHeight / 2);
-            }
-            gc.drawString("Wave: " + String.valueOf(waveNum + 1), 300, titleHeight / 2);
-
-            // Draw Buttom Panel
-
-            for (TowerIcon icon : towerIcons) {
-                gc.setColor(Color.WHITE);
-                if (icon.select) {
-                    gc.fillRect(icon.x - 2, icon.y - 2, icon.width + 4, icon.height + 4);
-                }
-                // gc.setColor(Color.BLACK);
-                // gc.fillRect(icon.x, icon.y, icon.width, icon.height);
-                gc.drawImage(icon.icon, icon.x, icon.y, icon.width, icon.height, null);
-
-                gc.setColor(Color.BLACK);
-                gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
-            }
-            gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
-            gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3 * 2);
-
-            // Draw Blocks and towers
-            gc.setColor(Color.BLACK);
-            for (Bullet bullet : bullets) {
-                // draw explsion animation
-                if (bullet.explodeRadius >= 0 && bullet.explodeTime >= 0) {
-                    gc.drawImage(explodeImage, bullet.x - bullet.explodeRadius / 2, bullet.y - bullet.explodeRadius / 2,
-                            bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
-                            bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
-                }
-                gc.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
-            }
-
-            for (Block block : blocks) {
-                // gc.fillRect(block.x, block.y, block.width, block.height);
-                gc.drawImage(block.image, block.x, block.y, block.width, block.height, null);
-
-            }
-
-            for (Tower tower : towers) {
-                int cx = tower.x + blockSize / 2;
-                int cy = tower.y + blockSize / 2;
-                AffineTransform Towertransform = new AffineTransform();
-                Towertransform.translate(cx, cy);
-                Towertransform.rotate(Math.toRadians(tower.angle));
-                Towertransform.translate(-blockSize / 2, -blockSize / 2);
-                Towertransform.scale(blockSize / 1500.0, blockSize / 1500.0);
-                gc.drawImage(tower.image, Towertransform, null);
-
-                gc.setColor(Color.YELLOW);
-                // gc.fillRect(tower.x,tower.y,blockSize/5,blockSize/5);
-                for (int i = 0; i < tower.level; i++) {
-                    double centerX = tower.x + blockSize / 5 + blockSize / 5 * i;
-                    double centerY = tower.y + blockSize / 5;
-                    double outerRadius = blockSize / 5;
-                    double innerRadius = outerRadius / 2.5;
-
-                    Polygon star = new Polygon();
-                    for (int u = 0; u < 10; u++) {
-                        double angle = Math.PI / 5 * u + Math.PI / 2;
-                        double radius = (u % 2 == 0) ? outerRadius : innerRadius;
-                        int dx = (int) (centerX + Math.cos(angle) * radius);
-                        int dy = (int) (centerY - Math.sin(angle) * radius);
-                        star.addPoint(dx, dy);
-                    }
-
-                    gc.fill(star);
-
-                }
-
-            }
-
-            if (towerPanel != null) {
-
-                gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-                if (selectedTower != null) {
-                    gc.setColor(towerPanel.color);
-                    gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
-                    gc.setColor(towerPanel.upgradeButton.color);
-                    gc.fillRect(towerPanel.upgradeButton.x, towerPanel.upgradeButton.y, towerPanel.upgradeButton.width,
-                            towerPanel.upgradeButton.height);
-                    gc.setColor(towerPanel.sellButton.color);
-                    gc.fillRect(towerPanel.sellButton.x, towerPanel.sellButton.y, towerPanel.sellButton.width,
-                            towerPanel.sellButton.height);
-                    gc.setColor(Color.BLACK);
-                    gc.drawString("lv " + String.valueOf(selectedTower.level),
-                            towerPanel.x,
-                            towerPanel.y + blockSize * 2 / 3);
-                    gc.drawString("↑ - " + String.valueOf(MainFrame.towerCosts[towerPanel.type - 1] / 2),
-                            towerPanel.upgradeButton.x,
-                            towerPanel.upgradeButton.y + blockSize * 2 / 3);
-                    gc.drawString(
-                            "x + " + String.valueOf(
-                                    MainFrame.towerCosts[towerPanel.type - 1] * (1 + selectedTower.level / 2.0)),
-                            towerPanel.sellButton.x,
-                            towerPanel.sellButton.y + blockSize * 2 / 3);
-                }
-                if (selectedBlock != null) {
-                    gc.setColor(towerPanel.color);
-                    gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
-                    gc.setColor(towerPanel.sellButton.color);
-                    gc.fillRect(towerPanel.sellButton.x, towerPanel.sellButton.y, towerPanel.sellButton.width,
-                            towerPanel.sellButton.height);
-                    gc.setColor(Color.BLACK);
-                    gc.drawString("Cannot",
-                            towerPanel.x,
-                            towerPanel.y + blockSize * 2 / 3);
-                    gc.drawString("Upgrade",
-                            towerPanel.upgradeButton.x,
-                            towerPanel.upgradeButton.y + blockSize * 2 / 3);
-                    gc.drawString(
-                            "x + " + String
-                                    .valueOf(MainFrame.towerCosts[0]),
-                            towerPanel.sellButton.x,
-                            towerPanel.sellButton.y + blockSize * 2 / 3);
-
-                }
-
-            }
-
-            // Draw Enemies
-            for (Enemy enemy : enemys) {
-
-                int cx = enemy.x + blockSize / 2;
-                int cy = enemy.y + blockSize / 2;
-                AffineTransform Enemytransform = new AffineTransform();
-
-                Enemytransform.translate(cx, cy);
-                Enemytransform.rotate(Math.toRadians(enemy.angle));
-                Enemytransform.translate(-blockSize / 2, -blockSize / 2);
-                Enemytransform.scale(blockSize / 348.0, blockSize / 348.0);
-                gc.drawImage(enemy.image, Enemytransform, null);
-                enemy.drawHP(gc);
-            }
-
-        }
-    }
-
-    static BufferedImage loadImage(String filename) {
-        BufferedImage img = null;
-        try {
-            img = ImageIO.read(new File(filename));
-        } catch (IOException e) {
-            System.out.println(e.toString());
-            JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        return img;
-    }
-
-    static void loadWave() {
-        try {
-            File file = new File("scripts/wave.txt");
-            FileReader in = new FileReader(file);
-            BufferedReader fileReader = new BufferedReader(in);
-            String text;
-            int w = 0;
-            while ((text = fileReader.readLine()) != null) {
-                wave[w] = text.toCharArray();
-                w++;
-            }
-            fileReader.close();
-            in.close();
-        } catch (Exception e) {
-            System.out.println("cannot find file");
         }
     }
 }
