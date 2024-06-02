@@ -1,11 +1,9 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-
 public class Tower extends Rectangle {
 	int gridX, gridY, type, range, damage, freq, cost;
 	double angle = 0, estimateTime, dis, speed;
-	int costs[] = { 20, 30, 40, 50, 60, 70 };
 	BufferedImage image;
 	int px, py;
 	Enemy target;
@@ -20,11 +18,11 @@ public class Tower extends Rectangle {
 		this.px = gridX * GameFrame.blockSize + GameFrame.leftMargin;
 		this.py = gridY * GameFrame.blockSize + GameFrame.topMargin;
 		this.image = GameFrame.towerImages.get(type);
-		this.cost = MainFrame.towerCosts[type-1];
-		this.speed = MainFrame.towerSpeed[type-1];
-		this.freq = MainFrame.towerFreq[type-1];
-		this.damage = MainFrame.towerDamage[type-1];
-		this.range = MainFrame.towerRange[type-1];
+		this.cost = MainFrame.towerCosts[type - 1];
+		this.speed = MainFrame.towerSpeed[type - 1];
+		this.freq = MainFrame.towerFreq[type - 1];
+		this.damage = MainFrame.towerDamage[type - 1];
+		this.range = MainFrame.towerRange[type - 1];
 	}
 
 	public void aim() {
@@ -44,14 +42,58 @@ public class Tower extends Rectangle {
 	}
 
 	public void shoot() {
-		if (this.target != null &&this.target.hp>0) {
-			Bullet bullet = new Bullet(this.px + this.width / 2, this.py + this.height / 2, type, type * 3, speed,
-					this.target.x + this.target.width / 2 + this.target.speedX * estimateTime,
-					this.target.y + this.target.height / 2 + this.target.speedY * estimateTime, dis, damage);
+		if (this.target != null && this.target.hp > 0) {
+			double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
+			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
+			Bullet bullet = new Bullet(this.px + this.width / 2, this.py + this.height / 2, type, 2, speedX,
+					speedY, damage);
 			GameFrame.bullets.add(bullet);
 		}
 	}
 
+}
+
+class RingTower extends Tower {
+	RingTower(int gridX, int gridY, int type) {
+		super(gridX, gridY, type);
+	}
+
+	public void aim() {
+		for (Enemy enemy : GameFrame.enemys) {
+			dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
+			if (dis < this.range * GameFrame.blockSize) {
+				this.target = enemy;
+				return;
+			}
+		}
+	}
+
+	public void shoot() {
+		if (this.target != null && this.target.hp > 0) {
+			for (int i = 0; i < 16; i++) {
+				GameFrame.bullets.add(new PenetrateBullet(this.px + this.width / 2, this.py + this.height / 2, type, 2,
+						speed * Math.sin((22.5 * i) / 180 * Math.PI), speed * Math.cos((22.5 * i) / 180 * Math.PI),
+						damage));
+			}
+			;
+			// speed * Math.sin(angleInRadians);
+		}
+	}
+}
+
+class BoomTower extends Tower{
+	BoomTower(int gridX,int gridY,int type){
+		super(gridX, gridY, type);
+	}
+	public void shoot() {
+		if (this.target != null && this.target.hp > 0) {
+			double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
+			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
+			Bullet boom = new Boom(this.px + this.width / 2, this.py + this.height / 2, type, 2, speedX,
+					speedY, damage,target.x+target.speedX*estimateTime,target.y+target.speedY*estimateTime);
+			GameFrame.bullets.add(boom);
+		}
+	}
 }
 
 /**
@@ -126,7 +168,7 @@ class UpgradePanel extends Rectangle {
 
 	UpgradePanel(int gridX, int gridY) {
 		super((gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin,
-				(gridY+1) * GameFrame.blockSize + GameFrame.topMargin,
+				(gridY + 1) * GameFrame.blockSize + GameFrame.topMargin,
 				GameFrame.blockSize * 2, GameFrame.blockSize);
 		this.color = new Color(0, 250, 0);
 	}
@@ -135,7 +177,7 @@ class UpgradePanel extends Rectangle {
 		this.gridX = gridX;
 		this.gridY = gridY;
 		this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
-		this.y = (gridY+1) * GameFrame.blockSize + GameFrame.topMargin;
+		this.y = (gridY + 1) * GameFrame.blockSize + GameFrame.topMargin;
 	}
 }
 
@@ -154,7 +196,7 @@ class SellButton extends Rectangle {
 		this.gridX = gridX;
 		this.gridY = gridY;
 		this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
-		this.y = (gridY+2) * GameFrame.blockSize + GameFrame.topMargin;
+		this.y = (gridY + 2) * GameFrame.blockSize + GameFrame.topMargin;
 
 	}
 }

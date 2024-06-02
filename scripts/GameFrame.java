@@ -47,6 +47,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static ArrayList<BufferedImage> towerImages;
     static ArrayList<BufferedImage> enemyImages;
     static int selectNum = 0;
+    static BufferedImage explodeImage;
 
     // wave variables
     static char[][] wave = new char[100][100];
@@ -58,7 +59,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     // Game variables
     static int playerHP = 20;
-    int cash = 50;
+    int cash = 5000;
 
     static Tower selectedTower;
     static Block selectedBlock;
@@ -119,6 +120,8 @@ public class GameFrame extends JFrame implements ActionListener {
         towerImages = new ArrayList<BufferedImage>();
         enemyImages = new ArrayList<BufferedImage>();
 
+        explodeImage = GameFrame.loadImage("scripts/Images/explosions.png");
+
         enemyImages.add(loadImage("scripts/Images/enemy_2.png"));
         enemyImages.add(loadImage("scripts/Images/enemy_3.png"));
         enemyImages.add(loadImage("scripts/Images/enemy_4.png"));
@@ -136,6 +139,7 @@ public class GameFrame extends JFrame implements ActionListener {
         towerImages.add(loadImage("scripts/Images/tower_4.png"));
         towerImages.add(loadImage("scripts/Images/tower_5.png"));
         towerImages.add(loadImage("scripts/Images/tower_6.png"));
+        towerImages.add(loadImage("scripts/Images/tower_7.png"));
 
         TowerIcon block = new TowerIcon(1, MainFrame.towerCosts[0]);
         TowerIcon t1 = new TowerIcon(2, MainFrame.towerCosts[1]);
@@ -144,6 +148,7 @@ public class GameFrame extends JFrame implements ActionListener {
         TowerIcon t4 = new TowerIcon(5, MainFrame.towerCosts[4]);
         TowerIcon t5 = new TowerIcon(6, MainFrame.towerCosts[5]);
         TowerIcon t6 = new TowerIcon(7, MainFrame.towerCosts[6]);
+        TowerIcon t7 = new TowerIcon(8, MainFrame.towerCosts[7]);
 
         towerIcons.add(block);
         towerIcons.add(t1);
@@ -152,7 +157,7 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t4);
         towerIcons.add(t5);
         towerIcons.add(t6);
-
+        towerIcons.add(t7);
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
         loadWave();
 
@@ -303,7 +308,15 @@ public class GameFrame extends JFrame implements ActionListener {
                             towerPanel = null;
                             cash -= MainFrame.towerCosts[selectNum - 1];
                             towerGrid[gridY][gridX] = selectNum;
-                            Tower tower = new Tower(gridX, gridY, selectNum - 1);
+                            Tower tower;
+                            if (selectNum == 7) {
+                                tower = new BoomTower(gridX, gridY, selectNum - 1);
+
+                            } else if (selectNum == 8) {
+                                tower = new RingTower(gridX, gridY, selectNum - 1);
+                            } else {
+                                tower = new Tower(gridX, gridY, selectNum - 1);
+                            }
                             towers.add(tower);
                         }
                     }
@@ -334,8 +347,27 @@ public class GameFrame extends JFrame implements ActionListener {
 
         for (Bullet bullet : tempBullets) {
             bullet.move();
-        }
+            // Remove out of boundet
+            if (bullet.x + bullet.width < 0 || bullet.x > panelWidth || bullet.y < titleHeight
+                    || bullet.y > buttomY) {
+                bullets.remove(bullet);
+            }
+            // remove to far away from tower.
+            if (bullet.existTime * bullet.speed > (MainFrame.towerRange[bullet.type - 1] + 1) * blockSize) {
+                if (bullet.explodeRadius > 0) {
+                    bullet.explode();
+                } else {
+                    bullets.remove(bullet);
+                }
+            }
+            if (bullet.explodeTime >= 0) {
+                bullet.explodeTime++;
+            }
+            if (bullet.explodeTime > 16) {
+                bullets.remove(bullet);
+            }
 
+        }
         if (!edit) {
 
             if (time % 25 == 0 && pointer < wave[waveNum].length) {
@@ -372,17 +404,24 @@ public class GameFrame extends JFrame implements ActionListener {
 
             for (Enemy enemy : tempEnemys) {
                 enemy.move();
+                
+                for (Bullet bullet : tempBullets) {
+                    if (bullet.intersects(enemy )&&bullet.explodeTime<0) {
+                        enemy.hp -= bullet.damage;
+                        if (!bullet.penetrate) {
+                            if (bullet.explodeRadius > 0) {
+                                bullet.explode();
+                            } else {
+                                bullets.remove(bullet);
+                            }
+                        }
+                    }
+                }
                 if (enemy.hp <= 0) {
                     enemy.die();
                     enemys.remove(enemy);
                     cash += enemy.type * 10;
 
-                }
-                for (Bullet bullet : tempBullets) {
-                    if (bullet.intersects(enemy)) {
-                        enemy.hp -= bullet.damage;
-                        bullets.remove(bullet);
-                    }
                 }
             }
 
@@ -508,6 +547,12 @@ public class GameFrame extends JFrame implements ActionListener {
             // Draw Blocks and towers
             gc.setColor(Color.BLACK);
             for (Bullet bullet : bullets) {
+                // draw explsion animation
+                if (bullet.explodeRadius >= 0 && bullet.explodeTime >= 0) {
+                    gc.drawImage(explodeImage, bullet.x - bullet.explodeRadius / 2, bullet.y - bullet.explodeRadius / 2,
+                            bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
+                            bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
+                }
                 gc.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
             }
 
@@ -545,6 +590,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     }
 
                     gc.fill(star);
+
                 }
 
             }
@@ -568,6 +614,11 @@ public class GameFrame extends JFrame implements ActionListener {
                     gc.drawString("↑ - " + String.valueOf(MainFrame.towerCosts[towerPanel.type - 1] / 2),
                             towerPanel.upgradeButton.x,
                             towerPanel.upgradeButton.y + blockSize * 2 / 3);
+                    gc.drawString(
+                            "x + " + String.valueOf(
+                                    MainFrame.towerCosts[towerPanel.type - 1] * (1 + selectedTower.level / 2.0)),
+                            towerPanel.sellButton.x,
+                            towerPanel.sellButton.y + blockSize * 2 / 3);
                 }
                 if (selectedBlock != null) {
                     gc.setColor(towerPanel.color);
@@ -582,12 +633,14 @@ public class GameFrame extends JFrame implements ActionListener {
                     gc.drawString("Upgrade",
                             towerPanel.upgradeButton.x,
                             towerPanel.upgradeButton.y + blockSize * 2 / 3);
+                    gc.drawString(
+                            "x + " + String
+                                    .valueOf(MainFrame.towerCosts[0]),
+                            towerPanel.sellButton.x,
+                            towerPanel.sellButton.y + blockSize * 2 / 3);
 
                 }
 
-                gc.drawString("x + " + String.valueOf(MainFrame.towerCosts[towerPanel.type - 1]),
-                        towerPanel.sellButton.x,
-                        towerPanel.sellButton.y + blockSize * 2 / 3);
             }
 
             // Draw Enemies

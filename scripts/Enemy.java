@@ -93,6 +93,7 @@ public class Enemy extends Rectangle {
         this.hp = 0;
         GameFrame.enemyNum--;
         
+        
     }
     
 }
