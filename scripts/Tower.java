@@ -52,18 +52,31 @@ public class Tower extends Rectangle {
 	}
 
 }
-
+class PenetrateTower extends Tower{
+	PenetrateTower(int gridX, int gridY, int type){
+		super(gridX, gridY, type);
+	}
+	public void shoot(){
+		double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
+			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
+			Bullet bullet = new PenetrateBullet(this.px + this.width / 2, this.py + this.height / 2, type, 2, speedX,
+					speedY, damage);
+			GameFrame.bullets.add(bullet);
+	}
+}
 class RingTower extends Tower {
 	RingTower(int gridX, int gridY, int type) {
 		super(gridX, gridY, type);
 	}
 
 	public void aim() {
+		int largestDis = 0;
 		for (Enemy enemy : GameFrame.enemys) {
 			dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
 			if (dis < this.range * GameFrame.blockSize) {
+				if (enemy.dis>largestDis){
 				this.target = enemy;
-				return;
+				}
 			}
 		}
 	}
@@ -90,9 +103,23 @@ class BoomTower extends Tower{
 			double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
 			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
 			Bullet boom = new Boom(this.px + this.width / 2, this.py + this.height / 2, type, 2, speedX,
-					speedY, damage,target.x+target.speedX*estimateTime,target.y+target.speedY*estimateTime);
+					speedY, damage);
 			GameFrame.bullets.add(boom);
 		}
+	}
+}
+
+class MissleTower extends Tower{
+	MissleTower(int gridX,int gridY,int type){
+		super(gridX, gridY, type);
+	}
+	public void shoot() {
+		double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
+		double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
+			Bullet missle = new Missle(this.px + this.width / 2, this.py + this.height / 2, type, 2, speedX,
+					speedY, damage,this);
+			GameFrame.bullets.add(missle);
+		
 	}
 }
 

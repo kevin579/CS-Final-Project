@@ -46,6 +46,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static TowerPanel towerPanel;
     static ArrayList<BufferedImage> towerImages;
     static ArrayList<BufferedImage> enemyImages;
+    static ArrayList<BufferedImage> bulletImages;
     static int selectNum = 0;
     static BufferedImage explodeImage;
 
@@ -119,6 +120,7 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons = new ArrayList<TowerIcon>();
         towerImages = new ArrayList<BufferedImage>();
         enemyImages = new ArrayList<BufferedImage>();
+        bulletImages = new ArrayList<BufferedImage>();
 
         explodeImage = GameFrame.loadImage("scripts/Images/explosions.png");
 
@@ -309,7 +311,14 @@ public class GameFrame extends JFrame implements ActionListener {
                             cash -= MainFrame.towerCosts[selectNum - 1];
                             towerGrid[gridY][gridX] = selectNum;
                             Tower tower;
-                            if (selectNum == 7) {
+                            if (selectNum ==5){
+                                tower = new PenetrateTower(gridX, gridY, selectNum-1);
+                            }
+                            else if (selectNum == 6) {
+                                tower = new MissleTower(gridX, gridY, selectNum - 1);
+
+                            }
+                            else if (selectNum == 7) {
                                 tower = new BoomTower(gridX, gridY, selectNum - 1);
 
                             } else if (selectNum == 8) {

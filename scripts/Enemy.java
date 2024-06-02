@@ -17,6 +17,7 @@ public class Enemy extends Rectangle {
     Rectangle hpNow;
     Color red;
     Color green;
+    double dis = 0;
 
     Enemy(int type, double factor) {
         super(GameFrame.startX, GameFrame.startY, GameFrame.blockSize, GameFrame.blockSize);
@@ -71,6 +72,8 @@ public class Enemy extends Rectangle {
         else changeBlock = true;
         this.xx+=this.speedX;
         this.yy+=this.speedY;
+        this.dis+=this.speedX;
+        this.dis+=this.speedY;
         this.x = (int) this.xx;
         this.y = (int)this. yy;
         this.rect.setLocation((int) this.x, (int) this.y);
