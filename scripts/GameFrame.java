@@ -101,7 +101,6 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     public void setup() {
-
         // Find a suitable size for the top and buttom panel based on the screen size
         topMargin = titleHeight = panelHeight / 15;
         buttomHeight = panelHeight / 8;
