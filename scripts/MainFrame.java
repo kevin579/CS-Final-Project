@@ -228,7 +228,8 @@ public class MainFrame extends JFrame implements ActionListener {
             // (int) (enemyAttackRate / 3), enemyDamage * 10000, (int) (enemyGenerateSpeed /
             // 1.5),
             // scoreRate * 10);
-        } else { // when a difficult is choosed
+        } 
+        else { // when a difficult is choosed
             @SuppressWarnings("unchecked") // for comboBox
             JComboBox<String> comboBox = (JComboBox<String>) event.getSource();
             difficult = (String) comboBox.getSelectedItem();

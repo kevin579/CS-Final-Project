@@ -14,8 +14,10 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -74,7 +76,9 @@ public class GameFrame extends JFrame implements ActionListener {
 
     // Game variables
     static int playerHP = 20;
-    int cash = 5000;
+    static int score = 0;
+    int cash = 50;
+    boolean notSave = true;
 
     // panel variables
     static Tower selectedTower;
@@ -180,6 +184,7 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t7);
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
         loadWave();
+        loadGame();
 
         // Start the timer
         timer = new Timer(16, this);
@@ -199,8 +204,13 @@ public class GameFrame extends JFrame implements ActionListener {
         // If the game is at edit mode
         if (edit) {
             // remove all bullets from previous wave
+            if (notSave) {
+                saveProgress();
+                notSave = false;
+            }
             bullets.clear();
             if (mouseClick) {
+                notSave = true;
                 // If the player clicked on the game area
                 if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
                         && mouseY < buttomY) {
@@ -465,7 +475,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 if (elementNum < 10) {
                     delay = elementNum;
                 } else {
-                    Enemy enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) / 5.0));
+                    Enemy enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) / 2.0));
                     enemys.add(enemy);
                     enemyNum++;
                 }
@@ -512,6 +522,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 enemy.die();
                 enemys.remove(enemy);
                 cash += enemy.type * 10;
+                score += enemy.type * 20;
 
             }
         }
@@ -737,6 +748,99 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    public void saveProgress() {
+        try {
+            File progressFile = new File("scripts/progress.txt");
+            FileWriter out = new FileWriter(progressFile, false);
+            BufferedWriter writer = new BufferedWriter(out);
+            for (int y = 0; y < row; y++) {
+                for (int x = 0; x < col; x++) {
+                    if (towerGrid[y][x] == 0) {
+                        writer.write("0");
+                    } else {
+                        writer.write(String.valueOf(towerGrid[y][x]));
+                    }
+
+                }
+                writer.newLine();
+            }
+            writer.write(String.valueOf(cash));
+            writer.newLine();
+            writer.write(String.valueOf(score));
+            writer.newLine();
+            writer.write(String.valueOf(waveNum));
+            writer.newLine();
+            writer.write(String.valueOf(playerHP));
+            writer.close();
+            out.close();
+        } catch (Exception e) {
+            System.out.println("Cannot find progress file when writing");
+        }
+    }
+
+    public void loadGame() {
+
+        try {
+            File progressFile = new File("scripts/progress.txt");
+            FileReader in = new FileReader(progressFile);
+            BufferedReader reader = new BufferedReader(in);
+            for (int y = 0; y < row; y++) {
+                String row = reader.readLine();
+                if (row == null) {
+                    reader.close();
+                    in.close();
+                    return;
+                }
+                char[] num = row.toCharArray();
+                for (int x = 0; x < col; x++) {
+
+                    int itemNum = Integer.parseInt(String.valueOf(num[x]));
+
+                    if (itemNum >= 1 && itemNum <= 8) {
+                        towerGrid[y][x] = 1;
+                        Block block = new Block(x, y, 10);
+                        blocks.add(block);
+                    }
+                    if (itemNum > 1 ) {
+                        Tower tower;
+                        if (itemNum == 2) {
+                            tower = new Tower(x, y, itemNum - 1);
+                        } else if (itemNum == 3) {
+                            tower = new Tower(x, y, itemNum - 1);
+
+                        } else if (itemNum == 4) {
+                            tower = new Tower(x, y, itemNum - 1);
+
+                        } else if (itemNum == 5) {
+                            tower = new PenetrateTower(x, y, itemNum - 1);
+                        } else if (itemNum == 6) {
+                            tower = new MissleTower(x, y, itemNum - 1);
+
+                        } else if (itemNum == 7) {
+                            tower = new BoomTower(x, y, itemNum - 1);
+
+                        } else if (itemNum == 8) {
+                            tower = new RingTower(x, y, itemNum - 1);
+                        } else {
+                            tower = new Tower(x, y, itemNum - 1);
+                        }
+                        towers.add(tower);
+                    }
+
+                }
+            }
+            findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
+            cash = Integer.parseInt(reader.readLine());
+            score = Integer.parseInt(reader.readLine());
+            waveNum = Integer.parseInt(reader.readLine());
+            playerHP = Integer.parseInt(reader.readLine());
+            reader.close();
+            in.close();
+        } catch (Exception ee) {
+            System.out.println(ee.getMessage());
+        }
+    }
+
     /**
      * It will update the 2D array pathGrid.
      * It will run a BFS from the end as start.
@@ -790,48 +894,50 @@ public class GameFrame extends JFrame implements ActionListener {
             return false;
         }
     }
-}
 
-class KeyInput extends KeyAdapter {
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            System.exit(0);
-        }
-        if (e.getKeyCode() == KeyEvent.VK_ENTER && GameFrame.edit == true) {
-            GameFrame.time = 0;
-            GameFrame.edit = false;
-            GameFrame.pointer = 0;
-            GameFrame.waveNum++;
-            GameFrame.delay = 0;
-            GameFrame.allOut = false;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_1) {
-            GameFrame.selectNum = 1;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_2) {
-            GameFrame.selectNum = 2;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_3) {
-            GameFrame.selectNum = 3;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_4) {
-            GameFrame.selectNum = 4;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_5) {
-            GameFrame.selectNum = 5;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_6) {
-            GameFrame.selectNum = 6;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_7) {
-            GameFrame.selectNum = 7;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_8) {
-            GameFrame.selectNum = 8;
-        }
-        if (e.getKeyCode() == KeyEvent.VK_9) {
-            GameFrame.selectNum = 9;
+    class KeyInput extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                System.exit(0);
+            }
+            if (e.getKeyCode() == KeyEvent.VK_ENTER && edit == true) {
+                time = 0;
+                edit = false;
+                pointer = 0;
+                waveNum++;
+                delay = 0;
+                allOut = false;
+                notSave = true;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_1) {
+                selectNum = 1;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_2) {
+                selectNum = 2;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_3) {
+                selectNum = 3;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_4) {
+                selectNum = 4;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_5) {
+                selectNum = 5;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_6) {
+                selectNum = 6;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_7) {
+                selectNum = 7;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_8) {
+                selectNum = 8;
+            }
+            if (e.getKeyCode() == KeyEvent.VK_9) {
+                selectNum = 9;
+            }
+
         }
 
     }
