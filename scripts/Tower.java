@@ -8,6 +8,7 @@ public class Tower extends Rectangle {
 	int px, py;
 	Enemy target;
 	int level = 0;
+	int totalDamage;
 
 	public Tower(int gridX, int gridY, int type) {
 		super(gridX * GameFrame.blockSize + GameFrame.leftMargin, gridY * GameFrame.blockSize + GameFrame.topMargin,
@@ -124,8 +125,11 @@ class MissleTower extends Tower {
 	}
 
 	public void shoot() {
-		double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (this.dis);
-		double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (this.dis);
+		double speedX = 0,speedY = 0; 
+		if (this.target!=null &&this.target.hp>0){
+		speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (this.dis);
+		 speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (this.dis);
+		}
 		Bullet missle = new Missle(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/5,
 				speedX,
 				speedY, damage, this);

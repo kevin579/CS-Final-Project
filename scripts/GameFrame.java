@@ -77,7 +77,7 @@ public class GameFrame extends JFrame implements ActionListener {
     // Game variables
     static int playerHP = 20;
     static int score = 0;
-    int cash = 50;
+    int cash = 80;
     boolean notSave = true;
 
     // panel variables
@@ -184,7 +184,7 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t7);
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
         loadWave();
-        loadGame();
+        // loadGame();
 
         // Start the timer
         timer = new Timer(16, this);
@@ -355,12 +355,12 @@ public class GameFrame extends JFrame implements ActionListener {
                 towerGrid[gridY][gridX] = 1;
                 if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)
                         && (gridY != 12 || gridX != 26)) {
-                    // for (int i = 0; i < pathGrid.length; i++) {
-                    // for (int j = 0; j < pathGrid[0].length; j++) {
-                    // System.out.print(pathGrid[i][j] + " ");
-                    // }
-                    // System.out.println();
-                    // }
+                    for (int i = 0; i < pathGrid.length; i++) {
+                    for (int j = 0; j < pathGrid[0].length; j++) {
+                    System.out.print(pathGrid[i][j] + " ");
+                    }
+                    System.out.println();
+                    }
                     cash -= MainFrame.towerCosts[0];
                     Block block = new Block(gridX, gridY, 10);
                     blocks.add(block);
@@ -466,7 +466,7 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void generateEnemy() {
-        if (time % 15 == 0 && pointer < wave[waveNum].length) {
+        if (time % 25 == 0 && pointer < wave[waveNum].length) {
             if (delay > 0) {
                 delay--;
             } else {
@@ -475,7 +475,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 if (elementNum < 10) {
                     delay = elementNum;
                 } else {
-                    Enemy enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) / 2.0));
+                    Enemy enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) / 2.0));
                     enemys.add(enemy);
                     enemyNum++;
                 }
@@ -488,6 +488,7 @@ public class GameFrame extends JFrame implements ActionListener {
         }
         if (allOut && enemyNum == 0) {
             edit = true;
+            cash+=(waveNum+1)*20;
         }
     }
 
