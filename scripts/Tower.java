@@ -26,14 +26,16 @@ public class Tower extends Rectangle {
 	}
 
 	public void aim() {
+		double largestDis = 0;
 		for (Enemy enemy : GameFrame.enemys) {
-			dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
-			estimateTime = dis / this.speed;
-			if (dis < this.range * GameFrame.blockSize) {
+			this.dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
+			this.estimateTime = this.dis / this.speed;
+			if (this.dis < this.range * GameFrame.blockSize && this.dis>largestDis) {
+				largestDis = this.dis;
 				this.target = enemy;
 				this.angle = (Math.atan2(
-						(enemy.x + enemy.width / 2 + enemy.speedX * estimateTime) - (this.x + this.width / 2),
-						-(enemy.y + enemy.height / 2 + enemy.speedY * estimateTime) + (this.y + this.height / 2))) * 180
+						(enemy.x + enemy.width / 2 + enemy.speedX * this.estimateTime) - (this.x + this.width / 2),
+						-(enemy.y + enemy.height / 2 + enemy.speedY * this.estimateTime) + (this.y + this.height / 2))) * 180
 						/ Math.PI;
 
 				return;
@@ -42,9 +44,12 @@ public class Tower extends Rectangle {
 	}
 
 	public void shoot() {
+		
 		if (this.target != null && this.target.hp > 0) {
-			double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
-			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
+			this.dis = Math.sqrt(Math.pow((this.target.x - this.px), 2) + Math.pow((this.target.y - this.py), 2));
+			double speedX = this.speed * (this.target.x + this.target.speedX*this.estimateTime + this.target.width / 2 - (this.x+this.width/2)) / (this.dis);
+			double speedY = this.speed * (this.target.y + this.target.speedY*this.estimateTime + this.target.height / 2 - (this.y+this.height/2)) / (this.dis);
+
 			Bullet bullet = new Bullet(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/6, speedX,
 					speedY, damage);
 			GameFrame.bullets.add(bullet);
@@ -60,8 +65,8 @@ class PenetrateTower extends Tower {
 
 	public void shoot() {
 		if (this.target != null) {
-			double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
-			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
+			double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (this.dis);
+			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (this.dis);
 			Bullet bullet = new PenetrateBullet(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/8, speedX,
 					speedY, damage);
 			GameFrame.bullets.add(bullet);
@@ -75,13 +80,11 @@ class RingTower extends Tower {
 	}
 
 	public void aim() {
-		int largestDis = 0;
+		
 		for (Enemy enemy : GameFrame.enemys) {
-			dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
-			if (dis < this.range * GameFrame.blockSize) {
-				if (enemy.dis > largestDis) {
-					this.target = enemy;
-				}
+			this.dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
+			if (this.dis < this.range * GameFrame.blockSize) {
+				this.target = enemy;
 			}
 		}
 	}
@@ -106,8 +109,8 @@ class BoomTower extends Tower {
 
 	public void shoot() {
 		if (this.target != null && this.target.hp > 0) {
-			double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
-			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
+			double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (this.dis);
+			double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (this.dis);
 			Bullet boom = new Boom(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/6, speedX,
 					speedY, damage);
 			GameFrame.bullets.add(boom);
@@ -121,8 +124,8 @@ class MissleTower extends Tower {
 	}
 
 	public void shoot() {
-		double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (dis);
-		double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (dis);
+		double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (this.dis);
+		double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (this.dis);
 		Bullet missle = new Missle(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/5,
 				speedX,
 				speedY, damage, this);
