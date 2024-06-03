@@ -74,7 +74,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     // Game variables
     static int playerHP = 20;
-    int cash = 5000;
+    int cash = 50;
 
     // panel variables
     static Tower selectedTower;

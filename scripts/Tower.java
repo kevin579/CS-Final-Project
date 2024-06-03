@@ -124,11 +124,13 @@ class MissleTower extends Tower {
 	}
 
 	public void shoot() {
-		double speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (this.dis);
-		double speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (this.dis);
-		Bullet missle = new Missle(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/5,
-				speedX,
-				speedY, damage, this);
+		double speedX=0;
+		double speedY=0;
+		if(this.target!=null&& this.target.hp>0){
+			speedX = this.speed * (this.target.x + this.target.speedX + this.target.width / 2 - this.x) / (this.dis);
+			speedY = this.speed * (this.target.y + this.target.speedY + this.target.height / 2 - this.y) / (this.dis);
+		}
+		Bullet missle = new Missle(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/5,speedX,speedY, damage, this);
 		GameFrame.bullets.add(missle);
 		System.out.println(missle.size);
 
