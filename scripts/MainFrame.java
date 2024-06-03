@@ -9,22 +9,15 @@ public class MainFrame extends JFrame implements ActionListener {
     String difficult = difficulties[0];
     JButton startButton, introButton, rankButton, loadButton;
     JPanel mainPanel;
-    static int panelWidth = 1707;
-    static int panelHeight = 1070;
+    static int panelWidth = 1550;
+    static int panelHeight = 900;
     TextLabel infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7;
 
     // The parameter of enemy, can be modified
     // including health, speed, bullet speed, dmg, attack rate, spawnspeed, and
     // score
-    static int enemyHP = 5;
-    static double enemySpeed = 1;
-    static double enemyBulletSpeed = 5;
-    static int enemyDamage = 1;
-    static int enemyAttackRate = 50;
-    static int enemyGenerateSpeed = 500;
     static int scoreRate = 1;
 
-    static int[] costs = { 10, 20, 30, 40, 50, 60, 70, 80, 90 };
     static int[] enemyHPs = { 8, 12, 20, 25, 30, 50, 20, 30 };
     static double[] enemySpeeds = { 1.2, 1.5, 1, 1, 0.8, 0.5, 2, 2.5 };
 
@@ -86,37 +79,6 @@ public class MainFrame extends JFrame implements ActionListener {
 
         // Game rules
         /**
-         * 
-         * BLOCKS
-         * Press number key 1 on your keyboard, a "block" can be selected. It blocks
-         * enemy's path, and allows you to deploy defense towers.
-         * When a deployed blocked is clicked, and there is not tower deployed on top,
-         * the block will removed and the cost will be refunded.
-         * 
-         * p.s. you cannot completely seal the path, towerbuilder will not respond to
-         * your command
-         * 
-         * TOWERS
-         * Keys 2-7 will select corresponding tower. Tower stats displays upon hovering
-         * mouse on it.
-         * Similar to blocks, if clicked, tower undeployed and money refunded.
-         * 
-         * p.s. the towers can only be placed on top of a block
-         * 
-         * GAMEPLAY
-         * Drop-down menu can set the DIFFICULTY of the game. Press start button beside
-         * a button to start a game.
-         * 
-         * Once start button pressed, control panel will disappear and towers becomes
-         * non editable.
-         * 
-         * One waves ends when all enemy disappear. The total number of waves is
-         * dependent on the selected difficuly.
-         * 
-         * In order to quit current game, click ESCAPE key
-         * 
-         * 
-         * 
          * Simplified ver.
          * Move blocks and build machine gun towers to defend against alien invasion!
          * Your goal is to withstand all the waves to final victory.
@@ -241,7 +203,7 @@ public class MainFrame extends JFrame implements ActionListener {
             // scoreRate * 10);
         } else if (eventName.equals("intro")) {
             this.setVisible(true);
-            // new IntroFrame();
+            new IntroFrame();
         } else if (eventName.equals("ranking")) {
             this.setVisible(false);
             new RankingFrame();
