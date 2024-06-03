@@ -7,10 +7,10 @@ public class MainFrame extends JFrame implements ActionListener {
     JComboBox<String> comboBox;
     String[] difficulties = { "easy", "medium", "hard", "impossible" };
     String difficult = difficulties[0];
-    JButton startButton, introButton, rankButton;
+    JButton startButton, introButton, rankButton, loadButton;
     JPanel mainPanel;
-    static int panelWidth = 1707;
-    static int panelHeight = 1070;
+    static int panelWidth = 1400;
+    static int panelHeight = 800;
     TextLabel infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7;
 
     // The parameter of enemy, can be modified
@@ -34,6 +34,7 @@ public class MainFrame extends JFrame implements ActionListener {
     static int[] towerSpeed = {5,6,7,5,8,10,4};
     static int[] towerFreq = {15,10,5,20,20,30,10};
     static int[] explodeRadius = {panelHeight/5,panelHeight/10};
+
 
     public static void main(String[] args) {
         new MainFrame();
@@ -113,11 +114,15 @@ public class MainFrame extends JFrame implements ActionListener {
          * One waves ends when all enemy disappear. The total number of waves is
          * dependent on the selected difficuly.
          * 
+         * In order to quit current game, click ESCAPE key
+         * 
          * 
          * 
          * Simplified ver.
          * Move blocks and build machine gun towers to defend against alien invasion!
          * Your goal is to withstand all the waves to final victory.
+         * 
+         * In order to quit, click ESCAPE key
          * 
          * Good luck commander!
          * 
@@ -138,11 +143,18 @@ public class MainFrame extends JFrame implements ActionListener {
         textPanel.add(chooseDifficultText);
         buttonPanel.add(comboBox);
 
-        //
+        // start button to start the game
         startButton = new JButton("start");
         startButton.setActionCommand("start");
         startButton.addActionListener(this);
         buttonPanel.add(startButton);
+
+        // load game button
+        loadButton = new JButton("Load Game");
+        loadButton.setActionCommand("load");
+        loadButton.addActionListener(this);
+        buttonPanel.add(loadButton);
+
         infoText1 = new TextLabel(24, "Enemy hp x1", 0, 50, 0, 0);
         infoText2 = new TextLabel(24, "Enemy damage x1", 0, 50, 0, 0);
         infoText3 = new TextLabel(24, "Enemy speed x1", 0, 50, 0, 0);
@@ -228,8 +240,13 @@ public class MainFrame extends JFrame implements ActionListener {
             // (int) (enemyAttackRate / 3), enemyDamage * 10000, (int) (enemyGenerateSpeed /
             // 1.5),
             // scoreRate * 10);
-        } 
-        else { // when a difficult is choosed
+        } else if (eventName.equals("intro")) {
+            this.setVisible(true);
+            // new IntroFrame();
+        } else if (eventName.equals("ranking")) {
+            this.setVisible(false);
+            new RankingFrame();
+        } else { // when a difficult is choosed
             @SuppressWarnings("unchecked") // for comboBox
             JComboBox<String> comboBox = (JComboBox<String>) event.getSource();
             difficult = (String) comboBox.getSelectedItem();
@@ -257,7 +274,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 infoText5.setText("Enemy bullet speed x1.5");
                 infoText6.setText("Enemy generate speed x1.5");
                 infoText7.setText("Score magnification x5");
-            } else if (difficult.equals("impossible")) { 
+            } else if (difficult.equals("impossible")) {
                 infoText1.setText("Enemy hp x5");
                 infoText2.setText("Enemy damage ∞ *!!One Hit Kill!!");
                 infoText3.setText("Enemy speed x2");
