@@ -7,7 +7,7 @@ public class MainFrame extends JFrame implements ActionListener {
     JComboBox<String> comboBox;
     String[] difficulties = { "easy", "medium", "hard", "impossible" };
     String difficult = difficulties[0];
-    JButton startButton, introButton, rankButton;
+    JButton startButton, introButton, rankButton, loadButton;
     JPanel mainPanel;
     static int panelWidth = 1707;
     static int panelHeight = 1070;
@@ -142,11 +142,18 @@ public class MainFrame extends JFrame implements ActionListener {
         textPanel.add(chooseDifficultText);
         buttonPanel.add(comboBox);
 
-        //
+        // start button to start the game
         startButton = new JButton("start");
         startButton.setActionCommand("start");
         startButton.addActionListener(this);
         buttonPanel.add(startButton);
+
+        // load game button
+        loadButton = new JButton("Load Game");
+        loadButton.setActionCommand("load");
+        loadButton.addActionListener(this);
+        buttonPanel.add(loadButton);
+
         infoText1 = new TextLabel(24, "Enemy hp x1", 0, 50, 0, 0);
         infoText2 = new TextLabel(24, "Enemy damage x1", 0, 50, 0, 0);
         infoText3 = new TextLabel(24, "Enemy speed x1", 0, 50, 0, 0);
