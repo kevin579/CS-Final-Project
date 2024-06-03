@@ -1,4 +1,4 @@
-aa5a
+a1a
 aa1abb
 ab1abb1bbb
 bbbbb1bbbb1bbbbbbbb
@@ -9,9 +9,9 @@ bbbbb1cc1ddd
 ccbbb1ccbbbbb1cccbbbbbb
 ccddbbb1ccddddbbbbbbbb1ddddddd
 cdcdcdddd1ddddddddd2dddddddddddddd
-ddddddddddddddddddd2ddddddddddddddddddd
-dddddddddddddddddddddddddddd 
-dddddddddddddddddddddddddddddddddddddd
+ccccccccccccccccccccbbbbbbbbbbbbbbddddddddddddddddddd
+bbbbbbbbbbbbbbbbbbdddddddddddddddddddddddddddd 
+ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
 ddddee1ddddeeee 
 dededededededede
 ddddee1eeeeff2eeffff
