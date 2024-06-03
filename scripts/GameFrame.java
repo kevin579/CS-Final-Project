@@ -511,7 +511,7 @@ public class GameFrame extends JFrame implements ActionListener {
             if (enemy.hp <= 0) {
                 enemy.die();
                 enemys.remove(enemy);
-                cash += enemy.type * 10;
+                cash += enemy.type *10;
 
             }
         }
