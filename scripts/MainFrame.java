@@ -7,7 +7,7 @@ public class MainFrame extends JFrame implements ActionListener {
     JComboBox<String> comboBox;
     String[] difficulties = { "easy", "medium", "hard", "impossible" };
     String difficult = difficulties[0];
-    JButton startButton;
+    JButton startButton, introButton, rankButton;
     JPanel mainPanel;
     static int panelWidth = 1707;
     static int panelHeight = 1070;
@@ -24,16 +24,8 @@ public class MainFrame extends JFrame implements ActionListener {
     static int enemyGenerateSpeed = 500;
     static int scoreRate = 1;
 
-    
-    static int[] enemyHPs = {8,12,20,25,30,50,20,30};
-    static double[] enemySpeeds = {1.2,1.5,1,1,0.8,0.5,2,2.5};
-    
-    static int[] towerCosts = {10,20,50,180,200,1000,1000,1000,90};
-    static int[] towerDamage = {2,4,8,2,20,50,1};
-    static int[] towerRange = {5,6,7,8,50,10,3};
-    static int[] towerSpeed = {5,6,7,7,8,10,2};
-    static int[] towerFreq = {15,10,5,20,20,30,10};
-    static int[] explodeRadius = {panelHeight/5,panelHeight/10};
+    static int[] costs = { 10, 20, 30, 40, 50, 60, 70, 80, 90 };
+
     public static void main(String[] args) {
         new MainFrame();
     }
@@ -74,10 +66,54 @@ public class MainFrame extends JFrame implements ActionListener {
 
         // The introduction pannel on how to play the game, is empty and not be added
         // content in this assignment.
+
         PurplePanel introductionPanel = new PurplePanel();
         introductionPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
-        TextLabel introText = new TextLabel(36, "Click to see introduction", 0, 0, 0, 0);
-        introductionPanel.add(introText);
+
+        introButton = new JButton("Click to see Introduction");
+        introButton.setActionCommand("intro");
+        introButton.addActionListener(this);
+        introductionPanel.add(introButton);
+
+        // Game rules
+        /**
+         * 
+         * BLOCKS
+         * Press number key 1 on your keyboard, a "block" can be selected. It blocks
+         * enemy's path, and allows you to deploy defense towers.
+         * When a deployed blocked is clicked, and there is not tower deployed on top,
+         * the block will removed and the cost will be refunded.
+         * 
+         * p.s. you cannot completely seal the path, towerbuilder will not respond to
+         * your command
+         * 
+         * TOWERS
+         * Keys 2-7 will select corresponding tower. Tower stats displays upon hovering
+         * mouse on it.
+         * Similar to blocks, if clicked, tower undeployed and money refunded.
+         * 
+         * p.s. the towers can only be placed on top of a block
+         * 
+         * GAMEPLAY
+         * Drop-down menu can set the DIFFICULTY of the game. Press start button beside
+         * a button to start a game.
+         * 
+         * Once start button pressed, control panel will disappear and towers becomes
+         * non editable.
+         * 
+         * One waves ends when all enemy disappear. The total number of waves is
+         * dependent on the selected difficuly.
+         * 
+         * 
+         * 
+         * Simplified ver.
+         * Move blocks and build machine gun towers to defend against alien invasion!
+         * Your goal is to withstand all the waves to final victory.
+         * 
+         * Good luck commander!
+         * 
+         * 
+         */
 
         // The center panel, will let the player to choose difficulty and start the
         // game. Also displays difficulty information. Include button
@@ -121,8 +157,11 @@ public class MainFrame extends JFrame implements ActionListener {
         PurplePanel rankingPanel = new PurplePanel();
         rankingPanel.setBackground(new Color(230, 230, 250));
         rankingPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
-        TextLabel rankingText = new TextLabel(36, "Click to see ranking", 0, 0, 0, 0);
-        rankingPanel.add(rankingText);
+
+        rankButton = new JButton("Click to see ranking");
+        rankButton.setActionCommand("ranking");
+        rankButton.addActionListener(this);
+        rankingPanel.add(rankButton);
 
         // The bottom panel, with almost information
         JPanel bottomPanel = new JPanel();
@@ -208,7 +247,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 infoText5.setText("Enemy bullet speed x1.5");
                 infoText6.setText("Enemy generate speed x1.5");
                 infoText7.setText("Score magnification x5");
-            } else if (difficult.equals("impossible")) {
+            } else if (difficult.equals("impossible")) { 
                 infoText1.setText("Enemy hp x5");
                 infoText2.setText("Enemy damage ∞ *!!One Hit Kill!!");
                 infoText3.setText("Enemy speed x2");
