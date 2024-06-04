@@ -25,7 +25,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 	public RankingFrame() {
 	   this.setTitle("Rankings");
        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       this.setSize(new Dimension(1500, 800));
+       this.setSize(new Dimension(1400, 800));
       
        //Main Panel
        mainPanel = new JSplitPane();
@@ -48,18 +48,18 @@ public class RankingFrame extends JFrame implements ActionListener {
        rankPanel.add(spacer, BorderLayout.LINE_START);
        rankPanel.add(spacel, BorderLayout.LINE_END);
        
-       this.fileToArray("scripts/ranking.txt");
-       determineRank();
+       this.fileToSortedArray("src/finalProject/ranking.txt");
        
        scrollPanel = new JPanel();
        scrollPanel.setLayout(new BoxLayout(scrollPanel, BoxLayout.Y_AXIS));
      
        for(int i = 1; i < sort.size() + 1; i++) {
+    	   int key = sort.get(i-1);
     	   String score = sort.get(i-1).toString();
-    	   rank = new JLabel(i + ". " + info.get(score) + "  " + score, SwingConstants.CENTER);
-    	   rank.setAlignmentX(CENTER_ALIGNMENT);
-    	   Font rankFont = rank.getFont();
-           rank.setFont(new Font(rankFont.getName(), Font.PLAIN, 24));
+    	   
+    	   System.out.print(this.info.get(100));
+    	   rank = new JLabel(i + ". " + this.info.get(key) + "  " + score);
+    	   rank.setPreferredSize(new Dimension(300,100));
     	   scrollPanel.add(rank);
        }
        
@@ -85,7 +85,7 @@ public class RankingFrame extends JFrame implements ActionListener {
        this.setVisible(true);
 	}
 	
-	public void fileToArray(String file) {
+	public void fileToSortedArray(String file) {
 		//fills the array with data from file.
 		int index = 0;
 		String line;
@@ -98,13 +98,13 @@ public class RankingFrame extends JFrame implements ActionListener {
 				String[] parts = line.split(" ");
 				int count = 0;
 				if(parts.length == 2) {
-					String user = parts[0];
-					int score = Integer.parseInt(parts[1]);
+					String user = parts[0]; //Usernames
+					int score = Integer.parseInt(parts[1]); //Scores
 					
-					this.sort.add(score);
+					this.info.put(score, user); //Add users and scores into hashmap.
 					
+					this.sort.add(score); //Add scores into arraylist.
 					count++;
-					this.info.put(score, user);
 				}
 			}
 			reader.close();
@@ -118,27 +118,9 @@ public class RankingFrame extends JFrame implements ActionListener {
 		catch(IOException e) {
 			System.out.println("An error has occured.");
 		}
-	}
-	
-	public void determineRank() {
-		for(int index = 1; index < this.info.size(); index++) {
-			int prevIndex = index -1;
-			int x = sort.get(prevIndex);
-			int y = sort.get(prevIndex + 1);
-			int temp = sort.get(index);
-			
-			while ((x > temp) && (prevIndex > 0)) {
-				y = x;
-				prevIndex -= 1;
-			}
-			if(sort.get(prevIndex) > temp) {
-				y = x;
-				x = temp;
-			}
-			else {
-				y = temp;
-			}
-		}
+		
+		//Sort arraylist in descending order.
+		Collections.sort(sort, Collections.reverseOrder());
 	}
 		
 	@Override
