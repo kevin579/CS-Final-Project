@@ -56,8 +56,8 @@ public class RankingFrame extends JFrame implements ActionListener {
        for(int i = 1; i < sort.size() + 1; i++) {
     	   int key = sort.get(i-1);
     	   String score = sort.get(i-1).toString();
-    	   System.out.print(this.info.get(100));
-    	   rank = new JLabel(i + ". " + this.info.get(key) + "  " + score,SwingConstants.CENTER);
+    	   rank = new JLabel(i + ". " + this.info.get(key) + "  " + score);
+    	  // rank = new JLabel().setText("<html>i&emsp;&emsp;this.info.get(key)&emsp;&emsp;score</html>");
     	   rank.setAlignmentX(CENTER_ALIGNMENT);
     	   Font rankFont = rank.getFont();
            rank.setFont(new Font(rankFont.getName(), Font.PLAIN, 24));
