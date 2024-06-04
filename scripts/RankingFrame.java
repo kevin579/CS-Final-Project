@@ -1,4 +1,3 @@
-package finalProject;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,7 +38,9 @@ public class RankingFrame extends JFrame implements ActionListener {
        rankPanel.setPreferredSize(new Dimension(1500, 750));
        rankPanel.setBackground(new Color(255, 240, 255));  // Set background color
        
-       title = new JLabel("Rankings");
+       title = new JLabel("Rankings",SwingConstants.CENTER);
+       Font labelFont = title.getFont();
+       title.setFont(new Font(labelFont.getName(), Font.PLAIN, 36));
        rankPanel.add(title, BorderLayout.PAGE_START);
        
        spacer = new JLabel("                                                                                  ");
@@ -47,7 +48,7 @@ public class RankingFrame extends JFrame implements ActionListener {
        rankPanel.add(spacer, BorderLayout.LINE_START);
        rankPanel.add(spacel, BorderLayout.LINE_END);
        
-       this.fileToArray("src/finalProject/ranking.txt");
+       this.fileToArray("scripts/ranking.txt");
        determineRank();
        
        scrollPanel = new JPanel();
@@ -55,8 +56,10 @@ public class RankingFrame extends JFrame implements ActionListener {
      
        for(int i = 1; i < sort.size() + 1; i++) {
     	   String score = sort.get(i-1).toString();
-    	   rank = new JLabel(i + ". " + info.get(score) + "  " + score);
-    	   rank.setPreferredSize(new Dimension(300,100));
+    	   rank = new JLabel(i + ". " + info.get(score) + "  " + score, SwingConstants.CENTER);
+    	   rank.setAlignmentX(CENTER_ALIGNMENT);
+    	   Font rankFont = rank.getFont();
+           rank.setFont(new Font(rankFont.getName(), Font.PLAIN, 24));
     	   scrollPanel.add(rank);
        }
        
