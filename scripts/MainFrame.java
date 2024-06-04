@@ -18,12 +18,9 @@ public class MainFrame extends JFrame implements ActionListener {
     // score
     static int scoreRate = 1;
 
-    static int[] costs = { 10, 20, 30, 40, 50, 60, 70, 80, 90 };
-    static int[] enemyHPs = {8,12,30,45,70,100,50,65};
-    static double[] enemySpeeds = {1.2,1.5,1,1,0.6,0.8,2,2.5};
-
-
-    static int[] towerCosts = { 10, 20, 50, 180, 200, 1000, 1000, 1000, 90 };
+    static int[] enemyHPs = {8,12,25,40,60,90,50,65};
+    static double[] enemySpeeds = {0.5,0.5,0.6,0.8,0.9,0.9,1,1.5};
+    static int[] towerCosts = { 10, 20, 50, 180, 200, 1000, 1500, 2000 };
     static int[] towerDamage = { 2, 4, 8, 2, 20, 50, 1 };
     static int[] towerRange = { 5, 6, 7, 8, 50, 10, 3 };
     static int[] towerSpeed = { 5, 6, 7, 7, 8, 10, 2 };

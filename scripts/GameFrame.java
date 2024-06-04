@@ -65,6 +65,8 @@ public class GameFrame extends JFrame implements ActionListener {
     static ArrayList<BufferedImage> bulletImages;
     static int selectNum = 0;
     static BufferedImage explodeImage;
+    static BufferedImage start;
+    static BufferedImage end;
 
     // wave variables
     static char[][] wave = new char[100][100];
@@ -73,11 +75,10 @@ public class GameFrame extends JFrame implements ActionListener {
     static int delay;
     static int enemyNum = 0;
     static boolean allOut = false;
-
     // Game variables
     static int playerHP = 20;
     static int score = 0;
-    int cash = 80;
+    int cash = 1000000;
     boolean notSave = true;
 
     // panel variables
@@ -140,6 +141,9 @@ public class GameFrame extends JFrame implements ActionListener {
         towerImages = new ArrayList<BufferedImage>();
         enemyImages = new ArrayList<BufferedImage>();
         bulletImages = new ArrayList<BufferedImage>();
+        
+        start = loadImage("scripts/Images/start.png");
+        end = loadImage("scripts/Images/end.png");
 
         explodeImage = GameFrame.loadImage("scripts/Images/explosions.png");
         bulletImages.add(loadImage("scripts/Images/bullet.png"));
@@ -581,10 +585,12 @@ public class GameFrame extends JFrame implements ActionListener {
             for (int i = 0; i <= row; i++) {
                 gc.drawLine(0, i * blockSize + titleHeight, panelWidth, i * blockSize + titleHeight);
             }
-            gc.setColor(Color.RED);
+            gc.setColor(Color.BLACK);
             gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
-            gc.setColor(Color.BLUE);
+            gc.drawImage(start,(col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize,null);
+            gc.setColor(Color.BLACK);
             gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
+            gc.drawImage(end,(col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize,null);
             gc.setColor(Color.BLACK);
             // Draw top panel
             gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
