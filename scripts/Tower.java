@@ -167,7 +167,7 @@ class TowerIcon extends Rectangle {
 	BufferedImage icon;
 
 	TowerIcon(int type, int cost) {
-		super(MainFrame.panelWidth / 20 * type, GameFrame.buttomY + GameFrame.buttomHeight / 5,
+		super(MainFrame.panelWidth / 15 * type, GameFrame.buttomY + GameFrame.buttomHeight / 5,
 				(int) (GameFrame.blockSize * 1.5), (int) (GameFrame.blockSize * 1.5));
 		this.type = type;
 		this.cost = cost;
