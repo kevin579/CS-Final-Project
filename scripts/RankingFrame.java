@@ -48,7 +48,7 @@ public class RankingFrame extends JFrame implements ActionListener {
        rankPanel.add(spacer, BorderLayout.LINE_START);
        rankPanel.add(spacel, BorderLayout.LINE_END);
        
-       this.fileToSortedArray("src/finalProject/ranking.txt");
+       this.fileToSortedArray("scripts/ranking.txt");
        
        scrollPanel = new JPanel();
        scrollPanel.setLayout(new BoxLayout(scrollPanel, BoxLayout.Y_AXIS));
@@ -56,9 +56,11 @@ public class RankingFrame extends JFrame implements ActionListener {
        for(int i = 1; i < sort.size() + 1; i++) {
     	   int key = sort.get(i-1);
     	   String score = sort.get(i-1).toString();
-    	   
     	   System.out.print(this.info.get(100));
-    	   rank = new JLabel(i + ". " + this.info.get(key) + "  " + score);
+    	   rank = new JLabel(i + ". " + this.info.get(key) + "  " + score,SwingConstants.CENTER);
+    	   rank.setAlignmentX(CENTER_ALIGNMENT);
+    	   Font rankFont = rank.getFont();
+           rank.setFont(new Font(rankFont.getName(), Font.PLAIN, 24));
     	   rank.setPreferredSize(new Dimension(300,100));
     	   scrollPanel.add(rank);
        }
