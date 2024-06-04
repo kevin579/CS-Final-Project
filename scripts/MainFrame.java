@@ -18,6 +18,8 @@ public class MainFrame extends JFrame implements ActionListener {
     // score
     static int scoreRate = 1;
 
+
+
     static int[] enemyHPs = {8,12,30,45,70,100,50,65};
     static double[] enemySpeeds = {1.2,1.5,1,1,0.6,0.8,2,2.5};
     static int[] towerCosts = {10,20,50,180,200,1000,1500,2000};
@@ -60,7 +62,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         // The title panel
         JPanel titlePanel = new JPanel();
-        titlePanel.setBackground(new Color(135, 206, 250));
+        titlePanel.setBackground(new Color(152, 251, 152));
         titlePanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 50, 10));
         TextLabel titleText = new TextLabel(64, "Welcome to Space Shooting", 0, 0, 0, 0);
         titlePanel.add(titleText);
@@ -69,6 +71,7 @@ public class MainFrame extends JFrame implements ActionListener {
         // content in this assignment.
 
         PurplePanel introductionPanel = new PurplePanel();
+        introductionPanel.setBackground(new Color(252, 71, 71));
         introductionPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
 
         introButton = new JButton("Click to see Introduction");
@@ -99,7 +102,7 @@ public class MainFrame extends JFrame implements ActionListener {
         PurplePanel textPanel = new PurplePanel();
         PurplePanel buttonPanel = new PurplePanel();
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
-        TextLabel chooseDifficultText = new TextLabel(36, "Choose your difficult", 0, 0, 0, 0);
+        TextLabel chooseDifficultText = new TextLabel(36, "Select Difficulty", 0, 0, 0, 0);
         textPanel.add(chooseDifficultText);
         buttonPanel.add(comboBox);
 
@@ -136,7 +139,7 @@ public class MainFrame extends JFrame implements ActionListener {
         // Ranking panel, show the top players who played this game. Also empty and not
         // made.
         PurplePanel rankingPanel = new PurplePanel();
-        rankingPanel.setBackground(new Color(230, 230, 250));
+        rankingPanel.setBackground(new Color(204, 153, 255));
         rankingPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
 
         rankButton = new JButton("Click to see ranking");
@@ -178,30 +181,10 @@ public class MainFrame extends JFrame implements ActionListener {
         if (eventName.equals("start")) {
             // Starts the game based on the difficult choosed when start button is pressed.
             // Create a GameFrame class.
-            // this.setVisible(false);
-            // if (difficult.equals("easy"))
-            // new GameFrame(panelWidth, panelHeight, enemyHP, enemySpeed, enemyBulletSpeed,
-            // enemyAttackRate,
-            // enemyDamage, enemyGenerateSpeed, scoreRate);
-            // else if (difficult.equals("medium"))
-            // new GameFrame(panelWidth, panelHeight, enemyHP * 2, enemySpeed * 1.2,
-            // enemyBulletSpeed * 1.2,
-            // (int) (enemyAttackRate / 1.5), enemyDamage * 2, (int) (enemyGenerateSpeed /
-            // 1.2),
-            // scoreRate * 3);
-            // else if (difficult.equals("hard"))
-            // new GameFrame(panelWidth, panelHeight, enemyHP * 3, enemySpeed * 1.5,
-            // enemyBulletSpeed * 1.5,
-            // (int) (enemyAttackRate / 2), enemyDamage * 3, (int) (enemyGenerateSpeed /
-            // 1.5), scoreRate * 5);
-            // else if (difficult.equals("impossible"))
-            // new GameFrame(panelWidth, panelHeight, enemyHP * 5, enemySpeed * 2,
-            // enemyBulletSpeed * 1.5,
-            // (int) (enemyAttackRate / 3), enemyDamage * 10000, (int) (enemyGenerateSpeed /
-            // 1.5),
-            // scoreRate * 10);
+            this.setVisible(false);
+            new GameFrame();
         } else if (eventName.equals("intro")) {
-            this.setVisible(true);
+            this.setVisible(false);
             new IntroFrame();
         } else if (eventName.equals("ranking")) {
             this.setVisible(false);
