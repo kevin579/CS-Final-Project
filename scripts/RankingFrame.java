@@ -1,3 +1,4 @@
+package finalProject;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,10 +10,11 @@ public class RankingFrame extends JFrame implements ActionListener {
 	private JSplitPane mainPanel;
 	private JScrollPane scroll;
     private JPanel rankPanel, btnPanel, scrollPanel;
-	private JLabel title, rank, spacer, spacel;
+	private JLabel title, rank, right, left, bottom;
 	private JButton mainMenu;
 	private ArrayList<Integer> sort = new ArrayList<Integer>();
 	private HashMap<Integer, String> info = new HashMap<Integer, String>();
+	
 	
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
@@ -25,7 +27,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 	public RankingFrame() {
 	   this.setTitle("Rankings");
        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       this.setSize(new Dimension(1400, 800));
+       this.setSize(new Dimension(1500, 800));
       
        //Main Panel
        mainPanel = new JSplitPane();
@@ -38,31 +40,75 @@ public class RankingFrame extends JFrame implements ActionListener {
        rankPanel.setPreferredSize(new Dimension(1500, 750));
        rankPanel.setBackground(new Color(255, 240, 255));  // Set background color
        
-       title = new JLabel("Rankings",SwingConstants.CENTER);
+       title = new JLabel("Rankings", SwingConstants.CENTER);
        Font labelFont = title.getFont();
-       title.setFont(new Font(labelFont.getName(), Font.PLAIN, 36));
+       title.setFont(new Font(labelFont.getName(), Font.PLAIN, 30));
        rankPanel.add(title, BorderLayout.PAGE_START);
        
-       spacer = new JLabel("                                                                                  ");
-       spacel = new JLabel("                                                                                  ");
-       rankPanel.add(spacer, BorderLayout.LINE_START);
-       rankPanel.add(spacel, BorderLayout.LINE_END);
+       right = new JLabel("                                                                                                                                                                 ");
+       left = new JLabel("                                                                                                                                                                 ");
+       bottom = new JLabel("");
+       rankPanel.add(right, BorderLayout.LINE_START);
+       rankPanel.add(left, BorderLayout.LINE_END);
+       rankPanel.add(bottom, BorderLayout.PAGE_END);
        
-       this.fileToSortedArray("scripts/ranking.txt");
+       this.fileToSortedArray("src/finalProject/ranking.txt");  // this.fileToSortedArray("scripts/ranking.txt");
        
        scrollPanel = new JPanel();
        scrollPanel.setLayout(new BoxLayout(scrollPanel, BoxLayout.Y_AXIS));
      
-       for(int i = 1; i < sort.size() + 1; i++) {
-    	   int key = sort.get(i-1);
-    	   String score = sort.get(i-1).toString();
-    	   rank = new JLabel(i + ". " + this.info.get(key) + "  " + score);
-    	  // rank = new JLabel().setText("<html>i&emsp;&emsp;this.info.get(key)&emsp;&emsp;score</html>");
-    	   rank.setAlignmentX(CENTER_ALIGNMENT);
-    	   Font rankFont = rank.getFont();
-           rank.setFont(new Font(rankFont.getName(), Font.PLAIN, 24));
-    	   rank.setPreferredSize(new Dimension(300,100));
-    	   scrollPanel.add(rank);
+       for(int i = 0; i < sort.size() + 1; i++) {
+    	   JPanel all = new JPanel();
+    	   all.setLayout(new GridLayout(1, 3));
+    	   all.setPreferredSize(new Dimension(10, 10));
+    	 
+    	   if(i == 0) {
+    		   rank = new JLabel("Rank", SwingConstants.CENTER); 
+        	   rank.setAlignmentX(LEFT_ALIGNMENT);
+        	   Font font = rank.getFont();
+               rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
+        	   rank.setPreferredSize(new Dimension(300,100));
+        	   all.add(rank);
+        	   
+        	   rank = new JLabel("User", SwingConstants.CENTER); 
+        	   rank.setAlignmentX(LEFT_ALIGNMENT);
+               rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
+        	   rank.setPreferredSize(new Dimension(300,100));
+        	   all.add(rank);
+        	   
+        	   rank = new JLabel("Score", SwingConstants.CENTER);
+        	   rank.setAlignmentX(LEFT_ALIGNMENT);
+               rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
+        	   rank.setPreferredSize(new Dimension(300,100));
+        	   all.add(rank);
+        	   
+        	   scrollPanel.add(all);
+    	   }
+    	   else {
+    		   int key = sort.get(i-1);
+        	   String score = sort.get(i-1).toString();
+        	   
+        	   rank = new JLabel(i + ". ", SwingConstants.CENTER); 
+        	   rank.setAlignmentX(LEFT_ALIGNMENT);
+        	   Font font = rank.getFont();
+               rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
+        	   rank.setPreferredSize(new Dimension(300,100));
+        	   all.add(rank);
+        	   
+        	   rank = new JLabel(this.info.get(key), SwingConstants.CENTER); 
+        	   rank.setAlignmentX(LEFT_ALIGNMENT);
+               rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
+        	   rank.setPreferredSize(new Dimension(300,100));
+        	   all.add(rank);
+        	   
+        	   rank = new JLabel(score, SwingConstants.CENTER);
+        	   rank.setAlignmentX(LEFT_ALIGNMENT);
+               rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
+        	   rank.setPreferredSize(new Dimension(300,100));
+        	   all.add(rank);
+        	   
+        	   scrollPanel.add(all);
+    	   }
        }
        
        scroll = new JScrollPane(scrollPanel);
@@ -124,7 +170,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 		//Sort arraylist in descending order.
 		Collections.sort(sort, Collections.reverseOrder());
 	}
-		
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String event = e.getActionCommand();
