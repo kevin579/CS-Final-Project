@@ -52,6 +52,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static int topMargin, leftMargin, rightMargin;
     static int startX, startY, endX, endY;
     static int gridX, gridY;
+    static Color transparentRed = new Color(250, 0, 0, 50);
 
     // variables for block and tower
     static ArrayList<Block> blocks;
@@ -75,6 +76,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static int delay;
     static int enemyNum = 0;
     static boolean allOut = false;
+
     // Game variables
     static int playerHP = 20;
     static int score = 0;
@@ -188,7 +190,7 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t7);
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
         loadWave();
-        // loadGame();
+        loadGame();
 
         // Start the timer
         timer = new Timer(1, this);
@@ -207,6 +209,8 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // If the game is at edit mode
         if (edit) {
+            Enemy pointer = new Enemy(0, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2));
+            enemys.add(pointer);
             // remove all bullets from previous wave
             if (notSave) {
                 saveProgress();
@@ -725,18 +729,22 @@ public class GameFrame extends JFrame implements ActionListener {
         }
 
         public void drawEnemy(Graphics2D gc) {
+            gc.setColor(transparentRed);
             for (Enemy enemy : enemys) {
+                if (enemy.type == 0) {
+                    gc.fillRect(enemy.x, enemy.y, blockSize, blockSize);
+                } else {
+                    int cx = enemy.x + blockSize / 2;
+                    int cy = enemy.y + blockSize / 2;
+                    AffineTransform Enemytransform = new AffineTransform();
 
-                int cx = enemy.x + blockSize / 2;
-                int cy = enemy.y + blockSize / 2;
-                AffineTransform Enemytransform = new AffineTransform();
-
-                Enemytransform.translate(cx, cy);
-                Enemytransform.rotate(Math.toRadians(enemy.angle));
-                Enemytransform.translate(-blockSize / 2, -blockSize / 2);
-                Enemytransform.scale(blockSize / 348.0, blockSize / 348.0);
-                gc.drawImage(enemy.image, Enemytransform, null);
-                enemy.drawHP(gc);
+                    Enemytransform.translate(cx, cy);
+                    Enemytransform.rotate(Math.toRadians(enemy.angle));
+                    Enemytransform.translate(-blockSize / 2, -blockSize / 2);
+                    Enemytransform.scale(blockSize / 348.0, blockSize / 348.0);
+                    gc.drawImage(enemy.image, Enemytransform, null);
+                    enemy.drawHP(gc);
+                }
             }
         }
 
@@ -976,6 +984,8 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             if (e.getKeyCode() == KeyEvent.VK_ENTER && edit == true) {
                 findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
+                enemys.clear();
+                enemyNum = 0;
                 time = 0;
                 edit = false;
                 pointer = 0;
