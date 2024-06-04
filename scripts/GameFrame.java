@@ -206,7 +206,7 @@ public class GameFrame extends JFrame implements ActionListener {
         panelOperation = false;
         // get which tower the player wants to put
         getSelectedTower();
-
+        
         // If the game is at edit mode
         if (edit) {
             Enemy pointer = new Enemy(0, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2));
@@ -366,7 +366,7 @@ public class GameFrame extends JFrame implements ActionListener {
                             blocks.remove(block);
                             cash += MainFrame.towerCosts[0];
                             towerGrid[towerPanel.gridY][towerPanel.gridX] = 0;
-                            findPath(towerGrid, row / 2, col / 2, pathGrid);
+                            findPath(towerGrid, row / 2, col / 2+1, pathGrid);
 
                             break;
                         }
