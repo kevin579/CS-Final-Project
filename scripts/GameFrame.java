@@ -187,7 +187,7 @@ public class GameFrame extends JFrame implements ActionListener {
         // loadGame();
 
         // Start the timer
-        timer = new Timer(16, this);
+        timer = new Timer(1, this);
         timer.setInitialDelay(1000);
         timer.start();
 
@@ -475,7 +475,25 @@ public class GameFrame extends JFrame implements ActionListener {
                 if (elementNum < 10) {
                     delay = elementNum;
                 } else {
-                    Enemy enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) / 2.0));
+                    Enemy enemy;
+                    if (waveNum<5){
+                    enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) / 2.0));
+                    }
+                    else if(waveNum>=5&&waveNum<10){
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) ));
+                    }
+                    else if (waveNum>=10&&waveNum<15){
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) *1.5));
+                    }
+                    else if (waveNum>=15&&waveNum<20){
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) *2));
+                    }
+                    else if (waveNum>=20&&waveNum<25){
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) *2.5));
+                    }
+                    else{
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) *3));
+                    }
                     enemys.add(enemy);
                     enemyNum++;
                 }
@@ -903,6 +921,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 System.exit(0);
             }
             if (e.getKeyCode() == KeyEvent.VK_ENTER && edit == true) {
+                findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
                 time = 0;
                 edit = false;
                 pointer = 0;
