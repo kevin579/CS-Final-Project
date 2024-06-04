@@ -755,6 +755,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
                 gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
                 if (selectedTower != null) {
+                    gc.drawOval(selectedTower.x-selectedTower.range*blockSize+blockSize/2,selectedTower.y-selectedTower.range*blockSize+blockSize/2,selectedTower.range*blockSize*2,selectedTower.range*blockSize*2);
                     gc.setColor(towerPanel.color);
                     gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
                     gc.setColor(towerPanel.upgradeButton.color);
