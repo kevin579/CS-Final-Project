@@ -83,7 +83,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 		String event = e.getActionCommand();
 		
 		if(event.equals("return")) {
-			new MainFrame();
+	new MainFrame();
 		}
 	}
 }
