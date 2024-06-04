@@ -78,7 +78,7 @@ public class GameFrame extends JFrame implements ActionListener {
     // Game variables
     static int playerHP = 20;
     static int score = 0;
-    int cash = 1000000;
+    int cash = 80;
     boolean notSave = true;
 
     // panel variables
@@ -141,7 +141,7 @@ public class GameFrame extends JFrame implements ActionListener {
         towerImages = new ArrayList<BufferedImage>();
         enemyImages = new ArrayList<BufferedImage>();
         bulletImages = new ArrayList<BufferedImage>();
-        
+
         start = loadImage("scripts/Images/start.png");
         end = loadImage("scripts/Images/end.png");
 
@@ -248,12 +248,10 @@ public class GameFrame extends JFrame implements ActionListener {
             // Generate enemy based on the wave number.
             generateEnemy();
 
-            excuteEnemyOperations();
-
-            // Make the bullets move, track, explode
-            excuteBulletOperation();
-
         }
+        excuteEnemyOperations();
+        // Make the bullets move, track, explode
+        excuteBulletOperation();
         time++;
         mouseClick = false;
         mouseX = mouseY = 0;
@@ -292,9 +290,60 @@ public class GameFrame extends JFrame implements ActionListener {
                     for (Tower tower : towers) {
                         if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
                             if (cash >= MainFrame.towerCosts[towerPanel.type - 1] / 2 && tower.level < 5) {
-                                tower.damage += tower.type;
                                 tower.level++;
                                 cash -= MainFrame.towerCosts[towerPanel.type - 1] / 2;
+                                switch (tower.type) {
+                                    case 1:
+                                        tower.damage += 1;
+                                        if (tower.level == 5) {
+                                            tower.freq -= 5;
+                                        }
+                                        break;
+                                    case 2:
+                                        tower.damage += 2;
+                                        if (tower.level == 5) {
+                                            tower.freq -= 3;
+                                        }
+                                        break;
+                                    case 3:
+                                        tower.damage += 5;
+                                        if (tower.level == 5) {
+                                            tower.freq -= 2;
+                                        }
+                                        break;
+                                    case 4:
+                                        tower.freq = tower.freq * 2 / 3 + 1;
+                                        if (tower.level == 5) {
+                                            tower.damage += 2;
+                                        }
+                                        break;
+                                    case 5:
+                                        tower.damage += 15;
+                                        tower.freq--;
+                                        if (tower.level == 5) {
+                                            tower.freq -= 5;
+                                            tower.damage += 20;
+                                        }
+                                        break;
+                                    case 6:
+                                        tower.damage += 50;
+                                        tower.freq -= 2;
+                                        if (tower.level == 5) {
+                                            tower.damage += 80;
+                                        }
+                                        break;
+                                    case 7:
+                                        tower.freq--;
+                                        if (tower.level == 5) {
+                                            tower.speed--;
+                                            tower.damage += 1;
+                                        }
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+
                             }
                             break;
                         }
@@ -360,10 +409,10 @@ public class GameFrame extends JFrame implements ActionListener {
                 if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)
                         && (gridY != 12 || gridX != 26)) {
                     for (int i = 0; i < pathGrid.length; i++) {
-                    for (int j = 0; j < pathGrid[0].length; j++) {
-                    System.out.print(pathGrid[i][j] + " ");
-                    }
-                    System.out.println();
+                        for (int j = 0; j < pathGrid[0].length; j++) {
+                            System.out.print(pathGrid[i][j] + " ");
+                        }
+                        System.out.println();
                     }
                     cash -= MainFrame.towerCosts[0];
                     Block block = new Block(gridX, gridY, 10);
@@ -480,23 +529,18 @@ public class GameFrame extends JFrame implements ActionListener {
                     delay = elementNum;
                 } else {
                     Enemy enemy;
-                    if (waveNum<5){
-                    enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) / 2.0));
-                    }
-                    else if(waveNum>=5&&waveNum<10){
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) ));
-                    }
-                    else if (waveNum>=10&&waveNum<15){
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) *1.5));
-                    }
-                    else if (waveNum>=15&&waveNum<20){
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) *2));
-                    }
-                    else if (waveNum>=20&&waveNum<25){
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) *2.5));
-                    }
-                    else{
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1)*(waveNum + 1) *3));
+                    if (waveNum < 5) {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) / 2.0));
+                    } else if (waveNum >= 5 && waveNum < 10) {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1)));
+                    } else if (waveNum >= 10 && waveNum < 15) {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 1.25));
+                    } else if (waveNum >= 15 && waveNum < 20) {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 1.5));
+                    } else if (waveNum >= 20 && waveNum < 25) {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 1.75));
+                    } else {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2));
                     }
                     enemys.add(enemy);
                     enemyNum++;
@@ -510,7 +554,7 @@ public class GameFrame extends JFrame implements ActionListener {
         }
         if (allOut && enemyNum == 0) {
             edit = true;
-            cash+=(waveNum+1)*20;
+            cash += (waveNum + 1) * 20;
         }
     }
 
@@ -585,12 +629,16 @@ public class GameFrame extends JFrame implements ActionListener {
             for (int i = 0; i <= row; i++) {
                 gc.drawLine(0, i * blockSize + titleHeight, panelWidth, i * blockSize + titleHeight);
             }
-            gc.setColor(Color.BLACK);
-            gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
-            gc.drawImage(start,(col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize,null);
-            gc.setColor(Color.BLACK);
-            gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize);
-            gc.drawImage(end,(col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize, blockSize,null);
+            // gc.setColor(Color.BLACK);
+            // gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize +
+            // topMargin, blockSize, blockSize);
+            gc.drawImage(start, (col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize,
+                    blockSize, null);
+            // gc.setColor(Color.BLACK);
+            // gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize +
+            // topMargin, blockSize, blockSize);
+            gc.drawImage(end, (col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize,
+                    blockSize, null);
             gc.setColor(Color.BLACK);
             // Draw top panel
             gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
@@ -826,7 +874,7 @@ public class GameFrame extends JFrame implements ActionListener {
                         Block block = new Block(x, y, 10);
                         blocks.add(block);
                     }
-                    if (itemNum > 1 ) {
+                    if (itemNum > 1) {
                         Tower tower;
                         if (itemNum == 2) {
                             tower = new Tower(x, y, itemNum - 1);
