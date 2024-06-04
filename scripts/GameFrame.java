@@ -652,6 +652,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.drawString("Play Mode", 100, titleHeight / 2);
             }
             gc.drawString("Wave: " + String.valueOf(waveNum + 1), 300, titleHeight / 2);
+            gc.drawString("Score: " + String.valueOf(score ), 500, titleHeight / 2);
 
             // Draw Buttom Panel
 
@@ -669,6 +670,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
             gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3 * 2);
+            
         }
 
         public void drawTower(Graphics2D gc) {
