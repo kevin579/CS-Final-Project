@@ -195,36 +195,20 @@ public class MainFrame extends JFrame implements ActionListener {
             difficult = (String) comboBox.getSelectedItem();
             if (difficult.equals("easy")) {
                 infoText1.setText("Enemy hp x1");
-                infoText2.setText("Enemy damage x1");
                 infoText3.setText("Enemy speed x1");
-                infoText4.setText("Enemy attack speed x1");
-                infoText5.setText("Enemy bullet speed x1");
-                infoText6.setText("Enemy generate speed x1");
                 infoText7.setText("Score magnification x1");
             } else if (difficult.equals("medium")) {
-                infoText1.setText("Enemy hp x2");
-                infoText2.setText("Enemy damage x2");
+                infoText1.setText("Enemy hp x1.25");
                 infoText3.setText("Enemy speed x1.2");
-                infoText4.setText("Enemy attack speed x1.5");
-                infoText5.setText("Enemy bullet speed x1.2");
-                infoText6.setText("Enemy generate speed x1.2");
-                infoText7.setText("Score magnification x3");
+                infoText7.setText("Score magnification x1.5");
             } else if (difficult.equals("hard")) {
-                infoText1.setText("Enemy hp x3");
-                infoText2.setText("Enemy damage x3");
+                infoText1.setText("Enemy hp x1.5");
                 infoText3.setText("Enemy speed x1.5");
-                infoText4.setText("Enemy attack speed x2");
-                infoText5.setText("Enemy bullet speed x1.5");
-                infoText6.setText("Enemy generate speed x1.5");
-                infoText7.setText("Score magnification x5");
+                infoText7.setText("Score magnification x2");
             } else if (difficult.equals("impossible")) {
-                infoText1.setText("Enemy hp x5");
-                infoText2.setText("Enemy damage ∞ *!!One Hit Kill!!");
+                infoText1.setText("Enemy hp x2");
                 infoText3.setText("Enemy speed x2");
-                infoText4.setText("Enemy attack speed x5");
-                infoText5.setText("Enemy bullet speed x2");
-                infoText6.setText("Enemy generate speed x3");
-                infoText7.setText("Score magnification x10");
+                infoText7.setText("Score magnification x5");
             }
         }
 

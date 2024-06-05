@@ -412,7 +412,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
                 towerGrid[gridY][gridX] = 1;
                 if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)
-                        && (gridY != 12 || gridX != 26)) {
+                        && (gridY != row/2 || gridX != col/2+1)) {
                     for (int i = 0; i < pathGrid.length; i++) {
                         for (int j = 0; j < pathGrid[0].length; j++) {
                             System.out.print(pathGrid[i][j] + " ");
