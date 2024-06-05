@@ -51,7 +51,7 @@ public class RankingFrame extends JFrame implements ActionListener {
        rankPanel.add(left, BorderLayout.LINE_END);
        rankPanel.add(bottom, BorderLayout.PAGE_END);
        
-       this.fileToSortedArray("src/finalProject/ranking.txt");  // this.fileToSortedArray("scripts/ranking.txt");
+       this.fileToSortedArray("scripts/ranking.txt");
        
        scrollPanel = new JPanel();
        scrollPanel.setLayout(new BoxLayout(scrollPanel, BoxLayout.Y_AXIS));
