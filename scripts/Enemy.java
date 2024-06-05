@@ -74,8 +74,8 @@ public class Enemy extends Rectangle {
         }
         this.xx += this.speedX;
         this.yy += this.speedY;
-        this.dis += this.speedX;
-        this.dis += this.speedY;
+        this.dis += Math.abs(this.speedX);
+        this.dis += Math.abs(this.speedY);
         this.x = (int) this.xx;
         this.y = (int) this.yy;
 
@@ -100,11 +100,11 @@ public class Enemy extends Rectangle {
         this.hpNow = new Rectangle(this.hpBar.x, this.hpBar.y, (int) (GameFrame.blockSize * (this.hp / this.maxHp)), 5);
     }
 
-    public void drawHP(Graphics g) {
-        g.setColor(this.green);
-        g.fillRect(this.hpBar.x, this.hpBar.y, this.hpBar.width, this.hpBar.height);
-        g.setColor(this.red);
-        g.fillRect(this.hpNow.x, this.hpNow.y, this.hpNow.width, this.hpNow.height);
+    public void drawHP(Graphics gc) {
+        gc.setColor(this.green);
+        gc.fillRect(this.hpBar.x, this.hpBar.y, this.hpBar.width, this.hpBar.height);
+        gc.setColor(this.red);
+        gc.fillRect(this.hpNow.x, this.hpNow.y, this.hpNow.width, this.hpNow.height);
 
     }
 

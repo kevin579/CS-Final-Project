@@ -31,29 +31,34 @@ public class Tower extends Rectangle {
 		for (Enemy enemy : GameFrame.enemys) {
 			this.dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
 			this.estimateTime = this.dis / this.speed;
-			if (this.dis < this.range * GameFrame.blockSize && this.dis>largestDis) {
-				largestDis = this.dis;
+			if (this.dis < this.range * GameFrame.blockSize && enemy.dis > largestDis) {
+				largestDis = enemy.dis;
 				this.target = enemy;
 				this.angle = (Math.atan2(
 						(enemy.x + enemy.width / 2 + enemy.speedX * this.estimateTime) - (this.x + this.width / 2),
-						-(enemy.y + enemy.height / 2 + enemy.speedY * this.estimateTime) + (this.y + this.height / 2))) * 180
+						-(enemy.y + enemy.height / 2 + enemy.speedY * this.estimateTime) + (this.y + this.height / 2)))
+						* 180
 						/ Math.PI;
 
-				return;
 			}
 		}
 	}
 
 	public void shoot() {
-		
-		if (this.target != null && this.target.hp > 0) {
-			this.dis = Math.sqrt(Math.pow((this.target.x - this.px), 2) + Math.pow((this.target.y - this.py), 2));
-			double speedX = this.speed * (this.target.x + this.target.speedX*this.estimateTime + this.target.width / 2 - (this.x+this.width/2)) / (this.dis);
-			double speedY = this.speed * (this.target.y + this.target.speedY*this.estimateTime + this.target.height / 2 - (this.y+this.height/2)) / (this.dis);
 
-			Bullet bullet = new Bullet(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/6, speedX,
-					speedY, damage);
-			GameFrame.bullets.add(bullet);
+		if (this.target != null && this.target.hp > 0 && this.dis<this.range*GameFrame.blockSize) {
+			this.dis = Math.sqrt(Math.pow((this.target.x - this.px), 2) + Math.pow((this.target.y - this.py), 2));
+			if (this.dis < this.range * GameFrame.blockSize) {
+				double speedX = this.speed * (this.target.x + this.target.speedX * this.estimateTime
+						+ this.target.width / 2 - (this.x + this.width / 2)) / (this.dis);
+				double speedY = this.speed * (this.target.y + this.target.speedY * this.estimateTime
+						+ this.target.height / 2 - (this.y + this.height / 2)) / (this.dis);
+
+				Bullet bullet = new Bullet(this.px + this.width / 2, this.py + this.height / 2, type,
+						GameFrame.blockSize / 6, speedX,
+						speedY, damage);
+				GameFrame.bullets.add(bullet);
+			}
 		}
 	}
 
@@ -65,10 +70,13 @@ class PenetrateTower extends Tower {
 	}
 
 	public void shoot() {
-		if (this.target != null) {
-			double speedX = this.speed * (this.target.x + this.target.speedX*this.estimateTime + this.target.width / 2 - (this.x+this.width/2)) / (this.dis);
-			double speedY = this.speed * (this.target.y + this.target.speedY*this.estimateTime + this.target.height / 2 - (this.y+this.height/2)) / (this.dis);
-			Bullet bullet = new PenetrateBullet(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/8, speedX,
+		if (this.target != null&& this.dis<this.range*GameFrame.blockSize) {
+			double speedX = this.speed * (this.target.x + this.target.speedX * this.estimateTime + this.target.width / 2
+					- (this.x + this.width / 2)) / (this.dis);
+			double speedY = this.speed * (this.target.y + this.target.speedY * this.estimateTime
+					+ this.target.height / 2 - (this.y + this.height / 2)) / (this.dis);
+			Bullet bullet = new PenetrateBullet(this.px + this.width / 2, this.py + this.height / 2, type,
+					GameFrame.blockSize / 8, speedX,
 					speedY, damage);
 			GameFrame.bullets.add(bullet);
 		}
@@ -81,7 +89,7 @@ class RingTower extends Tower {
 	}
 
 	public void aim() {
-		
+
 		for (Enemy enemy : GameFrame.enemys) {
 			this.dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
 			if (this.dis < this.range * GameFrame.blockSize) {
@@ -111,10 +119,13 @@ class BoomTower extends Tower {
 	}
 
 	public void shoot() {
-		if (this.target != null && this.target.hp > 0) {
-			double speedX = this.speed * (this.target.x + this.target.speedX*this.estimateTime + this.target.width / 2 - (this.x+this.width/2)) / (this.dis);
-			double speedY = this.speed * (this.target.y + this.target.speedY*this.estimateTime + this.target.height / 2 - (this.y+this.height/2)) / (this.dis);
-			Bullet boom = new Boom(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/6, speedX,
+		if (this.target != null && this.target.hp > 0&& this.dis<this.range*GameFrame.blockSize) {
+			double speedX = this.speed * (this.target.x + this.target.speedX * this.estimateTime + this.target.width / 2
+					- (this.x + this.width / 2)) / (this.dis);
+			double speedY = this.speed * (this.target.y + this.target.speedY * this.estimateTime
+					+ this.target.height / 2 - (this.y + this.height / 2)) / (this.dis);
+			Bullet boom = new Boom(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize / 6,
+					speedX,
 					speedY, damage);
 			GameFrame.bullets.add(boom);
 		}
@@ -127,12 +138,14 @@ class MissleTower extends Tower {
 	}
 
 	public void shoot() {
-		double speedX = 0,speedY = 0; 
-		if (this.target!=null &&this.target.hp>0){
-			 speedX = this.speed * (this.target.x + this.target.speedX*this.estimateTime + this.target.width / 2 - (this.x+this.width/2)) / (this.dis);
-			 speedY = this.speed * (this.target.y + this.target.speedY*this.estimateTime + this.target.height / 2 - (this.y+this.height/2)) / (this.dis);
+		double speedX = 0, speedY = 0;
+		if (this.target != null && this.target.hp > 0) {
+			speedX = this.speed * (this.target.x + this.target.speedX * this.estimateTime + this.target.width / 2
+					- (this.x + this.width / 2)) / (this.dis);
+			speedY = this.speed * (this.target.y + this.target.speedY * this.estimateTime + this.target.height / 2
+					- (this.y + this.height / 2)) / (this.dis);
 		}
-		Bullet missle = new Missle(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize/5,
+		Bullet missle = new Missle(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize / 5,
 				speedX,
 				speedY, damage, this);
 		GameFrame.bullets.add(missle);
@@ -190,6 +203,12 @@ class TowerPanel extends Rectangle {
 		this.type = type;
 		this.gridX = gridX;
 		this.gridY = gridY;
+		if (this.gridX >= GameFrame.col-2) {
+			this.x -=3*GameFrame.blockSize;
+		} 
+		if (this.gridY >= GameFrame.row-2) {
+			this.y -=2*GameFrame.blockSize;
+		} 
 		this.sellButton = new SellButton(this.gridX, this.gridY);
 		this.upgradeButton = new UpgradePanel(this.gridX, this.gridY);
 		this.color = Color.WHITE;
@@ -199,8 +218,14 @@ class TowerPanel extends Rectangle {
 		this.gridX = gridX;
 		this.gridY = gridY;
 		this.type = type;
-		this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
+		this.x = (gridX+1) * GameFrame.blockSize + GameFrame.leftMargin;
 		this.y = gridY * GameFrame.blockSize + GameFrame.topMargin;
+		if (this.gridX >= GameFrame.col-2) {
+			this.x -=3*GameFrame.blockSize;
+		} 
+		if (this.gridY >= GameFrame.row-2) {
+			this.y -=2*GameFrame.blockSize;
+		} 
 		this.sellButton.update(this.gridX, this.gridY);
 		this.upgradeButton.update(this.gridX, this.gridY);
 	}
@@ -216,6 +241,12 @@ class UpgradePanel extends Rectangle {
 				(gridY + 1) * GameFrame.blockSize + GameFrame.topMargin,
 				GameFrame.blockSize * 2, GameFrame.blockSize);
 		this.color = new Color(0, 250, 0);
+		if (gridX >= GameFrame.col-2) {
+			this.x -=3*GameFrame.blockSize;
+		} 
+		if (gridY >= GameFrame.row-2) {
+			this.y -=2*GameFrame.blockSize;
+		} 
 	}
 
 	public void update(int gridX, int gridY) {
@@ -223,6 +254,12 @@ class UpgradePanel extends Rectangle {
 		this.gridY = gridY;
 		this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
 		this.y = (gridY + 1) * GameFrame.blockSize + GameFrame.topMargin;
+		if (this.gridX >= GameFrame.col-2) {
+			this.x -=3*GameFrame.blockSize;
+		} 
+		if (this.gridY >= GameFrame.row-2) {
+			this.y -=2*GameFrame.blockSize;
+		} 
 	}
 }
 
@@ -235,6 +272,12 @@ class SellButton extends Rectangle {
 				(gridY + 2) * GameFrame.blockSize + GameFrame.topMargin,
 				GameFrame.blockSize * 2, GameFrame.blockSize);
 		this.color = new Color(250, 0, 0);
+		if (gridX >= GameFrame.col-2) {
+			this.x -=3*GameFrame.blockSize;
+		} 
+		if (gridY >= GameFrame.row-2) {
+			this.y -=2*GameFrame.blockSize;
+		} 
 	}
 
 	public void update(int gridX, int gridY) {
@@ -242,6 +285,12 @@ class SellButton extends Rectangle {
 		this.gridY = gridY;
 		this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
 		this.y = (gridY + 2) * GameFrame.blockSize + GameFrame.topMargin;
+		if (this.gridX >= GameFrame.col-2) {
+			this.x -=3*GameFrame.blockSize;
+		} 
+		if (this.gridY >= GameFrame.row-2) {
+			this.y -=2*GameFrame.blockSize;
+		} 
 
 	}
 }

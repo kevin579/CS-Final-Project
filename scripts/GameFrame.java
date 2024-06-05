@@ -206,14 +206,14 @@ public class GameFrame extends JFrame implements ActionListener {
         panelOperation = false;
         // get which tower the player wants to put
         getSelectedTower();
-        
+
         // If the game is at edit mode
         if (edit) {
             Enemy pointer = new Enemy(0, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2));
             enemys.add(pointer);
             // remove all bullets from previous wave
             if (notSave) {
-                saveProgress();
+                saveGame();
                 notSave = false;
             }
             bullets.clear();
@@ -289,6 +289,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     private void excutePanelOperations() {
         if (towerPanel != null) {
+            
             if (towerPanel.upgradeButton.contains(mouseX, mouseY)) {
                 if (towerPanel.type != 1) {
                     for (Tower tower : towers) {
@@ -322,7 +323,7 @@ public class GameFrame extends JFrame implements ActionListener {
                                         }
                                         break;
                                     case 5:
-                                        tower.damage += 15;
+                                        tower.damage += 20;
                                         tower.freq--;
                                         if (tower.level == 5) {
                                             tower.freq -= 5;
@@ -366,7 +367,7 @@ public class GameFrame extends JFrame implements ActionListener {
                             blocks.remove(block);
                             cash += MainFrame.towerCosts[0];
                             towerGrid[towerPanel.gridY][towerPanel.gridX] = 0;
-                            findPath(towerGrid, row / 2, col / 2+1, pathGrid);
+                            findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
 
                             break;
                         }
@@ -523,7 +524,7 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void generateEnemy() {
-        if (time % 25 == 0 && pointer < wave[waveNum].length) {
+        if (time % (15 + waveNum/3) == 0 && pointer < wave[waveNum].length) {
             if (delay > 0) {
                 delay--;
             } else {
@@ -538,13 +539,13 @@ public class GameFrame extends JFrame implements ActionListener {
                     } else if (waveNum >= 5 && waveNum < 10) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1)));
                     } else if (waveNum >= 10 && waveNum < 15) {
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 1.25));
-                    } else if (waveNum >= 15 && waveNum < 20) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 1.5));
+                    } else if (waveNum >= 15 && waveNum < 20) {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2.5));
                     } else if (waveNum >= 20 && waveNum < 25) {
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 1.75));
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 3.5));
                     } else {
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2));
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 3));
                     }
                     enemys.add(enemy);
                     enemyNum++;
@@ -613,14 +614,18 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             drawGrid(gc);
+            
+            drawBullet(gc);
             drawTower(gc);
             drawEnemy(gc);
-            drawBullet(gc);
+            
+            
             drawTowerPanel(gc);
 
         }
 
         public void drawGrid(Graphics2D gc) {
+            
             gc.setColor(Color.GRAY);
             gc.fillRect(0, titleHeight, leftMargin, gridHeight);
             gc.fillRect(panelWidth - rightMargin, titleHeight, rightMargin, gridHeight);
@@ -652,7 +657,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.drawString("Play Mode", 100, titleHeight / 2);
             }
             gc.drawString("Wave: " + String.valueOf(waveNum + 1), 300, titleHeight / 2);
-            gc.drawString("Score: " + String.valueOf(score ), 500, titleHeight / 2);
+            gc.drawString("Score: " + String.valueOf(score), 500, titleHeight / 2);
 
             // Draw Buttom Panel
 
@@ -670,7 +675,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
             gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3 * 2);
-            
+
         }
 
         public void drawTower(Graphics2D gc) {
@@ -749,13 +754,15 @@ public class GameFrame extends JFrame implements ActionListener {
                 }
             }
         }
-
+        
         public void drawTowerPanel(Graphics2D gc) {
             if (towerPanel != null) {
-
                 gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
                 if (selectedTower != null) {
-                    gc.drawOval(selectedTower.x-selectedTower.range*blockSize+blockSize/2,selectedTower.y-selectedTower.range*blockSize+blockSize/2,selectedTower.range*blockSize*2,selectedTower.range*blockSize*2);
+                    gc.setColor(Color.BLACK);
+                    gc.drawOval(selectedTower.x - selectedTower.range * blockSize + blockSize / 2,
+                            selectedTower.y - selectedTower.range * blockSize + blockSize / 2,
+                            selectedTower.range * blockSize * 2, selectedTower.range * blockSize * 2);
                     gc.setColor(towerPanel.color);
                     gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
                     gc.setColor(towerPanel.upgradeButton.color);
@@ -773,7 +780,8 @@ public class GameFrame extends JFrame implements ActionListener {
                             towerPanel.upgradeButton.y + blockSize * 2 / 3);
                     gc.drawString(
                             "x + " + String.valueOf(
-                                    MainFrame.towerCosts[towerPanel.type - 1] * (1 + selectedTower.level / 2.0)),
+                                    (int) (MainFrame.towerCosts[towerPanel.type - 1]
+                                            * (1 + selectedTower.level / 2.0))),
                             towerPanel.sellButton.x,
                             towerPanel.sellButton.y + blockSize * 2 / 3);
                 }
@@ -832,19 +840,30 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
-    public void saveProgress() {
+    public void saveGame() {
         try {
             File progressFile = new File("scripts/progress.txt");
             FileWriter out = new FileWriter(progressFile, false);
             BufferedWriter writer = new BufferedWriter(out);
+            String[][] record = new String[row][col];
+
+            for (Block block : blocks) {
+                record[block.gridY][block.gridX] = "1";
+            }
+            for (Tower tower : towers) {
+                record[tower.gridY][tower.gridX] = String.valueOf(tower.level) + String.valueOf(tower.type+1);
+
+            }
             for (int y = 0; y < row; y++) {
                 for (int x = 0; x < col; x++) {
-                    if (towerGrid[y][x] == 0) {
-                        writer.write("0");
+                    if (record[y][x] ==null) {
+                        writer.write("0");;
                     } else {
-                        writer.write(String.valueOf(towerGrid[y][x]));
+                        writer.write(record[y][x]);
                     }
-
+                    if (x!=col-1){
+                        writer.write(" ");
+                    }
                 }
                 writer.newLine();
             }
@@ -875,38 +894,92 @@ public class GameFrame extends JFrame implements ActionListener {
                     in.close();
                     return;
                 }
-                char[] num = row.toCharArray();
+                String[] num = row.split(" ");
                 for (int x = 0; x < col; x++) {
 
-                    int itemNum = Integer.parseInt(String.valueOf(num[x]));
+                    int itemNum = Integer.parseInt(num[x]);
 
-                    if (itemNum >= 1 && itemNum <= 8) {
-                        towerGrid[y][x] = 1;
+                    if (itemNum >= 1 ) {
+                        towerGrid[y][x] = itemNum%10;
                         Block block = new Block(x, y, 10);
                         blocks.add(block);
                     }
                     if (itemNum > 1) {
                         Tower tower;
-                        if (itemNum == 2) {
-                            tower = new Tower(x, y, itemNum - 1);
-                        } else if (itemNum == 3) {
-                            tower = new Tower(x, y, itemNum - 1);
+                        if (itemNum%10 == 2) {
+                            tower = new Tower(x, y, itemNum%10 - 1);
+                        } else if (itemNum%10 == 3) {
+                            tower = new Tower(x, y, itemNum%10 - 1);
 
-                        } else if (itemNum == 4) {
-                            tower = new Tower(x, y, itemNum - 1);
+                        } else if (itemNum%10 == 4) {
+                            tower = new Tower(x, y, itemNum%10 - 1);
 
-                        } else if (itemNum == 5) {
-                            tower = new PenetrateTower(x, y, itemNum - 1);
-                        } else if (itemNum == 6) {
-                            tower = new MissleTower(x, y, itemNum - 1);
+                        } else if (itemNum%10 == 5) {
+                            tower = new PenetrateTower(x, y, itemNum%10 - 1);
+                        } else if (itemNum%10 == 6) {
+                            tower = new MissleTower(x, y, itemNum%10 - 1);
 
-                        } else if (itemNum == 7) {
-                            tower = new BoomTower(x, y, itemNum - 1);
+                        } else if (itemNum%10 == 7) {
+                            tower = new BoomTower(x, y, itemNum%10 - 1);
 
-                        } else if (itemNum == 8) {
-                            tower = new RingTower(x, y, itemNum - 1);
+                        } else if (itemNum%10 == 8) {
+                            tower = new RingTower(x, y, itemNum%10 - 1);
                         } else {
-                            tower = new Tower(x, y, itemNum - 1);
+                            tower = new Tower(x, y, itemNum%10 - 1);
+                        }
+                        tower.level = itemNum/10;
+                        switch (tower.type) {
+                            case 1:
+                                tower.damage += tower.level;
+                                if (tower.level == 5) {
+                                    tower.freq -= 5;
+                                }
+                                break;
+                            case 2:
+                                tower.damage += 2*tower.level;
+                                if (tower.level == 5) {
+                                    tower.freq -= 3;
+                                }
+                                break;
+                            case 3:
+                                tower.damage += 5*tower.level;
+                                if (tower.level == 5) {
+                                    tower.freq -= 2;
+                                }
+                                break;
+                            case 4:
+                                tower.damage +=tower.level;
+                                if (tower.level == 5) {
+                                    tower.damage += 2;
+                                }
+                                break;
+                            case 5:
+                                tower.damage += 20*tower.level;
+                                tower.freq-=tower.level;
+                                if (tower.level == 5) {
+                                    tower.freq -= 5;
+                                    tower.damage += 20;
+                                }
+                                break;
+                            case 6:
+                                tower.damage += 35*tower.level;
+                                tower.freq -= tower.level;
+                                if (tower.level == 5) {
+                                    tower.damage += 50;
+                                }
+                                break;
+                            case 7:
+                                tower.freq-=tower.level*2;
+                                tower.damage +=tower.level;
+                                if (tower.level == 5) {
+                                    tower.speed--;
+                                    tower.freq--;
+                                    tower.damage +=2;
+                                }
+                                break;
+
+                            default:
+                                break;
                         }
                         towers.add(tower);
                     }
