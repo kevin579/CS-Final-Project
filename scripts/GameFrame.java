@@ -710,7 +710,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             gc.drawString("Wave: " + String.valueOf(waveNum + 1), 300, titleHeight / 2);
             gc.drawString("Score: " + String.valueOf(score), 500, titleHeight / 2);
-            gc.drawString(userID + String.valueOf(score), 700, titleHeight / 2);
+            gc.drawString(userID, 700, titleHeight / 2);
 
             // Draw Buttom Panel
 
@@ -933,6 +933,13 @@ public class GameFrame extends JFrame implements ActionListener {
             writer.newLine();
             writer.write(userID);
             
+            
+            File rankingFile = new File("scripts/ranking.txt");
+            out = new FileWriter(rankingFile, true);
+            writer = new BufferedWriter(out);
+            String output = userID + String.valueOf(score);
+            writer.newLine();
+            writer.write(output);
             writer.close();
             out.close();
         } catch (Exception e) {
