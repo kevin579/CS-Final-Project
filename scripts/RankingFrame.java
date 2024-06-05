@@ -53,35 +53,29 @@ public class RankingFrame extends JFrame implements ActionListener {
        
        this.fileToSortedArray("scripts/ranking.txt");
        
-       scrollPanel = new JPanel();
-       scrollPanel.setLayout(new BoxLayout(scrollPanel, BoxLayout.Y_AXIS));
+ scrollPanel = new JPanel(new GridLayout(0, 3));
+       scroll = new JScrollPane(scrollPanel);
      
        for(int i = 0; i < sort.size() + 1; i++) {
-    	   JPanel all = new JPanel();
-    	   all.setLayout(new GridLayout(1, 3));
-    	   all.setPreferredSize(new Dimension(10, 10));
-    	 
     	   if(i == 0) {
     		   rank = new JLabel("Rank", SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
         	   Font font = rank.getFont();
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(300,100));
-        	   all.add(rank);
+        	   rank.setPreferredSize(new Dimension(10,50));
+        	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel("User", SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(300,100));
-        	   all.add(rank);
+        	   rank.setPreferredSize(new Dimension(10,50));
+        	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel("Score", SwingConstants.CENTER);
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(300,100));
-        	   all.add(rank);
-        	   
-        	   scrollPanel.add(all);
+        	   rank.setPreferredSize(new Dimension(10,50));
+        	   scrollPanel.add(rank);  
     	   }
     	   else {
     		   int key = sort.get(i-1);
@@ -91,22 +85,20 @@ public class RankingFrame extends JFrame implements ActionListener {
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
         	   Font font = rank.getFont();
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(300,100));
-        	   all.add(rank);
+        	   rank.setPreferredSize(new Dimension(10,50));
+        	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel(this.info.get(key), SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(300,100));
-        	   all.add(rank);
+        	   rank.setPreferredSize(new Dimension(10,50));
+        	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel(score, SwingConstants.CENTER);
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(300,100));
-        	   all.add(rank);
-        	   
-        	   scrollPanel.add(all);
+        	   rank.setPreferredSize(new Dimension(10,50));
+        	   scrollPanel.add(rank);
     	   }
        }
        
