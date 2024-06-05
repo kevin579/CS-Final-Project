@@ -10,8 +10,8 @@ public class MainFrame extends JFrame implements ActionListener {
     JButton startButton, introButton, rankButton, loadButton;
     JPanel mainPanel;
     JTextField textField;
-    static int panelWidth = 1707;
-    static int panelHeight = 1070;
+    static int panelWidth;
+    static int panelHeight;
     TextLabel infoText1, infoText2, infoText3;
     static String userID;
 
