@@ -9,9 +9,11 @@ public class MainFrame extends JFrame implements ActionListener {
     String difficult = difficulties[0];
     JButton startButton, introButton, rankButton, loadButton;
     JPanel mainPanel;
+    JTextField textField;
     static int panelWidth = 1707;
     static int panelHeight = 1070;
     TextLabel infoText1, infoText2, infoText3;
+    static String userID;
 
     // The parameter of enemy, can be modified
     // including health, speed, bullet speed, dmg, attack rate, spawnspeed, and
@@ -101,10 +103,13 @@ public class MainFrame extends JFrame implements ActionListener {
         PurplePanel textPanel = new PurplePanel();
         PurplePanel buttonPanel = new PurplePanel();
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+        textField = new JTextField(10);
+        buttonPanel.add(textField);
         TextLabel chooseDifficultText = new TextLabel(36, "Select Difficulty", 0, 0, 0, 0);
         textPanel.add(chooseDifficultText);
         buttonPanel.add(comboBox);
 
+        
         // start button to start the game
         startButton = new JButton("newGame");
         startButton.setActionCommand("start");
@@ -172,9 +177,10 @@ public class MainFrame extends JFrame implements ActionListener {
         if (eventName.equals("start")) {
             // Starts the game based on the difficult choosed when start button is pressed.
             // Create a GameFrame class.
-            
+            userID = textField.getText();
             this.setVisible(false);
             new GameFrame(false);
+            
         }else if (eventName.equals("load")) {
             // continues the game.
             this.setVisible(false);

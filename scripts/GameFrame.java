@@ -90,6 +90,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static Tower selectedTower;
     static Block selectedBlock;
     static boolean panelOperation;
+    String userID;
 
     GameFrame(boolean load) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -199,6 +200,7 @@ public class GameFrame extends JFrame implements ActionListener {
             loadGame();
         }else{
             this.difficult = MainFrame.dif;
+            this.userID = MainFrame.userID;
         }
         int[] tempEnemyHPs =  new int[8];
             double[] tempEnemySpeeds =  new double[8];
@@ -708,6 +710,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             gc.drawString("Wave: " + String.valueOf(waveNum + 1), 300, titleHeight / 2);
             gc.drawString("Score: " + String.valueOf(score), 500, titleHeight / 2);
+            gc.drawString(userID + String.valueOf(score), 700, titleHeight / 2);
 
             // Draw Buttom Panel
 
@@ -927,6 +930,8 @@ public class GameFrame extends JFrame implements ActionListener {
             writer.write(String.valueOf(playerHP));
             writer.newLine();
             writer.write(String.valueOf(this.difficult));
+            writer.newLine();
+            writer.write(userID);
             
             writer.close();
             out.close();
@@ -1046,6 +1051,7 @@ public class GameFrame extends JFrame implements ActionListener {
             waveNum = Integer.parseInt(reader.readLine());
             playerHP = Integer.parseInt(reader.readLine());
             this.difficult = Integer.parseInt(reader.readLine());
+            this.userID = reader.readLine();
             reader.close();
             in.close();
         } catch (Exception ee) {
