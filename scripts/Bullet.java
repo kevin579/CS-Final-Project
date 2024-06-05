@@ -3,6 +3,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class Bullet extends Rectangle {
+	//initialize variables
 	int existTime;
 	int type, damage;
 	double xx, yy, speedX, speedY, targetX, targetY;
@@ -13,7 +14,8 @@ public class Bullet extends Rectangle {
 	BufferedImage image;
 	double angle = 0;
 	AffineTransform transform;
-
+	
+	//construct bullet
 	public Bullet(int x, int y, int type, int size, double speedX, double speedY, int damage) {
 		super(x, y, size, size);
 		this.xx = x;
@@ -26,6 +28,8 @@ public class Bullet extends Rectangle {
 		this.speedY = speedY;
 		this.speed = Math.sqrt(speedX * speedX + speedY * speedY);
 		this.size = size;
+		
+		//load images
 		if (this.type ==5){
 			this.image = GameFrame.bulletImages.get(2);
 		}
@@ -39,7 +43,8 @@ public class Bullet extends Rectangle {
 
 		
 	}
-
+	
+	//method to move bullet
 	public void move() {
 		this.existTime++;
 		
@@ -55,11 +60,12 @@ public class Bullet extends Rectangle {
 		transform.scale(this.size / 80.0 * 4, this.size / 80.0 * 4);
 
 	}
-
+	
+	
 	public void explode() {
 	}
 }
-
+//check for penetration
 class PenetrateBullet extends Bullet {
 	PenetrateBullet(int x, int y, int type, int size, double speedX, double speedY, int damage) {
 		super(x, y, type, size, speedX, speedY, damage);
@@ -68,6 +74,7 @@ class PenetrateBullet extends Bullet {
 	}
 }
 
+//class for the explosion effect
 class Boom extends Bullet {
 
 	Boom(int x, int y, int type, int size, double speedX, double speedY, int damage) {
@@ -75,7 +82,7 @@ class Boom extends Bullet {
 		this.explodeRadius = MainFrame.explodeRadius[0];
 
 	}
-
+	//damage enemies in explosion area
 	public void explode() {
 		for (Enemy enemy : GameFrame.enemys) {
 			if (Math.sqrt(Math.pow(enemy.x - this.x, 2) + Math.pow(enemy.y - this.y, 2)) < this.explodeRadius) {
@@ -89,13 +96,15 @@ class Boom extends Bullet {
 
 }
 
-class Missle extends Boom {
+// special bullet "missile" for tower
+class Missile extends Boom {
 	Tower parent;
 	double dis;
 	boolean orbit;
 	int centerX, centerY;
 
-	Missle(int x, int y, int type, int size, double speedX, double speedY, int damage, Tower parent) {
+	//constructor
+	Missile(int x, int y, int type, int size, double speedX, double speedY, int damage, Tower parent) {
 		super(x, y, type, size, speedX, speedY, damage);
 		this.explodeRadius = MainFrame.explodeRadius[1];
 		this.parent = parent;
@@ -104,6 +113,7 @@ class Missle extends Boom {
 		this.centerY = GameFrame.row / 2 * GameFrame.blockSize + GameFrame.topMargin;
 	}
 
+	// method to move missile
 	public void move() {
 		if (orbit) {
 			if (parent.target != null && parent.target.hp > 0) {

@@ -243,7 +243,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
 
         // Start the timer
-        timer = new Timer(1, this);
+        timer = new Timer(8, this);
         timer.setInitialDelay(1000);
         timer.start();
 

@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Tower extends Rectangle {
+	
+	//initialize variables
 	int gridX, gridY, type, range, damage, freq, cost;
 	double angle = 0, estimateTime, dis, speed;
 	BufferedImage image;
@@ -10,6 +12,7 @@ public class Tower extends Rectangle {
 	int level = 0;
 	int totalDamage;
 
+	//constructor
 	public Tower(int gridX, int gridY, int type) {
 		super(gridX * GameFrame.blockSize + GameFrame.leftMargin, gridY * GameFrame.blockSize + GameFrame.topMargin,
 				GameFrame.blockSize, GameFrame.blockSize);
@@ -26,6 +29,7 @@ public class Tower extends Rectangle {
 		this.range = MainFrame.towerRange[type - 1];
 	}
 
+	//make tower aim at the closest enemy
 	public void aim() {
 		double largestDis = 0;
 		for (Enemy enemy : GameFrame.enemys) {
@@ -44,6 +48,7 @@ public class Tower extends Rectangle {
 		}
 	}
 
+	//shot at enemy 
 	public void shoot() {
 
 		if (this.target != null && this.target.hp > 0 && this.dis<this.range*GameFrame.blockSize) {
@@ -64,6 +69,7 @@ public class Tower extends Rectangle {
 
 }
 
+//One type of tower
 class PenetrateTower extends Tower {
 	PenetrateTower(int gridX, int gridY, int type) {
 		super(gridX, gridY, type);
@@ -83,11 +89,13 @@ class PenetrateTower extends Tower {
 	}
 }
 
+//One type of tower
 class RingTower extends Tower {
 	RingTower(int gridX, int gridY, int type) {
 		super(gridX, gridY, type);
 	}
-
+	
+	//aim at enemy
 	public void aim() {
 
 		for (Enemy enemy : GameFrame.enemys) {
@@ -100,6 +108,7 @@ class RingTower extends Tower {
 		this.target = null;
 	}
 
+	//shoot bullets
 	public void shoot() {
 		if (this.target != null && this.target.hp > 0) {
 			for (int i = 0; i < 16; i++) {
@@ -113,11 +122,13 @@ class RingTower extends Tower {
 	}
 }
 
+//one type of tower
 class BoomTower extends Tower {
 	BoomTower(int gridX, int gridY, int type) {
 		super(gridX, gridY, type);
 	}
 
+	//shoot at enemy
 	public void shoot() {
 		if (this.target != null && this.target.hp > 0&& this.dis<this.range*GameFrame.blockSize) {
 			double speedX = this.speed * (this.target.x + this.target.speedX * this.estimateTime + this.target.width / 2
@@ -132,11 +143,13 @@ class BoomTower extends Tower {
 	}
 }
 
+//one type of tower
 class MissleTower extends Tower {
 	MissleTower(int gridX, int gridY, int type) {
 		super(gridX, gridY, type);
 	}
 
+	//shoot at enemy
 	public void shoot() {
 		double speedX = 0, speedY = 0;
 		if (this.target != null && this.target.hp > 0) {
@@ -145,11 +158,11 @@ class MissleTower extends Tower {
 			speedY = this.speed * (this.target.y + this.target.speedY * this.estimateTime + this.target.height / 2
 					- (this.y + this.height / 2)) / (this.dis);
 		}
-		Bullet missle = new Missle(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize / 5,
+		Bullet missile = new Missile(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize / 5,
 				speedX,
 				speedY, damage, this);
-		GameFrame.bullets.add(missle);
-		System.out.println(missle.size);
+		GameFrame.bullets.add(missile);
+		System.out.println(missile.size);
 
 	}
 }
@@ -173,6 +186,7 @@ class Block extends Rectangle {
 	}
 }
 
+//make tower icons for game frame
 class TowerIcon extends Rectangle {
 	int type, cost;
 	String text;
@@ -190,6 +204,7 @@ class TowerIcon extends Rectangle {
 	}
 }
 
+//calss for towers in game
 class TowerPanel extends Rectangle {
 	int type, gridX, gridY;
 	SellButton sellButton;
@@ -232,6 +247,7 @@ class TowerPanel extends Rectangle {
 
 }
 
+//panel for upgrade when clicked on tower
 class UpgradePanel extends Rectangle {
 	int type, gridX, gridY;
 	Color color;
@@ -263,6 +279,7 @@ class UpgradePanel extends Rectangle {
 	}
 }
 
+//panel for sell when clicked on tower
 class SellButton extends Rectangle {
 	int gridX, gridY;
 	Color color;
