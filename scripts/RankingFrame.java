@@ -53,9 +53,10 @@ public class RankingFrame extends JFrame implements ActionListener {
        
        this.fileToSortedArray("scripts/ranking.txt");
        
- scrollPanel = new JPanel(new GridLayout(0, 3));
+ 	   scrollPanel = new JPanel(new GridLayout(0, 3));
        scroll = new JScrollPane(scrollPanel);
-     
+	   scrollPanel.setBackground(new Color(230, 255, 255));
+	   
        for(int i = 0; i < sort.size() + 1; i++) {
     	   if(i == 0) {
     		   rank = new JLabel("Rank", SwingConstants.CENTER); 
