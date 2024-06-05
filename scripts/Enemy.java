@@ -3,6 +3,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Enemy extends Rectangle {
+	
+	//initialize variables
     int type;
     double speed;
     double xx, yy;
@@ -18,6 +20,7 @@ public class Enemy extends Rectangle {
     Color green;
     double dis = 0;
 
+    //constructor
     Enemy(int type, double factor) {
         super(GameFrame.startX, GameFrame.startY, GameFrame.blockSize, GameFrame.blockSize);
         this.xx = this.x;
@@ -41,6 +44,7 @@ public class Enemy extends Rectangle {
         }
     }
 
+    //method to move enemies along the path
     public void move() {
         if ((((this.x - GameFrame.leftMargin) % GameFrame.blockSize <= this.speed && this.speedX >= 0)
                 || ((this.x - GameFrame.leftMargin) % GameFrame.blockSize <= this.speed && this.speedX <= 0))
@@ -96,10 +100,12 @@ public class Enemy extends Rectangle {
 
     }
 
+    //update enemy hp 
     public void updateHp() {
         this.hpNow = new Rectangle(this.hpBar.x, this.hpBar.y, (int) (GameFrame.blockSize * (this.hp / this.maxHp)), 5);
     }
 
+    //draw hp bar
     public void drawHP(Graphics gc) {
         gc.setColor(this.green);
         gc.fillRect(this.hpBar.x, this.hpBar.y, this.hpBar.width, this.hpBar.height);
@@ -108,6 +114,7 @@ public class Enemy extends Rectangle {
 
     }
 
+    //make the enemy disappear
     public void die() {
         this.hp = 0;
         GameFrame.enemyNum--;
