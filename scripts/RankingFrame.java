@@ -62,19 +62,19 @@ public class RankingFrame extends JFrame implements ActionListener {
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
         	   Font font = rank.getFont();
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(10,50));
+        	   rank.setPreferredSize(new Dimension(0,50));
         	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel("User", SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(10,50));
+        	   rank.setPreferredSize(new Dimension(5,50));
         	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel("Score", SwingConstants.CENTER);
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(10,50));
+        	   rank.setPreferredSize(new Dimension(0,50));
         	   scrollPanel.add(rank);  
     	   }
     	   else {
@@ -85,19 +85,19 @@ public class RankingFrame extends JFrame implements ActionListener {
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
         	   Font font = rank.getFont();
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(10,50));
+        	   rank.setPreferredSize(new Dimension(0,50));
         	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel(this.info.get(key), SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(10,50));
+        	   rank.setPreferredSize(new Dimension(5,50));
         	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel(score, SwingConstants.CENTER);
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(10,50));
+        	   rank.setPreferredSize(new Dimension(0,50));
         	   scrollPanel.add(rank);
     	   }
        }
