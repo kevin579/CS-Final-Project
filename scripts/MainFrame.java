@@ -11,13 +11,12 @@ public class MainFrame extends JFrame implements ActionListener {
     JPanel mainPanel;
     static int panelWidth = 1707;
     static int panelHeight = 1070;
-    TextLabel infoText1, infoText2, infoText3, infoText4, infoText5, infoText6, infoText7;
+    TextLabel infoText1, infoText2, infoText3;
 
     // The parameter of enemy, can be modified
     // including health, speed, bullet speed, dmg, attack rate, spawnspeed, and
     // score
-    static int scoreRate = 1;
-
+    static int dif = 1;
 
 
     static int[] enemyHPs = {8,12,40,60,100,150,25,30};
@@ -107,7 +106,7 @@ public class MainFrame extends JFrame implements ActionListener {
         buttonPanel.add(comboBox);
 
         // start button to start the game
-        startButton = new JButton("start");
+        startButton = new JButton("newGame");
         startButton.setActionCommand("start");
         startButton.addActionListener(this);
         buttonPanel.add(startButton);
@@ -119,21 +118,13 @@ public class MainFrame extends JFrame implements ActionListener {
         buttonPanel.add(loadButton);
 
         infoText1 = new TextLabel(24, "Enemy hp x1", 0, 50, 0, 0);
-        infoText2 = new TextLabel(24, "Enemy damage x1", 0, 50, 0, 0);
-        infoText3 = new TextLabel(24, "Enemy speed x1", 0, 50, 0, 0);
-        infoText4 = new TextLabel(24, "Enemy attack speed x1", 0, 50, 0, 0);
-        infoText5 = new TextLabel(24, "Enemy bullet speed x1", 0, 50, 0, 0);
-        infoText6 = new TextLabel(24, "Enemy generate speed x1", 0, 50, 0, 0);
-        infoText7 = new TextLabel(24, "Score magnification x1", 0, 50, 0, 0);
+        infoText2 = new TextLabel(24, "Enemy speed x1", 0, 50, 0, 0);
+        infoText3 = new TextLabel(24, "Score magnification x1", 0, 50, 0, 0);
         enterPanel.add(textPanel);
         enterPanel.add(buttonPanel);
         enterPanel.add(infoText1);
         enterPanel.add(infoText2);
         enterPanel.add(infoText3);
-        enterPanel.add(infoText4);
-        enterPanel.add(infoText5);
-        enterPanel.add(infoText6);
-        enterPanel.add(infoText7);
         mainPanel.add(enterPanel);
 
         // Ranking panel, show the top players who played this game. Also empty and not
@@ -181,9 +172,15 @@ public class MainFrame extends JFrame implements ActionListener {
         if (eventName.equals("start")) {
             // Starts the game based on the difficult choosed when start button is pressed.
             // Create a GameFrame class.
+            
             this.setVisible(false);
-            new GameFrame();
-        } else if (eventName.equals("intro")) {
+            new GameFrame(false);
+        }else if (eventName.equals("load")) {
+            // continues the game.
+            this.setVisible(false);
+            new GameFrame(true);
+        }
+        else if (eventName.equals("intro")) {
             this.setVisible(false);
             new IntroFrame();
         } else if (eventName.equals("ranking")) {
@@ -195,20 +192,24 @@ public class MainFrame extends JFrame implements ActionListener {
             difficult = (String) comboBox.getSelectedItem();
             if (difficult.equals("easy")) {
                 infoText1.setText("Enemy hp x1");
-                infoText3.setText("Enemy speed x1");
-                infoText7.setText("Score magnification x1");
+                infoText2.setText("Enemy speed x1");
+                dif = 1;
+                infoText3.setText("Score magnification x1");
             } else if (difficult.equals("medium")) {
                 infoText1.setText("Enemy hp x1.25");
-                infoText3.setText("Enemy speed x1.2");
-                infoText7.setText("Score magnification x1.5");
+                infoText2.setText("Enemy speed x1.25");
+                infoText3.setText("Score magnification x1.5");
+                dif = 2;
             } else if (difficult.equals("hard")) {
                 infoText1.setText("Enemy hp x1.5");
-                infoText3.setText("Enemy speed x1.5");
-                infoText7.setText("Score magnification x2");
+                infoText2.setText("Enemy speed x1.5");
+                infoText3.setText("Score magnification x2");
+                dif = 3;
             } else if (difficult.equals("impossible")) {
                 infoText1.setText("Enemy hp x2");
-                infoText3.setText("Enemy speed x2");
-                infoText7.setText("Score magnification x5");
+                infoText2.setText("Enemy speed x2");
+                infoText3.setText("Score magnification x5");
+                dif = 4;
             }
         }
 

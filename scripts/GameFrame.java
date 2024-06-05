@@ -30,9 +30,9 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GameFrame extends JFrame implements ActionListener {
-    public static void main(String[] args) {
-        new GameFrame();
-    }
+    // public static void main(String[] args) {
+    // new GameFrame();
+    // }
 
     GamePanel gamePanel;
     Timer timer;
@@ -80,18 +80,23 @@ public class GameFrame extends JFrame implements ActionListener {
     // Game variables
     static int playerHP = 20;
     static int score = 0;
+    int difficult = 1;
     int cash = 80;
     boolean notSave = true;
+    boolean load;
+    int scoreRate = 1;
 
     // panel variables
     static Tower selectedTower;
     static Block selectedBlock;
     static boolean panelOperation;
 
-    GameFrame() {
+    GameFrame(boolean load) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setUndecorated(true);
+        this.load = load;
+        
         panelWidth = MainFrame.panelWidth;
         panelHeight = MainFrame.panelHeight;
         gamePanel = new GamePanel();
@@ -190,7 +195,52 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t7);
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
         loadWave();
-        loadGame();
+        if (this.load) {
+            loadGame();
+        }else{
+            this.difficult = MainFrame.dif;
+        }
+        int[] tempEnemyHPs =  new int[8];
+            double[] tempEnemySpeeds =  new double[8];
+            if (this.difficult==1){
+                
+                for (int i = 0; i<8;i++){
+                    tempEnemyHPs[i] = MainFrame.enemyHPs[i]/2;
+                }
+                for (int i = 0; i<8;i++){
+                    tempEnemySpeeds[i] = MainFrame.enemySpeeds[i]/2;
+                }
+                MainFrame.enemyHPs = tempEnemyHPs;
+                MainFrame.enemySpeeds = tempEnemySpeeds;
+                scoreRate =1;
+            }
+            else if (this.difficult==2){
+                
+                for (int i = 0; i<8;i++){
+                    tempEnemyHPs[i] = (int)(MainFrame.enemyHPs[i]/1.6);
+                }
+                for (int i = 0; i<8;i++){
+                    tempEnemySpeeds[i] = MainFrame.enemySpeeds[i]/1.6;
+                }
+                MainFrame.enemyHPs = tempEnemyHPs;
+                MainFrame.enemySpeeds = tempEnemySpeeds;
+                scoreRate =2;
+            }
+            else if (this.difficult==3){
+                
+                for (int i = 0; i<8;i++){
+                    tempEnemyHPs[i] = (int)(MainFrame.enemyHPs[i]/1.33);
+                }
+                for (int i = 0; i<8;i++){
+                    tempEnemySpeeds[i] = MainFrame.enemySpeeds[i]/1.33;
+                }
+                MainFrame.enemyHPs = tempEnemyHPs;
+                MainFrame.enemySpeeds = tempEnemySpeeds;
+                scoreRate =3;
+            }
+            else{
+                scoreRate = 5;
+            }
 
         // Start the timer
         timer = new Timer(1, this);
@@ -412,7 +462,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
                 towerGrid[gridY][gridX] = 1;
                 if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)
-                        && (gridY != row/2 || gridX != col/2+1)) {
+                        && (gridY != row / 2 || gridX != col / 2 + 1)) {
                     for (int i = 0; i < pathGrid.length; i++) {
                         for (int j = 0; j < pathGrid[0].length; j++) {
                             System.out.print(pathGrid[i][j] + " ");
@@ -560,6 +610,7 @@ public class GameFrame extends JFrame implements ActionListener {
         if (allOut && enemyNum == 0) {
             edit = true;
             cash += (waveNum + 1) * 20;
+            score += (waveNum + 1) * 50 * scoreRate;
         }
     }
 
@@ -594,7 +645,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 enemy.die();
                 enemys.remove(enemy);
                 cash += enemy.type * 10;
-                score += enemy.type * 20;
+                score += enemy.type * 20 * scoreRate;
 
             }
         }
@@ -874,6 +925,9 @@ public class GameFrame extends JFrame implements ActionListener {
             writer.write(String.valueOf(waveNum));
             writer.newLine();
             writer.write(String.valueOf(playerHP));
+            writer.newLine();
+            writer.write(String.valueOf(this.difficult));
+            
             writer.close();
             out.close();
         } catch (Exception e) {
@@ -991,6 +1045,7 @@ public class GameFrame extends JFrame implements ActionListener {
             score = Integer.parseInt(reader.readLine());
             waveNum = Integer.parseInt(reader.readLine());
             playerHP = Integer.parseInt(reader.readLine());
+            this.difficult = Integer.parseInt(reader.readLine());
             reader.close();
             in.close();
         } catch (Exception ee) {
