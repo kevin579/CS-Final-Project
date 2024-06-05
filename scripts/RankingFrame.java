@@ -1,3 +1,4 @@
+package finalProject;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,7 +15,6 @@ public class RankingFrame extends JFrame implements ActionListener {
 	private ArrayList<Integer> sort = new ArrayList<Integer>();
 	private HashMap<Integer, String> info = new HashMap<Integer, String>();
 	
-	
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -26,56 +26,59 @@ public class RankingFrame extends JFrame implements ActionListener {
 	public RankingFrame() {
 	   this.setTitle("Rankings");
        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-       this.setSize(new Dimension(1500, 800));
+     //  this.setSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight));
       
        //Main Panel
        mainPanel = new JSplitPane();
        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
        mainPanel.setDividerLocation(760);
-       mainPanel.setBackground(new Color(255, 240, 255));  // Set background color
+       mainPanel.setBackground(new Color(255, 240, 255)); 
+       this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight)); // Set background color
        //Rank Panel
        rankPanel = new JPanel();
        rankPanel.setLayout(new BorderLayout());
        rankPanel.setPreferredSize(new Dimension(1500, 750));
        rankPanel.setBackground(new Color(255, 240, 255));  // Set background color
+       this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/20*19));
        
        title = new JLabel("Rankings", SwingConstants.CENTER);
        Font labelFont = title.getFont();
        title.setFont(new Font(labelFont.getName(), Font.PLAIN, 30));
        rankPanel.add(title, BorderLayout.PAGE_START);
        
-       right = new JLabel("                                                                                                                                                                 ");
-       left = new JLabel("                                                                                                                                                                 ");
+       right = new JLabel("                                                                                  ");
+       left = new JLabel("                                                                                  ");
        bottom = new JLabel("");
        rankPanel.add(right, BorderLayout.LINE_START);
        rankPanel.add(left, BorderLayout.LINE_END);
        rankPanel.add(bottom, BorderLayout.PAGE_END);
        
+       //Read file and sort the scores of players.
        this.fileToSortedArray("scripts/ranking.txt");
        
- 	   scrollPanel = new JPanel(new GridLayout(0, 3));
+       scrollPanel = new JPanel(new GridLayout(0, 3));
        scroll = new JScrollPane(scrollPanel);
-	   scrollPanel.setBackground(new Color(230, 255, 255));
-	   
+       scrollPanel.setBackground(new Color(230, 255, 255));
+     
        for(int i = 0; i < sort.size() + 1; i++) {
     	   if(i == 0) {
     		   rank = new JLabel("Rank", SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
         	   Font font = rank.getFont();
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(0,50));
+        	   rank.setPreferredSize(new Dimension(1,50));
         	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel("User", SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(5,50));
+        	   rank.setPreferredSize(new Dimension(1,50));
         	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel("Score", SwingConstants.CENTER);
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(0,50));
+        	   rank.setPreferredSize(new Dimension(1,50));
         	   scrollPanel.add(rank);  
     	   }
     	   else {
@@ -86,32 +89,29 @@ public class RankingFrame extends JFrame implements ActionListener {
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
         	   Font font = rank.getFont();
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(0,50));
+        	   rank.setPreferredSize(new Dimension(1,50));
         	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel(this.info.get(key), SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(5,50));
+        	   rank.setPreferredSize(new Dimension(1,50));
         	   scrollPanel.add(rank);
         	   
         	   rank = new JLabel(score, SwingConstants.CENTER);
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
                rank.setFont(new Font(font.getName(), Font.PLAIN, 16));
-        	   rank.setPreferredSize(new Dimension(0,50));
+        	   rank.setPreferredSize(new Dimension(1,50));
         	   scrollPanel.add(rank);
     	   }
        }
-       
-       scroll = new JScrollPane(scrollPanel);
-       scroll.setPreferredSize(new Dimension(200, 200));
-       
+   
        rankPanel.add(scroll, BorderLayout.CENTER);
       
        //Button Panel for return button
        btnPanel = new JPanel();
        btnPanel.setLayout(new BorderLayout(10, 10));
-       btnPanel.setPreferredSize(new Dimension(1500, 40));
+       btnPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/20));
        btnPanel.setBackground(new Color(255, 240, 255));  // Set background color
        mainMenu = new JButton("Return to Main Menu");
        mainMenu.setActionCommand("return");
@@ -121,6 +121,7 @@ public class RankingFrame extends JFrame implements ActionListener {
        mainPanel.setTopComponent(rankPanel);
        mainPanel.setBottomComponent(btnPanel);
        this.add(mainPanel);
+       this.pack();
        this.setLocationRelativeTo(null);
        this.setVisible(true);
 	}
