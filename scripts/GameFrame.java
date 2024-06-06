@@ -53,6 +53,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static int startX, startY, endX, endY;
     static int gridX, gridY;
     static Color transparentRed = new Color(250, 0, 0, 50);
+    static Color transparentOrange = new Color(255, 165, 0, 50);
 
     // variables for block and tower
     static ArrayList<Block> blocks;
@@ -809,8 +810,12 @@ public class GameFrame extends JFrame implements ActionListener {
             if (towerPanel != null) {
                 gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
                 if (selectedTower != null) {
-                    gc.setColor(Color.BLACK);
+                	gc.setColor(Color.BLACK);
                     gc.drawOval(selectedTower.x - selectedTower.range * blockSize + blockSize / 2,
+                            selectedTower.y - selectedTower.range * blockSize + blockSize / 2,
+                            selectedTower.range * blockSize * 2, selectedTower.range * blockSize * 2);
+                    gc.setColor(transparentOrange);
+                    gc.fillOval(selectedTower.x - selectedTower.range * blockSize + blockSize / 2,
                             selectedTower.y - selectedTower.range * blockSize + blockSize / 2,
                             selectedTower.range * blockSize * 2, selectedTower.range * blockSize * 2);
                     gc.setColor(towerPanel.color);
