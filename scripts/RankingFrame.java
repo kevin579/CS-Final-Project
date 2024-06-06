@@ -14,15 +14,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 	private ArrayList<Integer> sort = new ArrayList<Integer>();
 	private HashMap<Integer, String> info = new HashMap<Integer, String>();
 	
-	public static void main(String[] args) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new RankingFrame();
-			}
-		});
-	}
-	
-	public RankingFrame() {
+	RankingFrame() {
 	   this.setTitle("Rankings");
        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
      //  this.setSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight));
@@ -127,7 +119,6 @@ public class RankingFrame extends JFrame implements ActionListener {
 	
 	public void fileToSortedArray(String file) {
 		//fills the array with data from file.
-		int index = 0;
 		String line;
 		
 		try {
@@ -136,7 +127,6 @@ public class RankingFrame extends JFrame implements ActionListener {
 			
 			while((line = reader.readLine()) != null) {
 				String[] parts = line.split(" ");
-				int count = 0;
 				if(parts.length == 2) {
 					String user = parts[0]; //Usernames
 					int score = Integer.parseInt(parts[1]); //Scores
@@ -144,7 +134,6 @@ public class RankingFrame extends JFrame implements ActionListener {
 					this.info.put(score, user); //Add users and scores into hashmap.
 					
 					this.sort.add(score); //Add scores into arraylist.
-					count++;
 				}
 			}
 			reader.close();

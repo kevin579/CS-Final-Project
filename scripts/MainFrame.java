@@ -1,8 +1,11 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 
 //This is the introduction page of the application
 public class MainFrame extends JFrame implements ActionListener {
@@ -21,7 +24,7 @@ public class MainFrame extends JFrame implements ActionListener {
     // including health, speed, bullet speed, dmg, attack rate, spawnspeed, and
     // score
     static int dif = 1;
-    static BufferedImage pointerUp,pointerDown,pointerLeft,pointerRight;
+    static BufferedImage pointerUp, pointerDown, pointerLeft, pointerRight;
     static int[] enemyHPs = { 8, 12, 40, 60, 100, 150, 25, 30 };
     static double[] enemySpeeds = { 1.2, 1.5, 1, 1, 0.8, 0.9, 1.8, 2 };
     static int[] towerCosts = { 10, 20, 50, 180, 200, 1000, 1500, 2000 };
@@ -30,6 +33,13 @@ public class MainFrame extends JFrame implements ActionListener {
     static int[] towerSpeed = { 5, 6, 7, 5, 8, 10, 3 };
     static int[] towerFreq = { 15, 10, 5, 20, 20, 40, 15 };
     static int[] explodeRadius = new int[2];
+
+    static ArrayList<BufferedImage> towerImages;
+    static ArrayList<BufferedImage> enemyImages;
+    static ArrayList<BufferedImage> bulletImages;
+    static BufferedImage startImage;
+    static BufferedImage endImage;
+    static BufferedImage explodeImage;
 
     public static void main(String[] args) {
         new MainFrame();
@@ -66,50 +76,41 @@ public class MainFrame extends JFrame implements ActionListener {
         JPanel titlePanel = new JPanel();
         titlePanel.setBackground(new Color(152, 251, 152));
         titlePanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 50, 10));
-        TextLabel titleText = new TextLabel(64, "Welcome to Space Shooting", 0, 0, 0, 0);
+        TextLabel titleText = new TextLabel(64, "Welcome to Tower Defense!", 0, 0, 0, 0);
         titlePanel.add(titleText);
 
-        // The introduction pannel on how to play the game, is empty and not be added
-        // content in this assignment.
-
-        PurplePanel introductionPanel = new PurplePanel();
+        // The introduction pannel on how to play the game, Lead to intro frame for more detail
+        JPanel introductionPanel = new JPanel();
         introductionPanel.setBackground(new Color(252, 71, 71));
+        introductionPanel.setLayout(new BoxLayout(introductionPanel, BoxLayout.PAGE_AXIS));
         introductionPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
-
+        introductionPanel.add(new TextLabel(30, "Introduction",0,10,40,0));
         introButton = new JButton("Click to see Introduction");
         introButton.setActionCommand("intro");
         introButton.addActionListener(this);
         introductionPanel.add(introButton);
 
-        // Game rules
-        /**
-         * Simplified ver.
-         * Move blocks and build machine gun towers to defend against alien invasion!
-         * Your goal is to withstand all the waves to final victory.
-         * 
-         * In order to quit, click ESCAPE key
-         * 
-         * Good luck commander!
-         * 
-         * 
-         */
 
         // The center panel, will let the player to choose difficulty and start the
-        // game. Also displays difficulty information. Include button
-        PurplePanel enterPanel = new PurplePanel();
+        // game. Also displays difficulty information.
+        JPanel enterPanel = new JPanel();
+        JPanel textPanel = new JPanel();
+        JPanel buttonPanel = new JPanel();
+
+        textPanel.add(new TextLabel(36, "Select Difficulty", 0, 0, 0, 0));
+        
         enterPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
         enterPanel.setLayout(new GridLayout(10, 1));
-        comboBox = new JComboBox<String>(difficulties);
-        comboBox.addActionListener(this);
-        PurplePanel textPanel = new PurplePanel();
-        PurplePanel buttonPanel = new PurplePanel();
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
-        JLabel t1 = new JLabel("Enter username");
-        buttonPanel.add(t1);
+
+        //A text field for username input
+        buttonPanel.add(new TextLabel(18,"Enter username",-3,0,0,0));
         textField = new JTextField(10);
         buttonPanel.add(textField);
-        TextLabel chooseDifficultText = new TextLabel(36, "Select Difficulty", 0, 0, 0, 0);
-        textPanel.add(chooseDifficultText);
+        
+        //ComboBox for choose difficulty
+        comboBox = new JComboBox<String>(difficulties);
+        comboBox.addActionListener(this);
         buttonPanel.add(comboBox);
 
         // start button to start the game
@@ -136,10 +137,11 @@ public class MainFrame extends JFrame implements ActionListener {
 
         // Ranking panel, show the top players who played this game. Also empty and not
         // made.
-        PurplePanel rankingPanel = new PurplePanel();
+        JPanel rankingPanel = new JPanel();
         rankingPanel.setBackground(new Color(204, 153, 255));
         rankingPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
-
+        rankingPanel.setLayout(new BoxLayout(rankingPanel, BoxLayout.PAGE_AXIS));
+        rankingPanel.add(new TextLabel(30, "Ranking", 0, 20, 40, 0));
         rankButton = new JButton("Click to see ranking");
         rankButton.setActionCommand("ranking");
         rankButton.addActionListener(this);
@@ -168,42 +170,87 @@ public class MainFrame extends JFrame implements ActionListener {
         this.setFocusable(true);
         this.requestFocusInWindow(true);
 
+        initializeVariables();
+
+    }
+
+    /**
+     * Get the size of the maximized window
+     * Load all the images.
+     * 
+     */
+    public void initializeVariables() {
         panelWidth = this.getWidth();
         panelHeight = this.getHeight();
         explodeRadius[0] = panelHeight / 8;
         explodeRadius[1] = panelHeight / 12;
-        pointerUp = GameFrame.loadImage("scripts/Images/pointerUp.png");
-        pointerDown = GameFrame.loadImage("scripts/Images/pointerDown.png");
-        pointerLeft = GameFrame.loadImage("scripts/Images/pointerLeft.png");
-        pointerRight= GameFrame.loadImage("scripts/Images/pointerRight.png");
 
+        towerImages = new ArrayList<BufferedImage>();
+        enemyImages = new ArrayList<BufferedImage>();
+        bulletImages = new ArrayList<BufferedImage>();
+        pointerUp = loadImage("scripts/Images/pointerUp.png");
+        pointerDown = loadImage("scripts/Images/pointerDown.png");
+        pointerLeft = loadImage("scripts/Images/pointerLeft.png");
+        pointerRight = loadImage("scripts/Images/pointerRight.png");
+
+        startImage = loadImage("scripts/Images/start.png");
+        endImage = loadImage("scripts/Images/end.png");
+
+        explodeImage = loadImage("scripts/Images/explosions.png");
+        bulletImages.add(loadImage("scripts/Images/bullet.png"));
+        bulletImages.add(loadImage("scripts/Images/boom.png"));
+        bulletImages.add(loadImage("scripts/Images/missle.png"));
+
+        enemyImages.add(loadImage("scripts/Images/enemy_2.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_3.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_4.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_5.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_6.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_7.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_8.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_9.png"));
+        enemyImages.add(loadImage("scripts/Images/enemy_10.png"));
+
+        towerImages.add(loadImage("scripts/Images/block.png"));
+        towerImages.add(loadImage("scripts/Images/tower_1.png"));
+        towerImages.add(loadImage("scripts/Images/tower_2.png"));
+        towerImages.add(loadImage("scripts/Images/tower_3.png"));
+        towerImages.add(loadImage("scripts/Images/tower_4.png"));
+        towerImages.add(loadImage("scripts/Images/tower_5.png"));
+        towerImages.add(loadImage("scripts/Images/tower_6.png"));
+        towerImages.add(loadImage("scripts/Images/tower_7.png"));
     }
 
     // When the player chooses a diffucult or starts the game
     public void actionPerformed(ActionEvent event) {
         String eventName = event.getActionCommand();
+
+        // get the userName
+        userID = textField.getText();
+        if (userID.equals("")) {
+            userID = "anonymous";
+        }
+        // Starts a new game based on the difficult choosed when start button is pressed.
         if (eventName.equals("start")) {
-            // Starts the game based on the difficult choosed when start button is pressed.
-            // Create a GameFrame class.
-            userID = textField.getText();
-            if (userID.equals("")) {
-                userID = "anonymous";
-            }
-            JOptionPane.showMessageDialog(null, "Are you sure you want to start new Game? Archives will be coverd ", "Warning",
-                    JOptionPane.ERROR_MESSAGE);
-            
+
+            JOptionPane.showMessageDialog(null,
+                    "Are you sure you want to start new Game? Your previous progress will be coverd. Press esc to cancel ",
+                    "Warning",
+                    JOptionPane.NO_OPTION);
 
             this.setVisible(false);
+
+            // Create the game frame which is new
             new GameFrame(false);
 
-        } else if (eventName.equals("load")) {
-            userID = textField.getText();
-            if (userID.equals("")) {
-                userID = "anonymous";
-            }
+        }
+        // Load the game when load is pressed
+        else if (eventName.equals("load")) {
+
+            //Check if the userName have a progress file
             String fileName = "scripts/Progress/" + userID + "progress.txt";
             File file = new File(fileName);
-            if (!file.exists()) {
+            if (!file.exists()) {//Tell the user file not exits
                 JOptionPane.showMessageDialog(null, "No such Archive, please recheck user name", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
@@ -211,15 +258,22 @@ public class MainFrame extends JFrame implements ActionListener {
             // continues the game.
             this.setVisible(false);
             new GameFrame(true);
-        } else if (eventName.equals("intro")) {
+        } 
+        //Brings the user to the intro frame
+        else if (eventName.equals("intro")) {
             this.setVisible(false);
             new IntroFrame();
-        } else if (eventName.equals("ranking")) {
+        } 
+        //Brings the user to ranking frame
+        else if (eventName.equals("ranking")) {
             this.setVisible(false);
             new RankingFrame();
-        } else { // when a difficult is choosed
+        } 
+        //If the combo box is clicked and choosed difficulty
+        else { 
             @SuppressWarnings("unchecked") // for comboBox
             JComboBox<String> comboBox = (JComboBox<String>) event.getSource();
+            //Get and set difficulty
             difficult = (String) comboBox.getSelectedItem();
             if (difficult.equals("easy")) {
                 infoText1.setText("Enemy hp x1");
@@ -243,23 +297,32 @@ public class MainFrame extends JFrame implements ActionListener {
                 dif = 4;
             }
         }
-
     }
 
-    // Modify the JPanel for convinience
-    private class PurplePanel extends JPanel {
-        PurplePanel() {
-            super();
-            this.setBackground(new Color(230, 230, 250));
+    /**
+     * Load the image
+     * @param filename The file name of the image
+     * @return  The buffered image
+     */
+    static BufferedImage loadImage(String filename) {
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(filename));
+        } catch (IOException e) {
+            System.out.println(e.toString());
+            JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
+        return img;
     }
 
-    // Modify the JLabel for convinience
+    // Modify the JLabel text for convinience
     private class TextLabel extends JLabel {
         TextLabel(int size, String text, int topMargin, int leftMargin, int bottomMargin, int rightMargin) {
-            super(text);
+            super(text,SwingConstants.CENTER);
             this.setFont(new Font("Serif", Font.PLAIN, size));
             this.setBorder(BorderFactory.createEmptyBorder(topMargin, leftMargin, bottomMargin, rightMargin));
         }
     }
+
 }

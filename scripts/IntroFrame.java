@@ -3,9 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
+
 
 public class IntroFrame extends JFrame {
     public IntroFrame() {
@@ -48,7 +46,7 @@ public class IntroFrame extends JFrame {
         JLabel imageLabel = new JLabel();
         // BufferedImage image = ImageIO.read(new
         // File("bin/Images/gameDisplayImage.png"));
-        BufferedImage image = GameFrame.loadImage("scripts/Images/gameDisplayImage.png");
+        BufferedImage image = MainFrame.loadImage("scripts/Images/gameDisplayImage.png");
         // Resize the image
         int newWidth = image.getWidth() / 2;
         int newHeight = image.getHeight() / 2;

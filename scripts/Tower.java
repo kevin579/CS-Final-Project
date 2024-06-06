@@ -21,7 +21,7 @@ public class Tower extends Rectangle {
 		this.type = type;
 		this.px = gridX * GameFrame.blockSize + GameFrame.leftMargin;
 		this.py = gridY * GameFrame.blockSize + GameFrame.topMargin;
-		this.image = GameFrame.towerImages.get(type);
+		this.image = MainFrame.towerImages.get(type);
 		this.cost = MainFrame.towerCosts[type - 1];
 		this.speed = MainFrame.towerSpeed[type - 1];
 		this.freq = MainFrame.towerFreq[type - 1];
@@ -173,16 +173,15 @@ class MissleTower extends Tower {
  * xy.
  */
 class Block extends Rectangle {
-	int cost, gridX, gridY;
+	int  gridX, gridY;
 	BufferedImage image;
 
-	Block(int gridX, int gridY, int cost) {
+	Block(int gridX, int gridY) {
 		super(gridX * GameFrame.blockSize + GameFrame.leftMargin, gridY * GameFrame.blockSize + GameFrame.topMargin,
 				GameFrame.blockSize, GameFrame.blockSize);
 		this.gridX = gridX;
 		this.gridY = gridY;
-		this.cost = cost;
-		this.image = GameFrame.towerImages.get(0);
+		this.image = MainFrame.towerImages.get(0);
 	}
 }
 
@@ -200,7 +199,7 @@ class TowerIcon extends Rectangle {
 		this.cost = cost;
 		this.text = "$" + String.valueOf(cost);
 		this.select = false;
-		this.icon = GameFrame.towerImages.get(type - 1);
+		this.icon = MainFrame.towerImages.get(type - 1);
 	}
 }
 

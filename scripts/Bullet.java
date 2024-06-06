@@ -31,13 +31,13 @@ public class Bullet extends Rectangle {
 		
 		//load images
 		if (this.type ==5){
-			this.image = GameFrame.bulletImages.get(2);
+			this.image = MainFrame.bulletImages.get(2);
 		}
 		else if (this.type ==6){
-			this.image = GameFrame.bulletImages.get(1);
+			this.image = MainFrame.bulletImages.get(1);
 		}
 		else{
-			this.image = GameFrame.bulletImages.get(0);
+			this.image = MainFrame.bulletImages.get(0);
 		}
 
 

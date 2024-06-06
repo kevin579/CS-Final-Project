@@ -35,7 +35,7 @@ public class Enemy extends Rectangle {
             
         } else {// These are normal enemies
 
-            this.image = GameFrame.enemyImages.get(type - 1);
+            this.image = MainFrame.enemyImages.get(type - 1);
             this.hp = MainFrame.enemyHPs[type - 1] * factor;
             this.speed = MainFrame.enemySpeeds[type - 1];
             this.maxHp = this.hp;
