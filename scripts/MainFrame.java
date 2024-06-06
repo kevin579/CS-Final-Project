@@ -28,7 +28,7 @@ public class MainFrame extends JFrame implements ActionListener {
     static int[] towerRange = { 5, 6, 7, 5, 50, 8, 4};
     static int[] towerSpeed = {5,6,7,5,8,10,3};
     static int[] towerFreq = {15,10,5,20,20,40,15};
-    static int[] explodeRadius = { panelHeight / 8, panelHeight / 12 };
+    static int[] explodeRadius = new int[2];
 
     public static void main(String[] args) {
         new MainFrame();
@@ -168,6 +168,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
         panelWidth = this.getWidth();
         panelHeight = this.getHeight();
+        explodeRadius[0] = panelHeight / 8;
+        explodeRadius[1]  = panelHeight / 12;
 
     }
 

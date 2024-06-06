@@ -82,7 +82,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static int playerHP = 20;
     static int score = 0;
     int difficult = 1;
-    int cash = 80;
+    int cash = 8000;
     boolean notSave = true;
     boolean load;
     int scoreRate = 1;
@@ -632,8 +632,10 @@ public class GameFrame extends JFrame implements ActionListener {
             for (Bullet bullet : tempBullets) {
                 if (bullet.intersects(enemy) && bullet.explodeTime < 0) {
                     enemy.hp -= bullet.damage;
+                    
                     if (!bullet.penetrate) {
                         if (bullet.explodeRadius > 0) {
+                            
                             bullet.explode();
                         } else {
                             bullets.remove(bullet);
@@ -775,6 +777,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     gc.drawImage(explodeImage, bullet.x - bullet.explodeRadius / 2, bullet.y - bullet.explodeRadius / 2,
                             bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
                             bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
+                            System.out.println("explode");
                 }
                 // Draw Missle with correct direction
                 if (bullet.explodeTime < 0 && bullet.transform != null) {
