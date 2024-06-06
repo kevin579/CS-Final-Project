@@ -46,17 +46,16 @@ public class IntroFrame extends JFrame {
 
         // Image label and display the image
         JLabel imageLabel = new JLabel();
-        try {
-            BufferedImage image = ImageIO.read(new File("bin/Images/gameDisplayImage.png"));
-            // Resize the image
-            int newWidth = image.getWidth() / 2;
-            int newHeight = image.getHeight() / 2;
-            Image scaledImage = image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-            ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
-            imageLabel.setIcon(scaledImageIcon);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // BufferedImage image = ImageIO.read(new
+        // File("bin/Images/gameDisplayImage.png"));
+        BufferedImage image = GameFrame.loadImage("scripts/Images/gameDisplayImage.png");
+        // Resize the image
+        int newWidth = image.getWidth() / 2;
+        int newHeight = image.getHeight() / 2;
+        Image scaledImage = image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+        ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
+        imageLabel.setIcon(scaledImageIcon);
+
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(imageLabel);
 
