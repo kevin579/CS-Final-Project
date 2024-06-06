@@ -462,12 +462,12 @@ public class GameFrame extends JFrame implements ActionListener {
                 towerGrid[gridY][gridX] = 1;
                 if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)
                         && (gridY != row / 2 || gridX != col / 2 + 1)) {
-                    for (int i = 0; i < pathGrid.length; i++) {
-                        for (int j = 0; j < pathGrid[0].length; j++) {
-                            System.out.print(pathGrid[i][j] + " ");
-                        }
-                        System.out.println();
-                    }
+                    // for (int i = 0; i < pathGrid.length; i++) {
+                    //     for (int j = 0; j < pathGrid[0].length; j++) {
+                    //         System.out.print(pathGrid[i][j] + " ");
+                    //     }
+                    //     System.out.println();
+                    // }
                     cash -= MainFrame.towerCosts[0];
                     Block block = new Block(gridX, gridY, 10);
                     blocks.add(block);
@@ -929,25 +929,51 @@ public class GameFrame extends JFrame implements ActionListener {
             writer.write(String.valueOf(this.difficult));
             writer.newLine();
             writer.write(userID);
-            
-            String[] users = new String[1000];
-            int [] scores = new int[1000];
-            File rankingFile = new File("scripts/ranking.txt");
-            out = new FileWriter(rankingFile, true);
-            FileReader in = new FileReader(rankingFile);
-            BufferedReader reader = new BufferedReader(in);
-            String line;
-            while ( (line = reader.readLine())!=null){
-                
-            }   
-            writer = new BufferedWriter(out);
-            String output = userID + String.valueOf(score);
-            writer.newLine();
-            writer.write(output);
             writer.close();
             out.close();
+
+            File rankingFile = new File("scripts/ranking.txt");
+            FileReader in = new FileReader(rankingFile);
+            String[] users = new String[1000];
+            int [] scores = new int[1000];
+            BufferedReader reader = new BufferedReader(in);
+            String line;
+            int index = 0;
+            while ( (line = reader.readLine())!=null){
+                String[] info = line.split(" ");
+                users[index] = info[0];
+                scores[index] = Integer.parseInt(info[1]);
+                index++;
+            }   
+            reader.close();
+            in.close();
+            boolean change = false;
+            for (int i = 0; i <index;i++){
+                if (users[i].equals(userID)){
+                    change = true;
+                    if (score > scores[i]){
+                        scores[i] = score;
+                    }
+                    break;
+                }
+            }
+            out = new FileWriter(rankingFile, false);
+            writer = new BufferedWriter(out);
+            for (int i = 0; i <index;i++){
+                String output = users[i] + " " +String.valueOf(scores[i]);
+                writer.write(output);
+                writer.newLine();
+            }
+            if (!change){
+                String output = userID + " " +String.valueOf(score);
+                writer.write(output);
+                writer.newLine();
+            }
+            writer.close();
+            out.close();
+            
         } catch (Exception e) {
-            System.out.println("Cannot find progress file when writing");
+            System.out.println(e.toString());
         }
     }
 

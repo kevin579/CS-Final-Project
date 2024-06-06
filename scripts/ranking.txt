@@ -1,4 +1,8 @@
-Kevin 100
+Kevin 90
+Vinter 100
+Leo 6969
+Isabelle 100000
+KKevin1 0
 Vinter 200
 Leo 237
 Isabelle 184
@@ -14,3 +18,4 @@ ksiuh 435
 sdfio 457
 isgjoi 224
 dsoifnshoi 8
+af 90
