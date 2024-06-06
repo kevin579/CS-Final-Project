@@ -933,9 +933,16 @@ public class GameFrame extends JFrame implements ActionListener {
             writer.newLine();
             writer.write(userID);
             
-            
+            String[] users = new String[1000];
+            int [] scores = new int[1000];
             File rankingFile = new File("scripts/ranking.txt");
             out = new FileWriter(rankingFile, true);
+            FileReader in = new FileReader(rankingFile);
+            BufferedReader reader = new BufferedReader(in);
+            String line;
+            while ( (line = reader.readLine())!=null){
+                
+            }   
             writer = new BufferedWriter(out);
             String output = userID + String.valueOf(score);
             writer.newLine();
