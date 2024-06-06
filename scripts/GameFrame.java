@@ -98,7 +98,7 @@ public class GameFrame extends JFrame implements ActionListener {
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setUndecorated(true);
         this.load = load;
-        
+
         panelWidth = MainFrame.panelWidth;
         panelHeight = MainFrame.panelHeight;
         gamePanel = new GamePanel();
@@ -199,51 +199,48 @@ public class GameFrame extends JFrame implements ActionListener {
         loadWave();
         if (this.load) {
             loadGame();
-        }else{
+        } else {
             this.difficult = MainFrame.dif;
             this.userID = MainFrame.userID;
         }
-        int[] tempEnemyHPs =  new int[8];
-            double[] tempEnemySpeeds =  new double[8];
-            if (this.difficult==1){
-                
-                for (int i = 0; i<8;i++){
-                    tempEnemyHPs[i] = MainFrame.enemyHPs[i]/2;
-                }
-                for (int i = 0; i<8;i++){
-                    tempEnemySpeeds[i] = MainFrame.enemySpeeds[i]/2;
-                }
-                MainFrame.enemyHPs = tempEnemyHPs;
-                MainFrame.enemySpeeds = tempEnemySpeeds;
-                scoreRate =1;
+        int[] tempEnemyHPs = new int[8];
+        double[] tempEnemySpeeds = new double[8];
+        if (this.difficult == 1) {
+
+            for (int i = 0; i < 8; i++) {
+                tempEnemyHPs[i] = MainFrame.enemyHPs[i] / 2;
             }
-            else if (this.difficult==2){
-                
-                for (int i = 0; i<8;i++){
-                    tempEnemyHPs[i] = (int)(MainFrame.enemyHPs[i]/1.6);
-                }
-                for (int i = 0; i<8;i++){
-                    tempEnemySpeeds[i] = MainFrame.enemySpeeds[i]/1.6;
-                }
-                MainFrame.enemyHPs = tempEnemyHPs;
-                MainFrame.enemySpeeds = tempEnemySpeeds;
-                scoreRate =2;
+            for (int i = 0; i < 8; i++) {
+                tempEnemySpeeds[i] = MainFrame.enemySpeeds[i] / 2;
             }
-            else if (this.difficult==3){
-                
-                for (int i = 0; i<8;i++){
-                    tempEnemyHPs[i] = (int)(MainFrame.enemyHPs[i]/1.33);
-                }
-                for (int i = 0; i<8;i++){
-                    tempEnemySpeeds[i] = MainFrame.enemySpeeds[i]/1.33;
-                }
-                MainFrame.enemyHPs = tempEnemyHPs;
-                MainFrame.enemySpeeds = tempEnemySpeeds;
-                scoreRate =3;
+            MainFrame.enemyHPs = tempEnemyHPs;
+            MainFrame.enemySpeeds = tempEnemySpeeds;
+            scoreRate = 1;
+        } else if (this.difficult == 2) {
+
+            for (int i = 0; i < 8; i++) {
+                tempEnemyHPs[i] = (int) (MainFrame.enemyHPs[i] / 1.6);
             }
-            else{
-                scoreRate = 5;
+            for (int i = 0; i < 8; i++) {
+                tempEnemySpeeds[i] = MainFrame.enemySpeeds[i] / 1.6;
             }
+            MainFrame.enemyHPs = tempEnemyHPs;
+            MainFrame.enemySpeeds = tempEnemySpeeds;
+            scoreRate = 2;
+        } else if (this.difficult == 3) {
+
+            for (int i = 0; i < 8; i++) {
+                tempEnemyHPs[i] = (int) (MainFrame.enemyHPs[i] / 1.33);
+            }
+            for (int i = 0; i < 8; i++) {
+                tempEnemySpeeds[i] = MainFrame.enemySpeeds[i] / 1.33;
+            }
+            MainFrame.enemyHPs = tempEnemyHPs;
+            MainFrame.enemySpeeds = tempEnemySpeeds;
+            scoreRate = 3;
+        } else {
+            scoreRate = 5;
+        }
 
         // Start the timer
         timer = new Timer(8, this);
@@ -938,9 +935,16 @@ public class GameFrame extends JFrame implements ActionListener {
             writer.newLine();
             writer.write(userID);
             
-            
+            String[] users = new String[1000];
+            int [] scores = new int[1000];
             File rankingFile = new File("scripts/ranking.txt");
             out = new FileWriter(rankingFile, true);
+            FileReader in = new FileReader(rankingFile);
+            BufferedReader reader = new BufferedReader(in);
+            String line;
+            while ( (line = reader.readLine())!=null){
+                
+            }   
             writer = new BufferedWriter(out);
             String output = userID + String.valueOf(score);
             writer.newLine();
