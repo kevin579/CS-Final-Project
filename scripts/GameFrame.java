@@ -202,6 +202,10 @@ public class GameFrame extends JFrame implements ActionListener {
         } else {
             this.difficult = MainFrame.dif;
             this.userID = MainFrame.userID;
+            if (MainFrame.userID ==null){
+                this.userID = "anonymous";
+            }
+            
         }
         int[] tempEnemyHPs = new int[8];
         double[] tempEnemySpeeds = new double[8];
@@ -777,7 +781,6 @@ public class GameFrame extends JFrame implements ActionListener {
                     gc.drawImage(explodeImage, bullet.x - bullet.explodeRadius / 2, bullet.y - bullet.explodeRadius / 2,
                             bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
                             bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
-                            System.out.println("explode");
                 }
                 // Draw Missle with correct direction
                 if (bullet.explodeTime < 0 && bullet.transform != null) {

@@ -35,7 +35,7 @@ public class Tower extends Rectangle {
 		for (Enemy enemy : GameFrame.enemys) {
 			this.dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
 			this.estimateTime = this.dis / this.speed;
-			if (this.dis < this.range * GameFrame.blockSize && enemy.dis > largestDis) {
+			if (this.dis < this.range * GameFrame.blockSize && enemy.hp>0 && enemy.dis > largestDis) {
 				largestDis = enemy.dis;
 				this.target = enemy;
 				this.angle = (Math.atan2(
@@ -100,7 +100,7 @@ class RingTower extends Tower {
 
 		for (Enemy enemy : GameFrame.enemys) {
 			this.dis = Math.sqrt(Math.pow((enemy.x - this.px), 2) + Math.pow((enemy.y - this.py), 2));
-			if (this.dis < this.range * GameFrame.blockSize) {
+			if (this.dis < this.range * GameFrame.blockSize && enemy.hp>0) {
 				this.target = enemy;
 				return;
 			}
