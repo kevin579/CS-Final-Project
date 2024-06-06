@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 //This is the introduction page of the application
 public class MainFrame extends JFrame implements ActionListener {
@@ -13,21 +15,20 @@ public class MainFrame extends JFrame implements ActionListener {
     static int panelWidth;
     static int panelHeight;
     TextLabel infoText1, infoText2, infoText3;
-    static String userID;
+    static String userID = "anonymous";
 
     // The parameter of enemy, can be modified
     // including health, speed, bullet speed, dmg, attack rate, spawnspeed, and
     // score
     static int dif = 1;
-
-
-    static int[] enemyHPs = {8,12,40,60,100,150,25,30};
-    static double[] enemySpeeds = {1.2,1.5,1,1,0.8,0.9,1.8,2};
-    static int[] towerCosts = {10,20,50,180,200,1000,1500,2000};
-    static int[] towerDamage = {2,4,8,3,40,70,5};
-    static int[] towerRange = { 5, 6, 7, 5, 50, 8, 4};
-    static int[] towerSpeed = {5,6,7,5,8,10,3};
-    static int[] towerFreq = {15,10,5,20,20,40,15};
+    static BufferedImage pointerUp,pointerDown,pointerLeft,pointerRight;
+    static int[] enemyHPs = { 8, 12, 40, 60, 100, 150, 25, 30 };
+    static double[] enemySpeeds = { 1.2, 1.5, 1, 1, 0.8, 0.9, 1.8, 2 };
+    static int[] towerCosts = { 10, 20, 50, 180, 200, 1000, 1500, 2000 };
+    static int[] towerDamage = { 2, 4, 8, 3, 40, 70, 5 };
+    static int[] towerRange = { 5, 6, 7, 5, 50, 8, 4 };
+    static int[] towerSpeed = { 5, 6, 7, 5, 8, 10, 3 };
+    static int[] towerFreq = { 15, 10, 5, 20, 20, 40, 15 };
     static int[] explodeRadius = new int[2];
 
     public static void main(String[] args) {
@@ -103,13 +104,14 @@ public class MainFrame extends JFrame implements ActionListener {
         PurplePanel textPanel = new PurplePanel();
         PurplePanel buttonPanel = new PurplePanel();
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+        JLabel t1 = new JLabel("Enter username");
+        buttonPanel.add(t1);
         textField = new JTextField(10);
         buttonPanel.add(textField);
         TextLabel chooseDifficultText = new TextLabel(36, "Select Difficulty", 0, 0, 0, 0);
         textPanel.add(chooseDifficultText);
         buttonPanel.add(comboBox);
 
-        
         // start button to start the game
         startButton = new JButton("newGame");
         startButton.setActionCommand("start");
@@ -169,7 +171,11 @@ public class MainFrame extends JFrame implements ActionListener {
         panelWidth = this.getWidth();
         panelHeight = this.getHeight();
         explodeRadius[0] = panelHeight / 8;
-        explodeRadius[1]  = panelHeight / 12;
+        explodeRadius[1] = panelHeight / 12;
+        pointerUp = GameFrame.loadImage("scripts/Images/pointerUp.png");
+        pointerDown = GameFrame.loadImage("scripts/Images/pointerDown.png");
+        pointerLeft = GameFrame.loadImage("scripts/Images/pointerLeft.png");
+        pointerRight= GameFrame.loadImage("scripts/Images/pointerRight.png");
 
     }
 
@@ -180,15 +186,32 @@ public class MainFrame extends JFrame implements ActionListener {
             // Starts the game based on the difficult choosed when start button is pressed.
             // Create a GameFrame class.
             userID = textField.getText();
+            if (userID.equals("")) {
+                userID = "anonymous";
+            }
+            JOptionPane.showMessageDialog(null, "Are you sure you want to start new Game? Archives will be coverd ", "Warning",
+                    JOptionPane.ERROR_MESSAGE);
+            
+
             this.setVisible(false);
             new GameFrame(false);
-            
-        }else if (eventName.equals("load")) {
+
+        } else if (eventName.equals("load")) {
+            userID = textField.getText();
+            if (userID.equals("")) {
+                userID = "anonymous";
+            }
+            String fileName = "scripts/Progress/" + userID + "progress.txt";
+            File file = new File(fileName);
+            if (!file.exists()) {
+                JOptionPane.showMessageDialog(null, "No such Archive, please recheck user name", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             // continues the game.
             this.setVisible(false);
             new GameFrame(true);
-        }
-        else if (eventName.equals("intro")) {
+        } else if (eventName.equals("intro")) {
             this.setVisible(false);
             new IntroFrame();
         } else if (eventName.equals("ranking")) {

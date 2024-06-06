@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 public class Enemy extends Rectangle {
 	
 	//initialize variables
+    int gridX,gridY;
     int type;
     double speed;
     double xx, yy;
@@ -31,6 +32,7 @@ public class Enemy extends Rectangle {
         if (this.type == 0) {// this is used for showing the path (called pointer enemy). 
             this.speed = GameFrame.blockSize;
             this.hp =1;
+            
         } else {// These are normal enemies
 
             this.image = GameFrame.enemyImages.get(type - 1);
@@ -46,28 +48,46 @@ public class Enemy extends Rectangle {
 
     //method to move enemies along the path
     public void move() {
+        this.xx += this.speedX;
+        this.yy += this.speedY;
+        this.dis += Math.abs(this.speedX);
+        this.dis += Math.abs(this.speedY);
+        this.x = (int) this.xx;
+        this.y = (int) this.yy;
         if ((((this.x - GameFrame.leftMargin) % GameFrame.blockSize <= this.speed && this.speedX >= 0)
                 || ((this.x - GameFrame.leftMargin) % GameFrame.blockSize <= this.speed && this.speedX <= 0))
                 && ((((this.y - GameFrame.topMargin) % GameFrame.blockSize <= this.speed && this.speedY >= 0)
                         || ((this.y - GameFrame.topMargin) % GameFrame.blockSize <= this.speed && this.speedY <= 0)))
                 && changeBlock) {
             changeBlock = false;
-            int gridX = (this.x + GameFrame.blockSize - GameFrame.leftMargin) / GameFrame.blockSize - 1;
-            int gridY = (this.y + GameFrame.blockSize - GameFrame.topMargin) / GameFrame.blockSize - 1;
+            this.gridX = (this.x + GameFrame.blockSize - GameFrame.leftMargin) / GameFrame.blockSize - 1;
+            this.gridY = (this.y + GameFrame.blockSize - GameFrame.topMargin) / GameFrame.blockSize - 1;
             char direction = GameFrame.pathGrid[gridY][gridX];
 
             if (direction == '→') {
                 this.speedX = this.speed;
                 this.speedY = 0;
+                if (this.type ==0){
+                    this.image = MainFrame.pointerRight;
+                }
             } else if (direction == '↑') {
                 this.speedY = -this.speed;
                 this.speedX = 0;
+                if (this.type ==0){
+                    this.image = MainFrame.pointerUp;
+                }
             } else if (direction == '←') {
                 this.speedX = -this.speed;
                 this.speedY = 0;
+                if (this.type ==0){
+                    this.image = MainFrame.pointerLeft;
+                }
             } else if (direction == '↓') {
                 this.speedY = this.speed;
                 this.speedX = 0;
+                if (this.type ==0){
+                    this.image = MainFrame.pointerDown;
+                }
             } else {
                 this.hp = 0;
                 if (this.type != 0) {
@@ -76,12 +96,7 @@ public class Enemy extends Rectangle {
 
             }
         }
-        this.xx += this.speedX;
-        this.yy += this.speedY;
-        this.dis += Math.abs(this.speedX);
-        this.dis += Math.abs(this.speedY);
-        this.x = (int) this.xx;
-        this.y = (int) this.yy;
+        
 
         //Make non pointer enemy spin for better graphics. also they have a hp bar
         if (this.type != 0) {
@@ -96,6 +111,7 @@ public class Enemy extends Rectangle {
             updateHp();
         } else {
             changeBlock = true;
+            
         }
 
     }

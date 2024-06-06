@@ -197,16 +197,18 @@ public class GameFrame extends JFrame implements ActionListener {
         towerIcons.add(t7);
         findPath(towerGrid, row / 2, col / 2 + 1, pathGrid);
         loadWave();
+
         if (this.load) {
             loadGame();
         } else {
             this.difficult = MainFrame.dif;
             this.userID = MainFrame.userID;
-            if (MainFrame.userID ==null){
+            if (MainFrame.userID.equals("")) {
                 this.userID = "anonymous";
             }
-            
         }
+        // System.out.println(this.userID);
+        // System.exit(0);
         int[] tempEnemyHPs = new int[8];
         double[] tempEnemySpeeds = new double[8];
         if (this.difficult == 1) {
@@ -468,10 +470,10 @@ public class GameFrame extends JFrame implements ActionListener {
                 if (findPath(towerGrid, row / 2, col / 2 + 1, pathGrid)
                         && (gridY != row / 2 || gridX != col / 2 + 1)) {
                     // for (int i = 0; i < pathGrid.length; i++) {
-                    //     for (int j = 0; j < pathGrid[0].length; j++) {
-                    //         System.out.print(pathGrid[i][j] + " ");
-                    //     }
-                    //     System.out.println();
+                    // for (int j = 0; j < pathGrid[0].length; j++) {
+                    // System.out.print(pathGrid[i][j] + " ");
+                    // }
+                    // System.out.println();
                     // }
                     cash -= MainFrame.towerCosts[0];
                     Block block = new Block(gridX, gridY, 10);
@@ -636,10 +638,10 @@ public class GameFrame extends JFrame implements ActionListener {
             for (Bullet bullet : tempBullets) {
                 if (bullet.intersects(enemy) && bullet.explodeTime < 0) {
                     enemy.hp -= bullet.damage;
-                    
+
                     if (!bullet.penetrate) {
                         if (bullet.explodeRadius > 0) {
-                            
+
                             bullet.explode();
                         } else {
                             bullets.remove(bullet);
@@ -672,8 +674,8 @@ public class GameFrame extends JFrame implements ActionListener {
 
             drawGrid(gc);
 
-            drawTower(gc);
             drawEnemy(gc);
+            drawTower(gc);
             drawBullet(gc);
 
             drawTowerPanel(gc);
@@ -697,8 +699,10 @@ public class GameFrame extends JFrame implements ActionListener {
             // gc.setColor(Color.BLACK);
             // gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize +
             // topMargin, blockSize, blockSize);
-            gc.drawImage(start, (col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize,
-                    blockSize, null);
+            if (!edit) {
+                gc.drawImage(start, (col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize,
+                        blockSize, null);
+            }
             // gc.setColor(Color.BLACK);
             // gc.fillRect((col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize +
             // topMargin, blockSize, blockSize);
@@ -793,10 +797,12 @@ public class GameFrame extends JFrame implements ActionListener {
         }
 
         public void drawEnemy(Graphics2D gc) {
-            gc.setColor(transparentRed);
+            // gc.setColor(transparentRed);
             for (Enemy enemy : enemys) {
                 if (enemy.type == 0) {
-                    gc.fillRect(enemy.x, enemy.y, blockSize, blockSize);
+                    // if (!(enemy.gridX ==col/2-1 && enemy.gridY==row/2)) {
+                    gc.drawImage(enemy.image, enemy.x, enemy.y, blockSize, blockSize, null);
+                    // }
                 } else {
                     int cx = enemy.x + blockSize / 2;
                     int cy = enemy.y + blockSize / 2;
@@ -816,7 +822,7 @@ public class GameFrame extends JFrame implements ActionListener {
             if (towerPanel != null) {
                 gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
                 if (selectedTower != null) {
-                	gc.setColor(Color.BLACK);
+                    gc.setColor(Color.BLACK);
                     gc.drawOval(selectedTower.x - selectedTower.range * blockSize + blockSize / 2,
                             selectedTower.y - selectedTower.range * blockSize + blockSize / 2,
                             selectedTower.range * blockSize * 2, selectedTower.range * blockSize * 2);
@@ -903,7 +909,11 @@ public class GameFrame extends JFrame implements ActionListener {
 
     public void saveGame() {
         try {
-            File progressFile = new File("scripts/progress.txt");
+            String fileName = "scripts/Progress/" + userID + "progress.txt";
+            File progressFile = new File(fileName);
+            if (!progressFile.exists()) {
+                progressFile.createNewFile();
+            }
             FileWriter out = new FileWriter(progressFile, false);
             BufferedWriter writer = new BufferedWriter(out);
             String[][] record = new String[row][col];
@@ -946,23 +956,23 @@ public class GameFrame extends JFrame implements ActionListener {
             File rankingFile = new File("scripts/ranking.txt");
             FileReader in = new FileReader(rankingFile);
             String[] users = new String[1000];
-            int [] scores = new int[1000];
+            int[] scores = new int[1000];
             BufferedReader reader = new BufferedReader(in);
             String line;
             int index = 0;
-            while ( (line = reader.readLine())!=null){
+            while ((line = reader.readLine()) != null) {
                 String[] info = line.split(" ");
                 users[index] = info[0];
                 scores[index] = Integer.parseInt(info[1]);
                 index++;
-            }   
+            }
             reader.close();
             in.close();
             boolean change = false;
-            for (int i = 0; i <index;i++){
-                if (users[i].equals(userID)){
+            for (int i = 0; i < index; i++) {
+                if (users[i].equals(userID)) {
                     change = true;
-                    if (score > scores[i]){
+                    if (score > scores[i]) {
                         scores[i] = score;
                     }
                     break;
@@ -970,19 +980,19 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             out = new FileWriter(rankingFile, false);
             writer = new BufferedWriter(out);
-            for (int i = 0; i <index;i++){
-                String output = users[i] + " " +String.valueOf(scores[i]);
+            for (int i = 0; i < index; i++) {
+                String output = users[i] + " " + String.valueOf(scores[i]);
                 writer.write(output);
                 writer.newLine();
             }
-            if (!change){
-                String output = userID + " " +String.valueOf(score);
+            if (!change) {
+                String output = userID + " " + String.valueOf(score);
                 writer.write(output);
                 writer.newLine();
             }
             writer.close();
             out.close();
-            
+
         } catch (Exception e) {
             System.out.println(e.toString());
         }
@@ -991,7 +1001,9 @@ public class GameFrame extends JFrame implements ActionListener {
     public void loadGame() {
 
         try {
-            File progressFile = new File("scripts/progress.txt");
+            String fileName = "scripts/Progress/" + MainFrame.userID + "progress.txt";
+
+            File progressFile = new File(fileName);
             FileReader in = new FileReader(progressFile);
             BufferedReader reader = new BufferedReader(in);
             for (int y = 0; y < row; y++) {
@@ -1102,6 +1114,7 @@ public class GameFrame extends JFrame implements ActionListener {
             this.userID = reader.readLine();
             reader.close();
             in.close();
+
         } catch (Exception ee) {
             System.out.println(ee.getMessage());
         }
