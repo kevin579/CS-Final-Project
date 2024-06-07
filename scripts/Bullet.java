@@ -14,9 +14,10 @@ public class Bullet extends Rectangle {
 	BufferedImage image;
 	double angle = 0;
 	AffineTransform transform;
+	Tower parent;
 	
 	//construct bullet
-	public Bullet(int x, int y, int type, int size, double speedX, double speedY, int damage) {
+	public Bullet(int x, int y, int type, int size, double speedX, double speedY, int damage, Tower parent) {
 		super(x, y, size, size);
 		this.xx = x;
 		this.yy = y;
@@ -28,6 +29,7 @@ public class Bullet extends Rectangle {
 		this.speedY = speedY;
 		this.speed = Math.sqrt(speedX * speedX + speedY * speedY);
 		this.size = size;
+		this.parent = parent;
 		
 		//load images
 		if (this.type ==5){
@@ -67,8 +69,8 @@ public class Bullet extends Rectangle {
 }
 //check for penetration
 class PenetrateBullet extends Bullet {
-	PenetrateBullet(int x, int y, int type, int size, double speedX, double speedY, int damage) {
-		super(x, y, type, size, speedX, speedY, damage);
+	PenetrateBullet(int x, int y, int type, int size, double speedX, double speedY, int damage,Tower parent) {
+		super(x, y, type, size, speedX, speedY, damage,parent);
 		this.penetrate = true;
 
 	}
@@ -77,8 +79,8 @@ class PenetrateBullet extends Bullet {
 //class for the explosion effect
 class Boom extends Bullet {
 
-	Boom(int x, int y, int type, int size, double speedX, double speedY, int damage) {
-		super(x, y, type, size, speedX, speedY, damage);
+	Boom(int x, int y, int type, int size, double speedX, double speedY, int damage, Tower parent) {
+		super(x, y, type, size, speedX, speedY, damage,parent);
 		this.explodeRadius = MainFrame.explodeRadius[0];
 
 	}
@@ -105,7 +107,7 @@ class Missile extends Boom {
 
 	//constructor
 	Missile(int x, int y, int type, int size, double speedX, double speedY, int damage, Tower parent) {
-		super(x, y, type, size, speedX, speedY, damage);
+		super(x, y, type, size, speedX, speedY, damage,parent);
 		this.explodeRadius = MainFrame.explodeRadius[1];
 		this.parent = parent;
 		this.speed = MainFrame.towerSpeed[4];

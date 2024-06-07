@@ -61,7 +61,7 @@ public class Tower extends Rectangle {
 
 				Bullet bullet = new Bullet(this.px + this.width / 2, this.py + this.height / 2, type,
 						GameFrame.blockSize / 6, speedX,
-						speedY, damage);
+						speedY, damage,this);
 				GameFrame.bullets.add(bullet);
 			}
 		}
@@ -83,7 +83,7 @@ class PenetrateTower extends Tower {
 					+ this.target.height / 2 - (this.y + this.height / 2)) / (this.dis);
 			Bullet bullet = new PenetrateBullet(this.px + this.width / 2, this.py + this.height / 2, type,
 					GameFrame.blockSize / 8, speedX,
-					speedY, damage);
+					speedY, damage,this);
 			GameFrame.bullets.add(bullet);
 		}
 	}
@@ -114,7 +114,7 @@ class RingTower extends Tower {
 			for (int i = 0; i < 16; i++) {
 				GameFrame.bullets.add(new PenetrateBullet(this.px + this.width / 2, this.py + this.height / 2, type, 2,
 						speed * Math.sin((22.5 * i) / 180 * Math.PI), speed * Math.cos((22.5 * i) / 180 * Math.PI),
-						damage));
+						damage,this));
 			}
 			;
 			// speed * Math.sin(angleInRadians);
@@ -137,7 +137,7 @@ class BoomTower extends Tower {
 					+ this.target.height / 2 - (this.y + this.height / 2)) / (this.dis);
 			Bullet boom = new Boom(this.px + this.width / 2, this.py + this.height / 2, type, GameFrame.blockSize / 6,
 					speedX,
-					speedY, damage);
+					speedY, damage,this);
 			GameFrame.bullets.add(boom);
 		}
 	}
@@ -162,7 +162,6 @@ class MissleTower extends Tower {
 				speedX,
 				speedY, damage, this);
 		GameFrame.bullets.add(missile);
-		System.out.println(missile.size);
 
 	}
 }

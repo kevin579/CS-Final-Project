@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 public class EndFrame extends JFrame implements ActionListener{
     int panelWidth, panelHeight;
     JPanel scorePanel;
-    JButton button;
+    JButton closeButton,returnButton;
     BufferedImage endImg;
 
     EndFrame() {
@@ -28,13 +28,16 @@ public class EndFrame extends JFrame implements ActionListener{
         text.setBorder(BorderFactory.createEmptyBorder(0, 100, 100, 100));
         text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         scorePanel.add(text);
-        button = new JButton("close");
-        button.setAlignmentX(JPanel.CENTER_ALIGNMENT);
-        // button.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        button.setActionCommand("end");
-        button.addActionListener(this);
-        button.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-        scorePanel.add(button);
+        closeButton = new JButton("close");
+        closeButton.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        closeButton.setActionCommand("end");
+        closeButton.addActionListener(this);
+        scorePanel.add(closeButton);
+        returnButton = new JButton("Check your ranking");
+        returnButton.setAlignmentX(JPanel.CENTER_ALIGNMENT);
+        returnButton.setActionCommand("return");
+        returnButton.addActionListener(this);
+        scorePanel.add(returnButton);
         JPanel emptyPanel = new JPanel();
         emptyPanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 200, 100));
         emptyPanel.setBackground(Color.WHITE);
@@ -60,6 +63,10 @@ public class EndFrame extends JFrame implements ActionListener{
         if(name.equals("end")){
             this.setVisible(false);
             System.exit(0);
+        }
+        if(name.equals("return")){
+            this.setVisible(false);
+            new RankingFrame();
         }
     }
 

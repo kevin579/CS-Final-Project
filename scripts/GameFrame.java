@@ -210,9 +210,7 @@ public class GameFrame extends JFrame implements ActionListener {
         // Make the bullets move, track, explode
         excuteBulletOperation();
         if (playerHP <= 0) {
-            this.setVisible(false);
-            new EndFrame();
-            timer.stop();
+            endGame();
         }
         time++;
         mouseClick = false;
@@ -308,18 +306,21 @@ public class GameFrame extends JFrame implements ActionListener {
                                         tower.damage++;
                                         if (tower.level == 5) {
                                             tower.freq -= 5;
+                                            tower.range++;
                                         }
                                         break;
                                     case 2:
                                         tower.damage += 2;
                                         if (tower.level == 5) {
                                             tower.freq -= 3;
+                                            tower.range++;
                                         }
                                         break;
                                     case 3:
-                                        tower.damage += 5;
+                                        tower.damage += 4;
                                         if (tower.level == 5) {
                                             tower.freq -= 2;
+                                            tower.range++;
                                         }
                                         break;
                                     case 4:
@@ -327,6 +328,7 @@ public class GameFrame extends JFrame implements ActionListener {
                                         if (tower.level == 5) {
                                             tower.damage++;
                                             tower.freq -= 5;
+                                            tower.range++;
                                         }
                                         break;
                                     case 5:
@@ -338,19 +340,21 @@ public class GameFrame extends JFrame implements ActionListener {
                                         }
                                         break;
                                     case 6:
-                                        tower.damage += 35;
+                                        tower.damage += 50;
                                         tower.freq--;
                                         if (tower.level == 5) {
-                                            tower.damage += 50;
+                                            tower.damage += 80;
+                                            tower.range += 2;
                                         }
                                         break;
                                     case 7:
-                                        tower.freq -= 2;
+                                        tower.freq -= 1;
                                         tower.damage++;
                                         if (tower.level == 5) {
                                             tower.speed--;
                                             tower.freq--;
                                             tower.damage += 2;
+                                            tower.range++;
                                         }
                                         break;
 
@@ -508,7 +512,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 bullets.remove(bullet);
             }
             // remove to far away from tower.
-            if (bullet.existTime * bullet.speed > (MainFrame.towerRange[bullet.type - 1] + 1) * blockSize) {
+            if (bullet.existTime * bullet.speed > (bullet.parent.range + 1) * blockSize) {
                 if (bullet.explodeRadius > 0) {
                     bullet.explode();
                 } else {
@@ -541,13 +545,13 @@ public class GameFrame extends JFrame implements ActionListener {
                     } else if (waveNum >= 5 && waveNum < 10) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1)));
                     } else if (waveNum >= 10 && waveNum < 15) {
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 1.5));
-                    } else if (waveNum >= 15 && waveNum < 20) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2.5));
-                    } else if (waveNum >= 20 && waveNum < 25) {
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 3.5));
-                    } else {
+                    } else if (waveNum >= 15 && waveNum < 20) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 3));
+                    } else if (waveNum >= 20 && waveNum < 25) {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 5));
+                    } else {
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 4));
                     }
                     enemys.add(enemy);
                     enemyNum++;
@@ -587,8 +591,9 @@ public class GameFrame extends JFrame implements ActionListener {
 
                     if (!bullet.penetrate) {
                         if (bullet.explodeRadius > 0) {
-
+                            bullet.speedX = bullet.speedY = 0;
                             bullet.explode();
+                            bullet.parent.target = enemy;
                         } else {
                             bullets.remove(bullet);
                         }
@@ -603,6 +608,13 @@ public class GameFrame extends JFrame implements ActionListener {
 
             }
         }
+    }
+
+    private void endGame() {
+        new EndFrame();
+        this.setVisible(false);
+
+        timer.stop();
     }
 
     private class GamePanel extends JPanel {
@@ -730,10 +742,14 @@ public class GameFrame extends JFrame implements ActionListener {
             for (Bullet bullet : bullets) {
                 // draw explsion animation
                 if (bullet.explodeRadius > 0 && bullet.explodeTime >= 0) {
+                    // gc.drawImage(MainFrame.explodeImage, bullet.x - bullet.explodeRadius / 2,
+                    // bullet.y - bullet.explodeRadius / 2,
+                    // bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
+                    // bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
                     gc.drawImage(MainFrame.explodeImage, bullet.x - bullet.explodeRadius / 2,
                             bullet.y - bullet.explodeRadius / 2,
                             bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
-                            bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
+                            bullet.explodeTime * 64, 256, (bullet.explodeTime + 1) * 64, 320, null);
                 }
                 // Draw Missle with correct direction
                 if (bullet.explodeTime < 0 && bullet.transform != null) {
@@ -989,24 +1005,28 @@ public class GameFrame extends JFrame implements ActionListener {
                                 tower.damage += tower.level;
                                 if (tower.level == 5) {
                                     tower.freq -= 5;
+                                    tower.range++;
                                 }
                                 break;
                             case 2:
                                 tower.damage += 2 * tower.level;
                                 if (tower.level == 5) {
                                     tower.freq -= 3;
+                                    tower.range++;
                                 }
                                 break;
                             case 3:
-                                tower.damage += 5 * tower.level;
+                                tower.damage += 4 * tower.level;
                                 if (tower.level == 5) {
                                     tower.freq -= 2;
+                                    tower.range++;
                                 }
                                 break;
                             case 4:
                                 tower.damage += tower.level;
                                 if (tower.level == 5) {
                                     tower.damage += 2;
+                                    tower.range++;
                                 }
                                 break;
                             case 5:
@@ -1018,19 +1038,21 @@ public class GameFrame extends JFrame implements ActionListener {
                                 }
                                 break;
                             case 6:
-                                tower.damage += 35 * tower.level;
+                                tower.damage += 50 * tower.level;
                                 tower.freq -= tower.level;
                                 if (tower.level == 5) {
-                                    tower.damage += 50;
+                                    tower.damage += 80;
+                                    tower.range += 2;
                                 }
                                 break;
                             case 7:
-                                tower.freq -= tower.level * 2;
+                                tower.freq -= tower.level;
+                                tower.damage += tower.level;
                                 tower.damage += tower.level;
                                 if (tower.level == 5) {
                                     tower.speed--;
-                                    tower.freq--;
                                     tower.damage += 2;
+                                    tower.range++;
                                 }
                                 break;
 
@@ -1120,6 +1142,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             // Press enter to start a wave
             if (e.getKeyCode() == KeyEvent.VK_ENTER && edit == true) {
+
                 findPath();
                 enemys.clear();
                 enemyNum = 0;
@@ -1127,6 +1150,9 @@ public class GameFrame extends JFrame implements ActionListener {
                 edit = false;
                 pointer = 0;
                 waveNum++;
+                if (waveNum == 30) {
+                    endGame();
+                }
                 delay = 0;
                 allOut = false;
                 notSave = true;
@@ -1168,7 +1194,6 @@ public class GameFrame extends JFrame implements ActionListener {
     class MouseInput extends MouseAdapter {
         @Override
         public void mousePressed(MouseEvent e) {
-            // System.out.printf("%d,%d", e.getX(), e.getY());
             mouseClick = true;
             mouseX = e.getX();
             mouseY = e.getY();
