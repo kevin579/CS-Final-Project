@@ -3,6 +3,8 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.io.*;
 import java.util.*;
+import java.util.Queue;
+
 import javax.swing.*;
 import javax.swing.Timer;
 
@@ -45,6 +47,7 @@ public class GameFrame extends JFrame implements ActionListener {
     static int delay;
     static int enemyNum = 0;
     static boolean allOut = false;
+    static WaveEnd waveEnd;
 
     // Game variables
     static int playerHP = 20;
@@ -165,6 +168,12 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // If the game is at edit mode
         if (edit) {
+            if (waveEnd != null) {
+                waveEnd.move();
+                if (waveEnd.x > panelWidth) {
+                    waveEnd = null;
+                }
+            }
             Enemy pointer = new Enemy(0, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2));
             enemys.add(pointer);
             // remove all bullets from previous wave
@@ -185,6 +194,9 @@ public class GameFrame extends JFrame implements ActionListener {
 
                     // If the user did not click on the tower panel
                     if (panelOperation == false) {
+                        if (towerGrid[gridY][gridX] != 0) {
+                            updatePanel();
+                        }
                         if (selectNum == 1) {// the player select block
                             addBlock();
                         } else if (selectNum > 1) {// the player select player
@@ -284,6 +296,13 @@ public class GameFrame extends JFrame implements ActionListener {
             scoreRate = 3;
         } else {
             scoreRate = 5;
+        }
+        if (waveNum >= 15) {
+            for (int i = 0; i < 7; i++) {
+                MainFrame.towerSpeed[i] *= 1.5;
+                MainFrame.enemyHPs[i] /= 2;
+                MainFrame.enemySpeeds[i] *= 2;
+            }
         }
     }
 
@@ -404,16 +423,10 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void addBlock() {
-        if (towerGrid[gridY][gridX] != 0) {
-            updatePanel();
-        } else {
+        if (towerGrid[gridY][gridX] == 0) {
             towerPanel = null;
             if (cash >= MainFrame.towerCosts[0]) {
-                // for (int i = 0; i < pathGrid.length; i++) {
-                // for (int j = 0; j < pathGrid[0].length; j++) {
-                // pathGrid[i][j] = '+';
-                // }
-                // }
+
                 pathGrid = new char[row][col];
 
                 towerGrid[gridY][gridX] = 1;
@@ -433,32 +446,37 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void addTower() {
+        // towerPanel = null;
         if (towerGrid[gridY][gridX] == 0) {
             System.out.println("Requires block");
             towerPanel = null;
-        } else if (towerGrid[gridY][gridX] > 1) {
-            updatePanel();
 
-        } else if (cash >= MainFrame.towerCosts[selectNum - 1]) {
+        } else if (towerGrid[gridY][gridX] == 1) {
             towerPanel = null;
-            cash -= MainFrame.towerCosts[selectNum - 1];
-            towerGrid[gridY][gridX] = selectNum;
-            Tower tower;
-            if (selectNum == 5) {
-                tower = new PenetrateTower(gridX, gridY, selectNum - 1);
-            } else if (selectNum == 6) {
-                tower = new MissleTower(gridX, gridY, selectNum - 1);
+            if (cash >= MainFrame.towerCosts[selectNum - 1]) {
 
-            } else if (selectNum == 7) {
-                tower = new BoomTower(gridX, gridY, selectNum - 1);
+                cash -= MainFrame.towerCosts[selectNum - 1];
+                towerGrid[gridY][gridX] = selectNum;
+                Tower tower;
+                if (selectNum == 5) {
+                    tower = new PenetrateTower(gridX, gridY, selectNum - 1);
+                } else if (selectNum == 6) {
+                    tower = new MissleTower(gridX, gridY, selectNum - 1);
 
-            } else if (selectNum == 8) {
-                tower = new RingTower(gridX, gridY, selectNum - 1);
+                } else if (selectNum == 7) {
+                    tower = new BoomTower(gridX, gridY, selectNum - 1);
+
+                } else if (selectNum == 8) {
+                    tower = new RingTower(gridX, gridY, selectNum - 1);
+                } else {
+                    tower = new Tower(gridX, gridY, selectNum - 1);
+                }
+                towers.add(tower);
             } else {
-                tower = new Tower(gridX, gridY, selectNum - 1);
+                System.out.println("Not enough cash");
             }
-            towers.add(tower);
         }
+
     }
 
     private void updatePanel() {
@@ -545,13 +563,13 @@ public class GameFrame extends JFrame implements ActionListener {
                     } else if (waveNum >= 5 && waveNum < 10) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1)));
                     } else if (waveNum >= 10 && waveNum < 15) {
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2.5));
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2));
                     } else if (waveNum >= 15 && waveNum < 20) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 3));
                     } else if (waveNum >= 20 && waveNum < 25) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 5));
                     } else {
-                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 4));
+                        enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 6));
                     }
                     enemys.add(enemy);
                     enemyNum++;
@@ -567,6 +585,7 @@ public class GameFrame extends JFrame implements ActionListener {
             edit = true;
             cash += (waveNum + 1) * 20;
             score += (waveNum + 1) * 50 * scoreRate;
+            waveEnd = new WaveEnd();
         }
     }
 
@@ -637,11 +656,15 @@ public class GameFrame extends JFrame implements ActionListener {
             drawBullet(gc);
 
             drawTowerPanel(gc);
+            if (waveEnd != null) {
+                gc.drawImage(MainFrame.waveEndImage, waveEnd.x, waveEnd.y, waveEnd.width, waveEnd.height, null);
+            }
 
         }
 
         public void drawGrid(Graphics2D gc) {
 
+            // Draw the center grid
             gc.setColor(Color.GRAY);
             gc.fillRect(0, titleHeight, leftMargin, gridHeight);
             gc.fillRect(panelWidth - rightMargin, titleHeight, rightMargin, gridHeight);
@@ -668,6 +691,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     blockSize,
                     blockSize, null);
             gc.setColor(Color.BLACK);
+
             // Draw top panel
             gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
             gc.drawString("Player: " + userID, 100, titleHeight / 3 * 2);
@@ -762,7 +786,6 @@ public class GameFrame extends JFrame implements ActionListener {
         }
 
         public void drawEnemy(Graphics2D gc) {
-            // gc.setColor(transparentRed);
             for (Enemy enemy : enemys) {
                 if (enemy.type == 0) {
                     // if (!(enemy.gridX ==col/2-1 && enemy.gridY==row/2)) {
@@ -1150,6 +1173,15 @@ public class GameFrame extends JFrame implements ActionListener {
                 edit = false;
                 pointer = 0;
                 waveNum++;
+                if (waveNum == 15) {
+                    // After wave 15, a wave is too long, so increse enemy speed and decrese their
+                    // hp to speed up the game
+                    for (int i = 0; i < 7; i++) {
+                        MainFrame.towerSpeed[i] *= 1.5;
+                        MainFrame.enemyHPs[i] /= 2;
+                        MainFrame.enemySpeeds[i] *= 2;
+                    }
+                }
                 if (waveNum == 30) {
                     endGame();
                 }

@@ -26,17 +26,15 @@ public class MainFrame extends JFrame implements ActionListener {
     static int dif = 1;
     static BufferedImage pointerUp, pointerDown, pointerLeft, pointerRight;
 
-    // static int[] enemyHPs = { 8, 12, 40, 60, 100, 125, 25, 30 };
-    // static double[] enemySpeeds = { 1.2, 1.5, 1, 1, 0.8, 0.9, 1.8, 2 };
-    static int[] enemyHPs = { 4, 6, 20, 30, 50, 65, 12, 15 };
-    static double[] enemySpeeds = { 2.4, 3.0, 2, 2, 1.6, 1.8, 3.6, 4 };
+    static int[] enemyHPs = { 8, 12, 40, 60, 100, 125, 25, 30 };
+    static double[] enemySpeeds = { 1.2, 1.5, 1, 1, 0.8, 0.9, 1.8, 2 };
+
 
     static int[] towerCosts = { 10, 20, 50, 180, 200, 1000, 1500, 2000 };
     static int[] towerDamage = { 2, 4, 8, 3, 40, 100, 20 };
     static int[] towerRange = { 5, 6, 7, 5, 50, 8, 3 };
-    // static int[] towerSpeed = { 5, 6, 7, 5, 8, 10, 3 };
-    // static int[] towerSpeed = { 10, 12, 14, 10, 16, 20, 3 };
-    static int[] towerSpeed = { 7, 8, 10, 7, 12, 15, 3 };
+    static int[] towerSpeed = { 5, 6, 7, 5, 8, 10, 3 };
+
     static int[] towerFreq = { 15, 10, 5, 20, 20, 40, 15 };
     static int[] explodeRadius = new int[2];
 
@@ -46,6 +44,7 @@ public class MainFrame extends JFrame implements ActionListener {
     static BufferedImage startImage;
     static BufferedImage endImage;
     static BufferedImage explodeImage;
+    static BufferedImage waveEndImage;
 
     public static void main(String[] args) {
         new MainFrame();
@@ -225,6 +224,8 @@ public class MainFrame extends JFrame implements ActionListener {
         towerImages.add(loadImage("scripts/Images/tower_5.png"));
         towerImages.add(loadImage("scripts/Images/tower_6.png"));
         towerImages.add(loadImage("scripts/Images/tower_7.png"));
+
+        waveEndImage = loadImage("scripts/Images/waveEnd.png");
     }
 
     // When the player chooses a diffucult or starts the game

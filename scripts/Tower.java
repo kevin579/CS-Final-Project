@@ -309,3 +309,23 @@ class SellButton extends Rectangle {
 
 	}
 }
+
+//A image that shows at the end of every wave
+class WaveEnd extends Rectangle{
+	double speed = 80;
+	double acceleration;
+	WaveEnd(){
+		super(-MainFrame.panelWidth/3,MainFrame.panelHeight/3,MainFrame.panelWidth/3,MainFrame.panelHeight/5);
+		this.acceleration = (this.speed-8)*(this.speed-8)/(MainFrame.panelWidth);
+	}
+	public void move(){
+		if (this.x+this.width/2<MainFrame.panelWidth/2){
+			this.speed-=acceleration;
+		}
+		else{
+			this.speed+=acceleration;
+		}
+		this.speed = Math.max(this.speed,3);
+		this.x+=this.speed;
+	}
+}

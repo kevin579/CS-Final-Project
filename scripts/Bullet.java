@@ -117,7 +117,7 @@ class Missile extends Boom {
 
 	// method to move missile
 	public void move() {
-		if (orbit) {
+		if (orbit ) {
 			if (parent.target != null && parent.target.hp > 0) {
 				orbit = false;
 				return;
@@ -135,7 +135,7 @@ class Missile extends Boom {
 			this.speedX += accelerationX;
 			this.speedY += accelerationY;
 
-		} else if (parent.target != null && parent.target.hp > 0) {
+		} else if (parent.target != null && parent.target.hp > 0 &&this.explodeTime<0) {
 			this.dis = Math.sqrt(Math.pow((parent.target.x - this.x), 2) + Math.pow((parent.target.y - this.y), 2));
 			this.speedX = this.speed * (parent.target.x + parent.target.width / 2 - this.x) / (dis);
 			this.speedY = this.speed * (parent.target.y + parent.target.height / 2 - this.y) / (dis);
