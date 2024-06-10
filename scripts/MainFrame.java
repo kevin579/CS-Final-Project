@@ -234,6 +234,7 @@ public class MainFrame extends JFrame implements ActionListener {
         bgm = new Audio("bgm.wav",0.8f);
         error = new Audio("error.wav",1);
         lossHp = new Audio("lossHp.wav", 0.9f);
+        shoot = new Audio("shoot.wav", 0.9f);
     }
 
     // When the player chooses a diffucult or starts the game

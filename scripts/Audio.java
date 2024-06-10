@@ -25,8 +25,8 @@ public class Audio {
 
     // Play the loaded audio
     public void play() {
-        if (clip != null) {
-            clip.setFramePosition(0);
+        if (clip != null &&clip.isRunning()==false) {
+            clip.setFramePosition(2);
             clip.start();
         }
     }

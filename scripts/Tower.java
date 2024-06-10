@@ -54,6 +54,8 @@ public class Tower extends Rectangle {
 		if (this.target != null && this.target.hp > 0 && this.dis<this.range*GameFrame.blockSize) {
 			this.dis = Math.sqrt(Math.pow((this.target.x - this.px), 2) + Math.pow((this.target.y - this.py), 2));
 			if (this.dis < this.range * GameFrame.blockSize) {
+				MainFrame.shoot.play();
+
 				double speedX = this.speed * (this.target.x + this.target.speedX * this.estimateTime
 						+ this.target.width / 2 - (this.x + this.width / 2)) / (this.dis);
 				double speedY = this.speed * (this.target.y + this.target.speedY * this.estimateTime
@@ -63,7 +65,15 @@ public class Tower extends Rectangle {
 						GameFrame.blockSize / 6, speedX,
 						speedY, damage,this);
 				GameFrame.bullets.add(bullet);
+				
 			}
+			else{
+				MainFrame.shoot.stop();
+
+			}
+
+		}else{
+			MainFrame.shoot.stop();
 		}
 	}
 

@@ -81,8 +81,6 @@ public class GameFrame extends JFrame implements ActionListener {
     static boolean panelOperation;
     String userID;
 
-    
-
     GameFrame(boolean load) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(MAXIMIZED_BOTH);
@@ -171,7 +169,7 @@ public class GameFrame extends JFrame implements ActionListener {
         timer = new Timer(8, this);
         timer.setInitialDelay(1000);
         timer.start();
-        
+
         MainFrame.bgm.play();
 
     }
@@ -1187,7 +1185,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             // Press enter to start a wave
             if (e.getKeyCode() == KeyEvent.VK_ENTER && edit == true) {
-
+                waveEnd = null;
                 findPath();
                 enemys.clear();
                 enemyNum = 0;
