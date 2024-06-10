@@ -92,6 +92,7 @@ public class Enemy extends Rectangle {
                 this.hp = 0;
                 if (this.type != 0) {
                     GameFrame.playerHP--;
+                    MainFrame.lossHp.play();
                 }
 
             }

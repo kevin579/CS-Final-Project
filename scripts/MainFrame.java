@@ -46,6 +46,9 @@ public class MainFrame extends JFrame implements ActionListener {
     static BufferedImage explodeImage;
     static BufferedImage waveEndImage;
 
+    //sound variable
+    static Audio bgm,error,lossHp,shoot,hit;
+
     public static void main(String[] args) {
         new MainFrame();
     }
@@ -226,6 +229,11 @@ public class MainFrame extends JFrame implements ActionListener {
         towerImages.add(loadImage("scripts/Images/tower_7.png"));
 
         waveEndImage = loadImage("scripts/Images/waveEnd.png");
+
+    
+        bgm = new Audio("bgm.wav",0.8f);
+        error = new Audio("error.wav",1);
+        lossHp = new Audio("lossHp.wav", 0.9f);
     }
 
     // When the player chooses a diffucult or starts the game

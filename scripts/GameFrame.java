@@ -1,11 +1,28 @@
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Queue;
 
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class GameFrame extends JFrame implements ActionListener {
@@ -63,6 +80,8 @@ public class GameFrame extends JFrame implements ActionListener {
     static Block selectedBlock;
     static boolean panelOperation;
     String userID;
+
+    
 
     GameFrame(boolean load) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -152,6 +171,8 @@ public class GameFrame extends JFrame implements ActionListener {
         timer = new Timer(8, this);
         timer.setInitialDelay(1000);
         timer.start();
+        
+        MainFrame.bgm.play();
 
     }
 
@@ -437,7 +458,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     Block block = new Block(gridX, gridY);
                     blocks.add(block);
                 } else {
-                    System.out.println("Not avaliabe");
+                    MainFrame.error.play();
                     towerGrid[gridY][gridX] = 0;
                     findPath();
                 }
@@ -448,7 +469,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private void addTower() {
         // towerPanel = null;
         if (towerGrid[gridY][gridX] == 0) {
-            System.out.println("Requires block");
+            MainFrame.error.play();
             towerPanel = null;
 
         } else if (towerGrid[gridY][gridX] == 1) {
@@ -473,7 +494,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 }
                 towers.add(tower);
             } else {
-                System.out.println("Not enough cash");
+                MainFrame.error.play();
             }
         }
 
@@ -630,9 +651,9 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void endGame() {
-        new EndFrame();
+        MainFrame.bgm.stop();
         this.setVisible(false);
-
+        new EndFrame();
         timer.stop();
     }
 
@@ -879,6 +900,7 @@ public class GameFrame extends JFrame implements ActionListener {
             fileReader.close();
             in.close();
         } catch (Exception e) {
+            MainFrame.error.play();
             System.out.println("cannot find file");
         }
     }
