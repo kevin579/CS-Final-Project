@@ -58,9 +58,8 @@ public class RankingFrame extends JFrame implements ActionListener {
        scrollPanel = new JPanel(new GridLayout(0, 3));
 	   
        scroll = new JScrollPane(scrollPanel);
-	   scrollPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/20*19));
-       scrollPanel.setBackground(new Color(200, 225, 225));
 	   
+       scrollPanel.setBackground(new Color(200, 225, 225));
      
        for(int i = 0; i < sort.size() + 1; i++) {
     	   if(i == 0) {
