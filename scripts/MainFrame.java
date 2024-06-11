@@ -29,13 +29,12 @@ public class MainFrame extends JFrame implements ActionListener {
     static int[] enemyHPs = { 8, 12, 40, 60, 100, 125, 25, 30 };
     static double[] enemySpeeds = { 1.2, 1.5, 1, 1, 0.8, 0.9, 1.8, 2 };
 
-
     static int[] towerCosts = { 10, 20, 50, 180, 200, 1000, 1500, 2000 };
-    static int[] towerDamage = { 2, 4, 8, 3, 40, 100, 20 };
+    static int[] towerDamage = { 2, 4, 8, 20, 90, 200, 20 };
     static int[] towerRange = { 5, 6, 7, 5, 50, 8, 3 };
     static int[] towerSpeed = { 5, 6, 7, 5, 8, 10, 3 };
 
-    static int[] towerFreq = { 15, 10, 5, 20, 20, 40, 15 };
+    static int[] towerFreq = { 15, 10, 5, 40, 50, 80, 15 };
     static int[] explodeRadius = new int[2];
 
     static ArrayList<BufferedImage> towerImages;
@@ -46,8 +45,9 @@ public class MainFrame extends JFrame implements ActionListener {
     static BufferedImage explodeImage;
     static BufferedImage waveEndImage;
 
-    //sound variable
-    static Audio bgm,error,lossHp,shoot,hit;
+    // sound variable
+    static Audio bgm, error, lossHp, explode;
+    static ArrayList<Audio> bulletAudios;
 
     public static void main(String[] args) {
         new MainFrame();
@@ -87,17 +87,17 @@ public class MainFrame extends JFrame implements ActionListener {
         TextLabel titleText = new TextLabel(64, "Welcome to Tower Defense!", 0, 0, 0, 0);
         titlePanel.add(titleText);
 
-        // The introduction pannel on how to play the game, Lead to intro frame for more detail
+        // The introduction pannel on how to play the game, Lead to intro frame for more
+        // detail
         JPanel introductionPanel = new JPanel();
         introductionPanel.setBackground(new Color(252, 71, 71));
         introductionPanel.setLayout(new BoxLayout(introductionPanel, BoxLayout.PAGE_AXIS));
         introductionPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
-        introductionPanel.add(new TextLabel(30, "Introduction",0,10,40,0));
+        introductionPanel.add(new TextLabel(30, "Introduction", 0, 10, 40, 0));
         introButton = new JButton("Click to see Introduction");
         introButton.setActionCommand("intro");
         introButton.addActionListener(this);
         introductionPanel.add(introButton);
-
 
         // The center panel, will let the player to choose difficulty and start the
         // game. Also displays difficulty information.
@@ -106,17 +106,17 @@ public class MainFrame extends JFrame implements ActionListener {
         JPanel buttonPanel = new JPanel();
 
         textPanel.add(new TextLabel(36, "Select Difficulty", 0, 0, 0, 0));
-        
+
         enterPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
         enterPanel.setLayout(new GridLayout(10, 1));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
-        //A text field for username input
-        buttonPanel.add(new TextLabel(18,"Enter username",-3,0,0,0));
+        // A text field for username input
+        buttonPanel.add(new TextLabel(18, "Enter username", -3, 0, 0, 0));
         textField = new JTextField(10);
         buttonPanel.add(textField);
-        
-        //ComboBox for choose difficulty
+
+        // ComboBox for choose difficulty
         comboBox = new JComboBox<String>(difficulties);
         comboBox.addActionListener(this);
         buttonPanel.add(comboBox);
@@ -230,11 +230,18 @@ public class MainFrame extends JFrame implements ActionListener {
 
         waveEndImage = loadImage("scripts/Images/waveEnd.png");
 
-    
-        bgm = new Audio("bgm.wav",0.8f);
-        error = new Audio("error.wav",1);
+        bgm = new Audio("bgm.wav", 0.9f);
+        error = new Audio("error.wav", 1);
         lossHp = new Audio("lossHp.wav", 0.9f);
-        shoot = new Audio("shoot.wav", 0.9f);
+        explode = new Audio("explode.wav", 1);
+        bulletAudios = new ArrayList<Audio>();
+        bulletAudios.add(new Audio("shoot.wav", 0.8f));
+        bulletAudios.add(new Audio("shoot.wav", 0.8f));
+        bulletAudios.add(new Audio("shoot.wav", 0.8f));
+        bulletAudios.add(new Audio("penetrateShoot.wav", 0.75f));
+        bulletAudios.add(new Audio("missleShoot.wav", 0.8f));
+        bulletAudios.add(new Audio("cannonShoot.wav", 0.8f));
+        bulletAudios.add(new Audio("shoot.wav", 0.8f));
     }
 
     // When the player chooses a diffucult or starts the game
@@ -246,7 +253,8 @@ public class MainFrame extends JFrame implements ActionListener {
         if (userID.equals("")) {
             userID = "anonymous";
         }
-        // Starts a new game based on the difficult choosed when start button is pressed.
+        // Starts a new game based on the difficult choosed when start button is
+        // pressed.
         if (eventName.equals("start")) {
 
             JOptionPane.showMessageDialog(null,
@@ -263,10 +271,10 @@ public class MainFrame extends JFrame implements ActionListener {
         // Load the game when load is pressed
         else if (eventName.equals("load")) {
 
-            //Check if the userName have a progress file
+            // Check if the userName have a progress file
             String fileName = "scripts/Progress/" + userID + "progress.txt";
             File file = new File(fileName);
-            if (!file.exists()) {//Tell the user file not exits
+            if (!file.exists()) {// Tell the user file not exits
                 JOptionPane.showMessageDialog(null, "No such Archive, please recheck user name", "Error",
                         JOptionPane.ERROR_MESSAGE);
                 return;
@@ -274,22 +282,22 @@ public class MainFrame extends JFrame implements ActionListener {
             // continues the game.
             this.setVisible(false);
             new GameFrame(true);
-        } 
-        //Brings the user to the intro frame
+        }
+        // Brings the user to the intro frame
         else if (eventName.equals("intro")) {
             this.setVisible(false);
             new IntroFrame();
-        } 
-        //Brings the user to ranking frame
+        }
+        // Brings the user to ranking frame
         else if (eventName.equals("ranking")) {
             this.setVisible(false);
             new RankingFrame();
-        } 
-        //If the combo box is clicked and choosed difficulty
-        else { 
+        }
+        // If the combo box is clicked and choosed difficulty
+        else {
             @SuppressWarnings("unchecked") // for comboBox
             JComboBox<String> comboBox = (JComboBox<String>) event.getSource();
-            //Get and set difficulty
+            // Get and set difficulty
             difficult = (String) comboBox.getSelectedItem();
             if (difficult.equals("easy")) {
                 infoText1.setText("Enemy hp x1");
@@ -317,8 +325,9 @@ public class MainFrame extends JFrame implements ActionListener {
 
     /**
      * Load the image
+     * 
      * @param filename The file name of the image
-     * @return  The buffered image
+     * @return The buffered image
      */
     static BufferedImage loadImage(String filename) {
         BufferedImage img = null;
@@ -335,7 +344,7 @@ public class MainFrame extends JFrame implements ActionListener {
     // Modify the JLabel text for convinience
     private class TextLabel extends JLabel {
         TextLabel(int size, String text, int topMargin, int leftMargin, int bottomMargin, int rightMargin) {
-            super(text,SwingConstants.CENTER);
+            super(text, SwingConstants.CENTER);
             this.setFont(new Font("Serif", Font.PLAIN, size));
             this.setBorder(BorderFactory.createEmptyBorder(topMargin, leftMargin, bottomMargin, rightMargin));
         }

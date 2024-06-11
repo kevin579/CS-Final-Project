@@ -37,9 +37,8 @@ public class RankingFrame extends JFrame implements ActionListener {
        //Rank Panel
        rankPanel = new JPanel();
        rankPanel.setLayout(new BorderLayout());
-       rankPanel.setPreferredSize(new Dimension(1500, 750));
+       rankPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/20*19));
        rankPanel.setBackground(new Color(235, 200, 235));  // Set background color
-       this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/30*29));
        
        title = new JLabel("Rankings", SwingConstants.CENTER);
        Font labelFont = title.getFont();
@@ -57,8 +56,11 @@ public class RankingFrame extends JFrame implements ActionListener {
        this.fileToSortedArray("scripts/ranking.txt");
        
        scrollPanel = new JPanel(new GridLayout(0, 3));
+	   
        scroll = new JScrollPane(scrollPanel);
+	   scrollPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/20*19));
        scrollPanel.setBackground(new Color(200, 225, 225));
+	   
      
        for(int i = 0; i < sort.size() + 1; i++) {
     	   if(i == 0) {
@@ -108,7 +110,7 @@ public class RankingFrame extends JFrame implements ActionListener {
        //Button Panel for return button
        btnPanel = new JPanel();
        btnPanel.setLayout(new BorderLayout(10, 10));
-       btnPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/30));
+       btnPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/20));
        btnPanel.setBackground(new Color(235, 200, 235));  // Set background color
        mainMenu = new JButton("Return to Main Menu");
        mainMenu.setActionCommand("return");
@@ -174,6 +176,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 		String event = e.getActionCommand();
 		
 		if(event.equals("return")) {
+			this.setVisible(false);
 			new MainFrame();
 		}
 	}
