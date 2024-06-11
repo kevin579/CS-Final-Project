@@ -1043,6 +1043,7 @@ public class GameFrame extends JFrame implements ActionListener {
                             tower = new Tower(x, y, itemNum % 10 - 1);
                         }
                         tower.level = itemNum / 10;
+                        
                         switch (tower.type) {
                             case 1:
                                 tower.damage += tower.level;
