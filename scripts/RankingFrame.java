@@ -156,18 +156,15 @@ public class RankingFrame extends JFrame implements ActionListener {
 		
 		for(int i = 0; i < scores.size(); i++) {
 			for(int subIndex = i; subIndex < scores.size(); subIndex++) {
-				if(scores.get(subIndex) < scores.get(i)) {
-					int scoreTemp = scores.get(i);
-					String userTemp = users.get(i);
-					int switchScore1 = scores.get(i);
-					int switchScore2 = scores.get(subIndex);
-					String switchUser1 = users.get(i);
-					String switchUser2 = users.get(subIndex);
-					switchScore1 = scores.get(subIndex);
-					switchScore2 = scoreTemp;
-					switchUser1 = users.get(subIndex);
-					switchUser2 = userTemp;
+				if (scores.get(subIndex) > scores.get(i)) {
+					int temp1 = scores.get(i);
+					String temp2 = users.get(i);
+					scores.set(i, scores.get(subIndex));
+					scores.set(subIndex, temp1);
+					users.set(i, users.get(subIndex));
+					users.set(subIndex, temp2);
 				}
+
 			}
 		}
 	}
