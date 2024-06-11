@@ -4,12 +4,11 @@ import java.awt.image.BufferedImage;
 public class Tower extends Rectangle {
 	
 	//initialize variables
-	int gridX, gridY, type, range, damage, freq, cost;
+	int gridX, gridY, type, range, damage, freq, cost, level = 0;
 	double angle = 0, estimateTime, dis, speed;
 	BufferedImage image;
 	int px, py;
 	Enemy target;
-	int level = 0;
 	int totalDamage;
 
 	//constructor
@@ -76,6 +75,8 @@ public class Tower extends Rectangle {
 			MainFrame.shoot.stop();
 		}
 	}
+
+	
 
 }
 

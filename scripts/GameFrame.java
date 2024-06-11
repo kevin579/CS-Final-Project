@@ -1102,6 +1102,7 @@ public class GameFrame extends JFrame implements ActionListener {
                             default:
                                 break;
                         }
+
                         towers.add(tower);
                     }
 
