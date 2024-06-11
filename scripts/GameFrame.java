@@ -257,7 +257,7 @@ public class GameFrame extends JFrame implements ActionListener {
         if (towerPanel != null) {
 
             for (Tower tower : towers) {
-                if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
+                if (tower.getGridX() == towerPanel.getGridX() && tower.getGridY() == towerPanel.getGridY()) {
                     selectedTower = tower;
                     break;
 
@@ -265,7 +265,7 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             if (selectedTower == null) {
                 for (Block block : blocks) {
-                    if (block.gridX == towerPanel.gridX && block.gridY == towerPanel.gridY) {
+                    if (block.getGridX() == towerPanel.getGridX() && block.getGridY() == towerPanel.getGridY()) {
                         selectedBlock = block;
                         break;
 
@@ -329,77 +329,20 @@ public class GameFrame extends JFrame implements ActionListener {
 
         if (towerPanel != null) { // if there is a panel
 
-            if (towerPanel.upgradeButton.contains(mouseX, mouseY)) { // if upgrade button is clicked
+            if (towerPanel.getUpgradeButton().contains(mouseX, mouseY)) { // if upgrade button is clicked
 
-                if (towerPanel.type != 1) { // for all towers
+                if (towerPanel.getType() != 1) { // for all towers
 
                     for (Tower tower : towers) {
-                        if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
-                            if (cash >= MainFrame.towerCosts[towerPanel.type - 1] / 2 && tower.level < 5) {
+                        if (tower.getGridX() == towerPanel.getGridX() && tower.getGridY() == towerPanel.getGridY()) {
+                            if (cash >= MainFrame.towerCosts[towerPanel.getType() - 1] / 2 && tower.getLevel() < 5) {
                                 // Upgrade the tower selected if cash is sufficient
-                                tower.level++;
-                                cash -= MainFrame.towerCosts[towerPanel.type - 1] / 2;
-                                switch (tower.type) {
-                                    case 1:
-                                        tower.damage++;
-                                        if (tower.level == 5) {
-                                            tower.freq -= 5;
-                                            tower.range++;
-                                        }
-                                        break;
-                                    case 2:
-                                        tower.damage += 2;
-                                        if (tower.level == 5) {
-                                            tower.freq -= 3;
-                                            tower.range++;
-                                        }
-                                        break;
-                                    case 3:
-                                        tower.damage += 4;
-                                        if (tower.level == 5) {
-                                            tower.freq -= 2;
-                                            tower.range++;
-                                        }
-                                        break;
-                                    case 4:
-                                        tower.damage++;
-                                        if (tower.level == 5) {
-                                            tower.damage++;
-                                            tower.freq -= 5;
-                                            tower.range++;
-                                        }
-                                        break;
-                                    case 5:
-                                        tower.damage += 20;
-                                        tower.freq--;
-                                        if (tower.level == 5) {
-                                            tower.freq -= 5;
-                                            tower.damage += 20;
-                                        }
-                                        break;
-                                    case 6:
-                                        tower.damage += 50;
-                                        tower.freq--;
-                                        if (tower.level == 5) {
-                                            tower.damage += 80;
-                                            tower.range += 2;
-                                        }
-                                        break;
-                                    case 7:
-                                        tower.freq -= 1;
-                                        tower.damage++;
-                                        if (tower.level == 5) {
-                                            tower.speed--;
-                                            tower.freq--;
-                                            tower.damage += 2;
-                                            tower.range++;
-                                        }
-                                        break;
-
-                                    default:
-                                        break;
-                                }
-
+                                tower.setLevel(tower.getLevel() + 1);
+                                cash -= MainFrame.towerCosts[towerPanel.getType() - 1] / 2;
+                                tower.upgrade(1);
+                            }
+                            else{
+                                MainFrame.error.play();
                             }
                             break;
                         }
@@ -408,16 +351,16 @@ public class GameFrame extends JFrame implements ActionListener {
                 // close the panel
                 towerPanel = null;
                 panelOperation = true;
-            } else if (towerPanel.sellButton.contains(mouseX, mouseY)) { // if sell button is clicked
+            } else if (towerPanel.getSellButton().contains(mouseX, mouseY)) { // if sell button is clicked
 
-                if (towerPanel.type == 1) { // Remove the block, update enemy path, and re-gain cash
+                if (towerPanel.getType() == 1) { // Remove the block, update enemy path, and re-gain cash
 
                     ArrayList<Block> tempBlocks = new ArrayList<Block>(blocks);
                     for (Block block : tempBlocks) {
-                        if (block.gridX == towerPanel.gridX && block.gridY == towerPanel.gridY) {
+                        if (block.getGridX() == towerPanel.getGridX() && block.getGridY() == towerPanel.getGridY()) {
                             blocks.remove(block);
                             cash += MainFrame.towerCosts[0];
-                            towerGrid[towerPanel.gridY][towerPanel.gridX] = 0;
+                            towerGrid[towerPanel.getGridY()][towerPanel.getGridX()] = 0;
                             findPath();
                             break;
                         }
@@ -426,10 +369,10 @@ public class GameFrame extends JFrame implements ActionListener {
 
                     ArrayList<Tower> tempTowers = new ArrayList<Tower>(towers);
                     for (Tower tower : tempTowers) {
-                        if (tower.gridX == towerPanel.gridX && tower.gridY == towerPanel.gridY) {
+                        if (tower.getGridX() == towerPanel.getGridX() && tower.getGridY() == towerPanel.getGridY()) {
                             towers.remove(tower);
-                            cash += MainFrame.towerCosts[towerPanel.type - 1] * (1 + tower.level / 2.0);
-                            towerGrid[towerPanel.gridY][towerPanel.gridX] = 1;
+                            cash += MainFrame.towerCosts[towerPanel.getType() - 1] * (1 + tower.getLevel() / 2.0);
+                            towerGrid[towerPanel.getGridY()][towerPanel.getGridX()] = 1;
                             break;
                         }
                     }
@@ -461,6 +404,9 @@ public class GameFrame extends JFrame implements ActionListener {
                     findPath();
                 }
             }
+            else{
+                MainFrame.error.play();
+            }
         }
     }
 
@@ -480,7 +426,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 if (selectNum == 5) {
                     tower = new PenetrateTower(gridX, gridY, selectNum - 1);
                 } else if (selectNum == 6) {
-                    tower = new MissleTower(gridX, gridY, selectNum - 1);
+                    tower = new MissileTower(gridX, gridY, selectNum - 1);
 
                 } else if (selectNum == 7) {
                     tower = new BoomTower(gridX, gridY, selectNum - 1);
@@ -503,7 +449,7 @@ public class GameFrame extends JFrame implements ActionListener {
             towerPanel = new TowerPanel(towerGrid[gridY][gridX], gridX, gridY);
 
         } else {
-            if (gridX == towerPanel.gridX && gridY == towerPanel.gridY) {
+            if (gridX == towerPanel.getGridX() && gridY == towerPanel.getGridY()) {
                 towerPanel = null;
 
             } else {
@@ -520,11 +466,11 @@ public class GameFrame extends JFrame implements ActionListener {
             if (icon.contains(mouseX, mouseY)) {
                 // remove the highlignht of the old selected icon
                 for (TowerIcon i : towerIcons) {
-                    i.select = false;
+                    i.setSelect(false);
                 }
                 // mark the selected icon
-                icon.select = true;
-                selectNum = icon.type;
+                icon.setSelect(true);
+                selectNum = icon.getType();
             }
         }
 
@@ -532,9 +478,9 @@ public class GameFrame extends JFrame implements ActionListener {
         for (int i = 0; i < towerIcons.size(); i++) {
 
             if (i + 1 == selectNum) {
-                towerIcons.get(i).select = true;
+                towerIcons.get(i).setSelect(true);
             } else {
-                towerIcons.get(i).select = false;
+                towerIcons.get(i).setSelect(false);
             }
         }
     }
@@ -549,17 +495,17 @@ public class GameFrame extends JFrame implements ActionListener {
                 bullets.remove(bullet);
             }
             // remove to far away from tower.
-            if (bullet.existTime * bullet.speed > (bullet.parent.range + 1) * blockSize) {
-                if (bullet.explodeRadius > 0) {
+            if (bullet.getExistTime() * bullet.getSpeed() > (bullet.getParent().getRange() + 1) * blockSize) {
+                if (bullet.getExplodeRadius() > 0) {
                     bullet.explode();
                 } else {
                     bullets.remove(bullet);
                 }
             }
-            if (bullet.explodeTime >= 0) {
-                bullet.explodeTime++;
+            if (bullet.getExplodeTime() >= 0) {
+                bullet.setExplodeTime(bullet.getExplodeTime() + 1);
             }
-            if (bullet.explodeTime > 16) {
+            if (bullet.getExplodeTime() > 16) {
                 bullets.remove(bullet);
             }
 
@@ -611,7 +557,7 @@ public class GameFrame extends JFrame implements ActionListener {
     private void excuteTowerOperation() {
         for (Tower tower : towers) {
             tower.aim();
-            if (time % tower.freq == 0) {
+            if (time % tower.getFreq() == 0) {
                 tower.shoot();
             }
         }
@@ -624,25 +570,26 @@ public class GameFrame extends JFrame implements ActionListener {
             enemy.move();
             ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
             for (Bullet bullet : tempBullets) {
-                if (bullet.intersects(enemy) && bullet.explodeTime < 0) {
-                    enemy.hp -= bullet.damage;
+                if (bullet.intersects(enemy) && bullet.getExplodeTime() < 0) {
+                    enemy.setHp(enemy.getHp() - bullet.getDamage());
 
-                    if (!bullet.penetrate) {
-                        if (bullet.explodeRadius > 0) {
-                            bullet.speedX = bullet.speedY = 0;
+                    if (!bullet.isPenetrate()) {
+                        if (bullet.getExplodeRadius() > 0) {
+                            bullet.setSpeedX(0);
+                            bullet.setSpeedY(0);
                             bullet.explode();
-                            bullet.parent.target = enemy;
+                            bullet.getParent().setTarget(enemy);
                         } else {
                             bullets.remove(bullet);
                         }
                     }
                 }
             }
-            if (enemy.hp <= 0) {
+            if (enemy.getHp() <= 0) {
                 enemy.die();
                 enemys.remove(enemy);
-                cash += enemy.type * 10;
-                score += enemy.type * 20 * scoreRate;
+                cash += enemy.getType() * 10;
+                score += enemy.getType() * 20 * scoreRate;
 
             }
         }
@@ -727,15 +674,15 @@ public class GameFrame extends JFrame implements ActionListener {
 
             for (TowerIcon icon : towerIcons) {
                 gc.setColor(Color.WHITE);
-                if (icon.select) {
+                if (icon.isSelect()) {
                     gc.fillRect(icon.x - 2, icon.y - 2, icon.width + 4, icon.height + 4);
                 }
                 // gc.setColor(Color.BLACK);
                 // gc.fillRect(icon.x, icon.y, icon.width, icon.height);
-                gc.drawImage(icon.icon, icon.x, icon.y, icon.width, icon.height, null);
+                gc.drawImage(icon.getIcon(), icon.x, icon.y, icon.width, icon.height, null);
 
                 gc.setColor(Color.BLACK);
-                gc.drawString(icon.text, icon.x, (int) (icon.y + blockSize * 2.5));
+                gc.drawString(icon.getText(), icon.x, (int) (icon.y + blockSize * 2.5));
             }
             gc.drawString("Cash: " + String.valueOf(cash), panelWidth / 10 * 9, buttomY + buttomHeight / 3);
             gc.drawString("Life: " + String.valueOf(playerHP), panelWidth / 10 * 9, buttomY + buttomHeight / 3 * 2);
@@ -744,7 +691,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
         public void drawTower(Graphics2D gc) {
             for (Block block : blocks) {
-                gc.drawImage(block.image, block.x, block.y, block.width, block.height, null);
+                gc.drawImage(block.getImage(), block.x, block.y, block.width, block.height, null);
 
             }
             for (Tower tower : towers) {
@@ -752,14 +699,14 @@ public class GameFrame extends JFrame implements ActionListener {
                 int cy = tower.y + blockSize / 2;
                 AffineTransform Towertransform = new AffineTransform();
                 Towertransform.translate(cx, cy);
-                Towertransform.rotate(Math.toRadians(tower.angle));
+                Towertransform.rotate(Math.toRadians(tower.getAngle()));
                 Towertransform.translate(-blockSize / 2, -blockSize / 2);
                 Towertransform.scale(blockSize / 1500.0, blockSize / 1500.0);
-                gc.drawImage(tower.image, Towertransform, null);
+                gc.drawImage(tower.getImage(), Towertransform, null);
 
                 gc.setColor(Color.YELLOW);
                 // gc.fillRect(tower.x,tower.y,blockSize/5,blockSize/5);
-                for (int i = 0; i < tower.level; i++) {
+                for (int i = 0; i < tower.getLevel(); i++) {
                     double centerX = tower.x + blockSize / 5 + blockSize / 5 * i;
                     double centerY = tower.y + blockSize / 5;
                     double outerRadius = blockSize / 5;
@@ -784,20 +731,20 @@ public class GameFrame extends JFrame implements ActionListener {
         public void drawBullet(Graphics2D gc) {
             for (Bullet bullet : bullets) {
                 // draw explsion animation
-                if (bullet.explodeRadius > 0 && bullet.explodeTime >= 0) {
+                if (bullet.getExplodeRadius() > 0 && bullet.getExplodeTime() >= 0) {
                     // gc.drawImage(MainFrame.explodeImage, bullet.x - bullet.explodeRadius / 2,
                     // bullet.y - bullet.explodeRadius / 2,
                     // bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
                     // bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
-                    gc.drawImage(MainFrame.explodeImage, bullet.x - bullet.explodeRadius / 2,
-                            bullet.y - bullet.explodeRadius / 2,
-                            bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
-                            bullet.explodeTime * 64, 256, (bullet.explodeTime + 1) * 64, 320, null);
+                    gc.drawImage(MainFrame.explodeImage, bullet.x - bullet.getExplodeRadius() / 2,
+                            bullet.y - bullet.getExplodeRadius() / 2,
+                            bullet.x + bullet.getExplodeRadius() / 2, bullet.y + bullet.getExplodeRadius() / 2,
+                            bullet.getExplodeTime() * 64, 256, (bullet.getExplodeTime() + 1) * 64, 320, null);
                 }
                 // Draw Missle with correct direction
-                if (bullet.explodeTime < 0 && bullet.transform != null) {
+                if (bullet.getExplodeTime() < 0 && bullet.getTransform() != null) {
 
-                    gc.drawImage(bullet.image, bullet.transform, null);
+                    gc.drawImage(bullet.getImage(), bullet.getTransform(), null);
                     // gc.fillRect(bullet.x, bullet.y, bullet.size, bullet.size);
                 }
 
@@ -806,9 +753,9 @@ public class GameFrame extends JFrame implements ActionListener {
 
         public void drawEnemy(Graphics2D gc) {
             for (Enemy enemy : enemys) {
-                if (enemy.type == 0) {
+                if (enemy.getType() == 0) {
                     // if (!(enemy.gridX ==col/2-1 && enemy.gridY==row/2)) {
-                    gc.drawImage(enemy.image, enemy.x, enemy.y, blockSize, blockSize, null);
+                    gc.drawImage(enemy.getImage(), enemy.x, enemy.y, blockSize, blockSize, null);
                     // }
                 } else {
                     int cx = enemy.x + blockSize / 2;
@@ -816,10 +763,10 @@ public class GameFrame extends JFrame implements ActionListener {
                     AffineTransform Enemytransform = new AffineTransform();
 
                     Enemytransform.translate(cx, cy);
-                    Enemytransform.rotate(Math.toRadians(enemy.angle));
+                    Enemytransform.rotate(Math.toRadians(enemy.getAngle()));
                     Enemytransform.translate(-blockSize / 2, -blockSize / 2);
                     Enemytransform.scale(blockSize / 348.0, blockSize / 348.0);
-                    gc.drawImage(enemy.image, Enemytransform, null);
+                    gc.drawImage(enemy.getImage(), Enemytransform, null);
                     enemy.drawHP(gc);
                 }
             }
@@ -830,53 +777,53 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
                 if (selectedTower != null) {
                     gc.setColor(Color.BLACK);
-                    gc.drawOval(selectedTower.x - selectedTower.range * blockSize + blockSize / 2,
-                            selectedTower.y - selectedTower.range * blockSize + blockSize / 2,
-                            selectedTower.range * blockSize * 2, selectedTower.range * blockSize * 2);
+                    gc.drawOval(selectedTower.x - selectedTower.getRange() * blockSize + blockSize / 2,
+                            selectedTower.y - selectedTower.getRange() * blockSize + blockSize / 2,
+                            selectedTower.getRange() * blockSize * 2, selectedTower.getRange() * blockSize * 2);
                     gc.setColor(transparentOrange);
-                    gc.fillOval(selectedTower.x - selectedTower.range * blockSize + blockSize / 2,
-                            selectedTower.y - selectedTower.range * blockSize + blockSize / 2,
-                            selectedTower.range * blockSize * 2, selectedTower.range * blockSize * 2);
-                    gc.setColor(towerPanel.color);
+                    gc.fillOval(selectedTower.x - selectedTower.getRange() * blockSize + blockSize / 2,
+                            selectedTower.y - selectedTower.getRange() * blockSize + blockSize / 2,
+                            selectedTower.getRange() * blockSize * 2, selectedTower.getRange() * blockSize * 2);
+                    gc.setColor(towerPanel.getColor());
                     gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
-                    gc.setColor(towerPanel.upgradeButton.color);
-                    gc.fillRect(towerPanel.upgradeButton.x, towerPanel.upgradeButton.y, towerPanel.upgradeButton.width,
-                            towerPanel.upgradeButton.height);
-                    gc.setColor(towerPanel.sellButton.color);
-                    gc.fillRect(towerPanel.sellButton.x, towerPanel.sellButton.y, towerPanel.sellButton.width,
-                            towerPanel.sellButton.height);
+                    gc.setColor(towerPanel.getUpgradeButton().getColor());
+                    gc.fillRect(towerPanel.getUpgradeButton().x, towerPanel.getUpgradeButton().y, towerPanel.getUpgradeButton().width,
+                            towerPanel.getUpgradeButton().height);
+                    gc.setColor(towerPanel.getSellButton().getColor());
+                    gc.fillRect(towerPanel.getSellButton().x, towerPanel.getSellButton().y, towerPanel.getSellButton().width,
+                            towerPanel.getSellButton().height);
                     gc.setColor(Color.BLACK);
-                    gc.drawString("lv " + String.valueOf(selectedTower.level),
+                    gc.drawString("lv " + String.valueOf(selectedTower.getLevel()),
                             towerPanel.x,
                             towerPanel.y + blockSize * 2 / 3);
-                    gc.drawString("↑ - " + String.valueOf(MainFrame.towerCosts[towerPanel.type - 1] / 2),
-                            towerPanel.upgradeButton.x,
-                            towerPanel.upgradeButton.y + blockSize * 2 / 3);
+                    gc.drawString("↑ - " + String.valueOf(MainFrame.towerCosts[towerPanel.getType() - 1] / 2),
+                            towerPanel.getUpgradeButton().x,
+                            towerPanel.getUpgradeButton().y + blockSize * 2 / 3);
                     gc.drawString(
                             "x + " + String.valueOf(
-                                    (int) (MainFrame.towerCosts[towerPanel.type - 1]
-                                            * (1 + selectedTower.level / 2.0))),
-                            towerPanel.sellButton.x,
-                            towerPanel.sellButton.y + blockSize * 2 / 3);
+                                    (int) (MainFrame.towerCosts[towerPanel.getType() - 1]
+                                            * (1 + selectedTower.getLevel() / 2.0))),
+                            towerPanel.getSellButton().x,
+                            towerPanel.getSellButton().y + blockSize * 2 / 3);
                 }
                 if (selectedBlock != null) {
-                    gc.setColor(towerPanel.color);
+                    gc.setColor(towerPanel.getColor());
                     gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
-                    gc.setColor(towerPanel.sellButton.color);
-                    gc.fillRect(towerPanel.sellButton.x, towerPanel.sellButton.y, towerPanel.sellButton.width,
-                            towerPanel.sellButton.height);
+                    gc.setColor(towerPanel.getSellButton().getColor());
+                    gc.fillRect(towerPanel.getSellButton().x, towerPanel.getSellButton().y, towerPanel.getSellButton().width,
+                            towerPanel.getSellButton().height);
                     gc.setColor(Color.BLACK);
                     gc.drawString("Cannot",
                             towerPanel.x,
                             towerPanel.y + blockSize * 2 / 3);
                     gc.drawString("Upgrade",
-                            towerPanel.upgradeButton.x,
-                            towerPanel.upgradeButton.y + blockSize * 2 / 3);
+                            towerPanel.getUpgradeButton().x,
+                            towerPanel.getUpgradeButton().y + blockSize * 2 / 3);
                     gc.drawString(
                             "x + " + String
                                     .valueOf(MainFrame.towerCosts[0]),
-                            towerPanel.sellButton.x,
-                            towerPanel.sellButton.y + blockSize * 2 / 3);
+                            towerPanel.getSellButton().x,
+                            towerPanel.getSellButton().y + blockSize * 2 / 3);
 
                 }
 
@@ -915,10 +862,10 @@ public class GameFrame extends JFrame implements ActionListener {
             String[][] record = new String[row][col];
 
             for (Block block : blocks) {
-                record[block.gridY][block.gridX] = "1";
+                record[block.getGridY()][block.getGridX()] = "1";
             }
             for (Tower tower : towers) {
-                record[tower.gridY][tower.gridX] = String.valueOf(tower.level) + String.valueOf(tower.type + 1);
+                record[tower.getGridY()][tower.getGridX()] = String.valueOf(tower.getLevel()) + String.valueOf(tower.getType() + 1);
 
             }
             for (int y = 0; y < row; y++) {
@@ -1032,7 +979,7 @@ public class GameFrame extends JFrame implements ActionListener {
                         } else if (itemNum % 10 == 5) {
                             tower = new PenetrateTower(x, y, itemNum % 10 - 1);
                         } else if (itemNum % 10 == 6) {
-                            tower = new MissleTower(x, y, itemNum % 10 - 1);
+                            tower = new MissileTower(x, y, itemNum % 10 - 1);
 
                         } else if (itemNum % 10 == 7) {
                             tower = new BoomTower(x, y, itemNum % 10 - 1);
@@ -1042,67 +989,10 @@ public class GameFrame extends JFrame implements ActionListener {
                         } else {
                             tower = new Tower(x, y, itemNum % 10 - 1);
                         }
-                        tower.level = itemNum / 10;
+                        int level = itemNum / 10;
+                        tower.setLevel(level);
+                        tower.upgrade(level);
                         
-                        switch (tower.type) {
-                            case 1:
-                                tower.damage += tower.level;
-                                if (tower.level == 5) {
-                                    tower.freq -= 5;
-                                    tower.range++;
-                                }
-                                break;
-                            case 2:
-                                tower.damage += 2 * tower.level;
-                                if (tower.level == 5) {
-                                    tower.freq -= 3;
-                                    tower.range++;
-                                }
-                                break;
-                            case 3:
-                                tower.damage += 4 * tower.level;
-                                if (tower.level == 5) {
-                                    tower.freq -= 2;
-                                    tower.range++;
-                                }
-                                break;
-                            case 4:
-                                tower.damage += tower.level;
-                                if (tower.level == 5) {
-                                    tower.damage += 2;
-                                    tower.range++;
-                                }
-                                break;
-                            case 5:
-                                tower.damage += 20 * tower.level;
-                                tower.freq -= tower.level;
-                                if (tower.level == 5) {
-                                    tower.freq -= 5;
-                                    tower.damage += 20;
-                                }
-                                break;
-                            case 6:
-                                tower.damage += 50 * tower.level;
-                                tower.freq -= tower.level;
-                                if (tower.level == 5) {
-                                    tower.damage += 80;
-                                    tower.range += 2;
-                                }
-                                break;
-                            case 7:
-                                tower.freq -= tower.level;
-                                tower.damage += tower.level;
-                                tower.damage += tower.level;
-                                if (tower.level == 5) {
-                                    tower.speed--;
-                                    tower.damage += 2;
-                                    tower.range++;
-                                }
-                                break;
-
-                            default:
-                                break;
-                        }
 
                         towers.add(tower);
                     }
