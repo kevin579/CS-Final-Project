@@ -1,6 +1,5 @@
 import javax.sound.sampled.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 public class Audio {
     private Clip clip;
@@ -45,6 +44,7 @@ public class Audio {
         }
     }
 
+    //Set the volume of the audio from 0-1
     public void setVolume(float volume) {
         if (clip != null) {
             FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
