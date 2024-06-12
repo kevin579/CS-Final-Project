@@ -1,9 +1,12 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class IntroFrame extends JFrame {
     public IntroFrame() {
@@ -85,6 +88,16 @@ public class IntroFrame extends JFrame {
 
         add(mainPanel);
         setVisible(true);
+        // Add KeyListener to handle the ESC key
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    dispose(); // Close the frame
+                }
+            }
+        });
+        setFocusable(true); // Set focusable to true to receive key events
     }
 
     public static void main(String[] args) {
