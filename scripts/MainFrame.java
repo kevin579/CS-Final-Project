@@ -209,7 +209,7 @@ public class MainFrame extends JFrame implements ActionListener {
     /**
      * Get the size of the maximized window
      * Load all the images.
-     * 
+     * Load all the audios
      */
     public void initializeVariables() {
         panelWidth = this.getWidth();
