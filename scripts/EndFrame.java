@@ -1,7 +1,10 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 //the ending score panel
 public class EndFrame extends JFrame implements ActionListener{
@@ -15,10 +18,10 @@ public class EndFrame extends JFrame implements ActionListener{
         this.setTitle("GameOver");
         this.panelWidth = MainFrame.panelWidth;
         this.panelHeight = MainFrame.panelHeight;
-        // endImg = MainFrame.loadImage("Assignment5\\images\\endImg.jpg");
+        endImg = loadImage("scripts/Images/Ender.png");
         scorePanel = new JPanel();
         scorePanel.setPreferredSize(new Dimension(this.panelWidth,this.panelHeight));
-        scorePanel.setBackground(Color.WHITE);
+        scorePanel.setBackground(Color.BLACK);
         ImagePanel imgPanel = new ImagePanel();
         scorePanel.add(imgPanel);
         scorePanel.setLayout(new BoxLayout(scorePanel, BoxLayout.Y_AXIS));
@@ -40,7 +43,7 @@ public class EndFrame extends JFrame implements ActionListener{
         scorePanel.add(returnButton);
         JPanel emptyPanel = new JPanel();
         emptyPanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 200, 100));
-        emptyPanel.setBackground(Color.WHITE);
+        emptyPanel.setBackground(Color.BLACK);
         scorePanel.add(emptyPanel);
         this.add(scorePanel);
         
@@ -55,7 +58,7 @@ public class EndFrame extends JFrame implements ActionListener{
         }
         public void paintComponent(Graphics g){
             super.paintComponent(g);
-            // g.drawImage(endImg,0,0,panelWidth,panelHeight/2,null);
+            g.drawImage(endImg,0,0,panelWidth,panelHeight/2,null);
         }
     }
     public void actionPerformed(ActionEvent e){
@@ -68,6 +71,17 @@ public class EndFrame extends JFrame implements ActionListener{
             this.setVisible(false);
             new RankingFrame();
         }
+    }
+    static BufferedImage loadImage(String filename) {
+        BufferedImage img = null;
+        try {
+            img = ImageIO.read(new File(filename));
+        } catch (IOException e) {
+            System.out.println(e.toString());
+            JOptionPane.showMessageDialog(null, "An image failed to load: " + filename, "Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+        return img;
     }
 
 }
