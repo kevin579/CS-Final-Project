@@ -160,7 +160,7 @@ public class GameFrame extends JFrame implements ActionListener {
         timer = new Timer(8, this);
         timer.start();
 
-        MainFrame.bgm.play(); // play bgm
+        MainFrame.bgm.loop(); // play bgm
 
     }
 
@@ -876,7 +876,7 @@ public class GameFrame extends JFrame implements ActionListener {
     public void saveGame() {
         try {
             //Get user's progress file
-            String fileName = "scripts/Progress/" + userID + "progress.txt";
+            String fileName = "Progress/" + userID + "progress.txt";
             File progressFile = new File(fileName);
 
             //create if no such file
@@ -980,7 +980,7 @@ public class GameFrame extends JFrame implements ActionListener {
     public void loadGame() {
         try {
             //Find corresponding progress file of userID
-            String fileName = "scripts/Progress/" + MainFrame.userID + "progress.txt";
+            String fileName = "Progress/" + MainFrame.userID + "progress.txt";
             File progressFile = new File(fileName);
             FileReader in = new FileReader(progressFile);
             BufferedReader reader = new BufferedReader(in);

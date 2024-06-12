@@ -1,11 +1,29 @@
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 //This is the introduction page of the application
 public class MainFrame extends JFrame implements ActionListener {
@@ -202,52 +220,52 @@ public class MainFrame extends JFrame implements ActionListener {
         towerImages = new ArrayList<BufferedImage>();
         enemyImages = new ArrayList<BufferedImage>();
         bulletImages = new ArrayList<BufferedImage>();
-        pointerUp = loadImage("scripts/Images/pointerUp.png");
-        pointerDown = loadImage("scripts/Images/pointerDown.png");
-        pointerLeft = loadImage("scripts/Images/pointerLeft.png");
-        pointerRight = loadImage("scripts/Images/pointerRight.png");
+        pointerUp = loadImage("Images/pointerUp.png");
+        pointerDown = loadImage("Images/pointerDown.png");
+        pointerLeft = loadImage("Images/pointerLeft.png");
+        pointerRight = loadImage("Images/pointerRight.png");
 
-        startImage = loadImage("scripts/Images/start.png");
-        endImage = loadImage("scripts/Images/end.png");
+        startImage = loadImage("Images/start.png");
+        endImage = loadImage("Images/end.png");
 
-        explodeImage = loadImage("scripts/Images/explosions.png");
-        bulletImages.add(loadImage("scripts/Images/bullet.png"));
-        bulletImages.add(loadImage("scripts/Images/boom.png"));
-        bulletImages.add(loadImage("scripts/Images/missle.png"));
+        explodeImage = loadImage("Images/explosions.png");
+        bulletImages.add(loadImage("Images/bullet.png"));
+        bulletImages.add(loadImage("Images/boom.png"));
+        bulletImages.add(loadImage("Images/missle.png"));
 
-        enemyImages.add(loadImage("scripts/Images/enemy_2.png"));
-        enemyImages.add(loadImage("scripts/Images/enemy_3.png"));
-        enemyImages.add(loadImage("scripts/Images/enemy_4.png"));
-        enemyImages.add(loadImage("scripts/Images/enemy_5.png"));
-        enemyImages.add(loadImage("scripts/Images/enemy_6.png"));
-        enemyImages.add(loadImage("scripts/Images/enemy_7.png"));
-        enemyImages.add(loadImage("scripts/Images/enemy_8.png"));
-        enemyImages.add(loadImage("scripts/Images/enemy_9.png"));
-        enemyImages.add(loadImage("scripts/Images/enemy_10.png"));
+        enemyImages.add(loadImage("Images/enemy_2.png"));
+        enemyImages.add(loadImage("Images/enemy_3.png"));
+        enemyImages.add(loadImage("Images/enemy_4.png"));
+        enemyImages.add(loadImage("Images/enemy_5.png"));
+        enemyImages.add(loadImage("Images/enemy_6.png"));
+        enemyImages.add(loadImage("Images/enemy_7.png"));
+        enemyImages.add(loadImage("Images/enemy_8.png"));
+        enemyImages.add(loadImage("Images/enemy_9.png"));
+        enemyImages.add(loadImage("Images/enemy_10.png"));
 
-        towerImages.add(loadImage("scripts/Images/block.png"));
-        towerImages.add(loadImage("scripts/Images/tower_1.png"));
-        towerImages.add(loadImage("scripts/Images/tower_2.png"));
-        towerImages.add(loadImage("scripts/Images/tower_3.png"));
-        towerImages.add(loadImage("scripts/Images/tower_4.png"));
-        towerImages.add(loadImage("scripts/Images/tower_5.png"));
-        towerImages.add(loadImage("scripts/Images/tower_6.png"));
-        towerImages.add(loadImage("scripts/Images/tower_7.png"));
+        towerImages.add(loadImage("Images/block.png"));
+        towerImages.add(loadImage("Images/tower_1.png"));
+        towerImages.add(loadImage("Images/tower_2.png"));
+        towerImages.add(loadImage("Images/tower_3.png"));
+        towerImages.add(loadImage("Images/tower_4.png"));
+        towerImages.add(loadImage("Images/tower_5.png"));
+        towerImages.add(loadImage("Images/tower_6.png"));
+        towerImages.add(loadImage("Images/tower_7.png"));
 
-        waveEndImage = loadImage("scripts/Images/waveEnd.png");
+        waveEndImage = loadImage("Images/waveEnd.png");
 
-        bgm = new Audio("bgm.wav", 0.9f);
-        error = new Audio("error.wav", 1);
-        lossHp = new Audio("lossHp.wav", 0.9f);
-        explode = new Audio("explode.wav", 1);
+        bgm = new Audio("Audios/bgm.wav", 0.9f);
+        error = new Audio("Audios/error.wav", 1);
+        lossHp = new Audio("Audios/lossHp.wav", 0.9f);
+        explode = new Audio("Audios/explode.wav", 1);
         bulletAudios = new ArrayList<Audio>();
-        bulletAudios.add(new Audio("shoot.wav", 0.8f));
-        bulletAudios.add(new Audio("shoot.wav", 0.8f));
-        bulletAudios.add(new Audio("shoot.wav", 0.8f));
-        bulletAudios.add(new Audio("penetrateShoot.wav", 0.75f));
-        bulletAudios.add(new Audio("missleShoot.wav", 0.8f));
-        bulletAudios.add(new Audio("cannonShoot.wav", 0.8f));
-        bulletAudios.add(new Audio("shoot.wav", 0.8f));
+        bulletAudios.add(new Audio("Audios/shoot.wav", 0.8f));
+        bulletAudios.add(new Audio("Audios/shoot.wav", 0.8f));
+        bulletAudios.add(new Audio("Audios/shoot.wav", 0.8f));
+        bulletAudios.add(new Audio("Audios/penetrateShoot.wav", 0.75f));
+        bulletAudios.add(new Audio("Audios/missleShoot.wav", 0.8f));
+        bulletAudios.add(new Audio("Audios/cannonShoot.wav", 0.8f));
+        bulletAudios.add(new Audio("Audios/shoot.wav", 0.8f));
     }
 
     // When the player chooses a diffucult or starts the game
@@ -278,7 +296,7 @@ public class MainFrame extends JFrame implements ActionListener {
         else if (eventName.equals("load")) {
 
             // Check if the userName have a progress file
-            String fileName = "scripts/Progress/" + userID + "progress.txt";
+            String fileName = "Progress/" + userID + "progress.txt";
             File file = new File(fileName);
             if (!file.exists()) {// Tell the user file not exits
                 JOptionPane.showMessageDialog(null, "No such Archive, please recheck user name", "Error",
