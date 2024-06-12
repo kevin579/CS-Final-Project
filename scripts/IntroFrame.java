@@ -8,6 +8,7 @@ public class IntroFrame extends JFrame {
         setTitle("General Game Rules");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setUndecorated(true);
 
         // set up main panel, including backgroun color and broder
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -44,7 +45,7 @@ public class IntroFrame extends JFrame {
         JLabel imageLabel = new JLabel();
         // BufferedImage image = ImageIO.read(new
         // File("bin/Images/gameDisplayImage.png"));
-        BufferedImage image = MainFrame.loadImage("scripts/Images/gameDisplayImage.png");
+        BufferedImage image = MainFrame.loadImage("Images/gameDisplayImage.png");
         
         // make sure image is in the right size
         int newWidth = image.getWidth() / 2;
