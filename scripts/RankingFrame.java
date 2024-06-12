@@ -13,14 +13,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 	private JButton mainMenu;
 	private ArrayList<Integer> scores = new ArrayList<Integer>();
 	private ArrayList<String> users = new ArrayList<String>();
-	
-	public static void main(String[] args) {
-		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				new RankingFrame();
-			}
-		});
-	}
+
 	
 	public RankingFrame() {
 	   this.setTitle("Rankings");
@@ -39,12 +32,12 @@ public class RankingFrame extends JFrame implements ActionListener {
        rankPanel.setLayout(new BorderLayout());
        //rankPanel.setPreferredSize(new Dimension(1500, 750));
        rankPanel.setBackground(new Color(235, 200, 235)); 
-       this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/30*29));
+       this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight));
        
        //Rankings title.
        title = new JLabel("Rankings", SwingConstants.CENTER);
        Font labelFont = title.getFont();
-       title.setFont(new Font(labelFont.getName(), Font.PLAIN, 30));
+       title.setFont(new Font(labelFont.getName(), Font.PLAIN, 60));
        rankPanel.add(title, BorderLayout.PAGE_START);
        
        //Spacers for BorderLayout

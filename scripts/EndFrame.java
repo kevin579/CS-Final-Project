@@ -16,17 +16,18 @@ public class EndFrame extends JFrame implements ActionListener{
     EndFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("GameOver");
+        this.setExtendedState(MAXIMIZED_BOTH);
+        this.setUndecorated(true);
         this.panelWidth = MainFrame.panelWidth;
         this.panelHeight = MainFrame.panelHeight;
-        endImg = loadImage("scripts/Images/Ender.png");
+        endImg = loadImage("Images/Ender.png");
         scorePanel = new JPanel();
         scorePanel.setPreferredSize(new Dimension(this.panelWidth,this.panelHeight));
         scorePanel.setBackground(Color.BLACK);
         ImagePanel imgPanel = new ImagePanel();
         scorePanel.add(imgPanel);
         scorePanel.setLayout(new BoxLayout(scorePanel, BoxLayout.Y_AXIS));
-        String t = "Your score is " + String.valueOf(GameFrame.score);
-        JLabel text = new JLabel(t);
+        JLabel text = new JLabel("Your score is " + String.valueOf(GameFrame.score));
         text.setFont(new Font("Serif", Font.PLAIN, 64));
         text.setBorder(BorderFactory.createEmptyBorder(0, 100, 100, 100));
         text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
@@ -42,7 +43,7 @@ public class EndFrame extends JFrame implements ActionListener{
         returnButton.addActionListener(this);
         scorePanel.add(returnButton);
         JPanel emptyPanel = new JPanel();
-        emptyPanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 200, 100));
+        emptyPanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 400, 100));
         emptyPanel.setBackground(Color.BLACK);
         scorePanel.add(emptyPanel);
         this.add(scorePanel);
@@ -58,7 +59,7 @@ public class EndFrame extends JFrame implements ActionListener{
         }
         public void paintComponent(Graphics g){
             super.paintComponent(g);
-            g.drawImage(endImg,0,0,panelWidth,panelHeight/2,null);
+            g.drawImage(endImg,0,0,panelWidth,panelHeight/2-100,null);
         }
     }
     public void actionPerformed(ActionEvent e){
