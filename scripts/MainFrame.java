@@ -27,26 +27,31 @@ import javax.swing.SwingConstants;
 
 //This is the introduction page of the application
 public class MainFrame extends JFrame implements ActionListener {
+
+    // UI components
     JComboBox<String> comboBox;
     String[] difficulties = { "easy", "medium", "hard", "impossible" };
     String difficult = difficulties[0];
     JButton startButton, introButton, rankButton, loadButton;
     JPanel mainPanel;
     JTextField textField;
+
+    // game settings 
     static int panelWidth;
     static int panelHeight;
+
     TextLabel infoText1, infoText2, infoText3;
     static String userID = "anonymous";
 
-    // The parameter of enemy, can be modified
-    // including health, speed, bullet speed, dmg, attack rate, spawnspeed, and
-    // score
+    // game difficulty parameters
     static int dif = 1;
     static BufferedImage pointerUp, pointerDown, pointerLeft, pointerRight;
 
+    // enemy info 
     static int[] enemyHPs = { 8, 12, 40, 60, 100, 125, 25, 30 };
     static double[] enemySpeeds = { 1.2, 1.5, 1, 1, 0.8, 0.9, 1.8, 2 };
 
+    // tower info
     static int[] towerCosts = { 10, 20, 50, 180, 200, 1000, 1500, 2000 };
     static int[] towerDamage = { 2, 4, 8, 20, 90, 200, 20 };
     static int[] towerRange = { 5, 6, 7, 5, 50, 8, 3 };
@@ -63,7 +68,7 @@ public class MainFrame extends JFrame implements ActionListener {
     static BufferedImage explodeImage;
     static BufferedImage waveEndImage;
 
-    // sound variable
+    // variables for sounds 
     static Audio bgm, error, lossHp, explode;
     static ArrayList<Audio> bulletAudios;
 
@@ -71,6 +76,7 @@ public class MainFrame extends JFrame implements ActionListener {
         new MainFrame();
     }
 
+    // Constructor for main frame
     MainFrame() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setTitle("SetUp");
@@ -117,8 +123,7 @@ public class MainFrame extends JFrame implements ActionListener {
         introButton.addActionListener(this);
         introductionPanel.add(introButton);
 
-        // The center panel, will let the player to choose difficulty and start the
-        // game. Also displays difficulty information.
+        // Center panel that has multiple panel for different uses
         JPanel enterPanel = new JPanel();
         JPanel textPanel = new JPanel();
         JPanel buttonPanel = new JPanel();
@@ -151,6 +156,7 @@ public class MainFrame extends JFrame implements ActionListener {
         loadButton.addActionListener(this);
         buttonPanel.add(loadButton);
 
+        // display game characteristics for different difficulties 
         infoText1 = new TextLabel(24, "Enemy hp x1", 0, 50, 0, 0);
         infoText2 = new TextLabel(24, "Enemy speed x1", 0, 50, 0, 0);
         infoText3 = new TextLabel(24, "Score magnification x1", 0, 50, 0, 0);

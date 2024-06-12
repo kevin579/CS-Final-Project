@@ -11,7 +11,6 @@ public class RankingFrame extends JFrame implements ActionListener {
     private JPanel rankPanel, btnPanel, scrollPanel;
 	private JLabel title, rank, right, left, bottom;
 	private JButton mainMenu;
-	private ArrayList<Integer> sort = new ArrayList<Integer>();
 	private ArrayList<Integer> scores = new ArrayList<Integer>();
 	private ArrayList<String> users = new ArrayList<String>();
 	
@@ -33,18 +32,21 @@ public class RankingFrame extends JFrame implements ActionListener {
        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
        mainPanel.setDividerLocation(760);
        mainPanel.setBackground(new Color(255, 240, 255)); 
-       this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight)); // Set background color
+       this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight)); 
        //Rank Panel
        rankPanel = new JPanel();
        rankPanel.setLayout(new BorderLayout());
-       rankPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/20*19));
-       rankPanel.setBackground(new Color(235, 200, 235));  // Set background color
+       rankPanel.setPreferredSize(new Dimension(1500, 750));
+       rankPanel.setBackground(new Color(235, 200, 235)); 
+       this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/30*29));
        
+       //Rankings title.
        title = new JLabel("Rankings", SwingConstants.CENTER);
        Font labelFont = title.getFont();
        title.setFont(new Font(labelFont.getName(), Font.PLAIN, 30));
        rankPanel.add(title, BorderLayout.PAGE_START);
        
+       //Spacers for BorderLayout
        right = new JLabel("                                                                                  ");
        left = new JLabel("                                                                                  ");
        bottom = new JLabel("");
@@ -56,12 +58,11 @@ public class RankingFrame extends JFrame implements ActionListener {
        this.fileToSortedArray("scripts/ranking.txt");
        
        scrollPanel = new JPanel(new GridLayout(0, 3));
-	   
        scroll = new JScrollPane(scrollPanel);
-	   
        scrollPanel.setBackground(new Color(200, 225, 225));
-     
-       for(int i = 0; i < sort.size() + 1; i++) {
+       
+       //Lists all players users and scores in order starting from first place (top scorer).
+       for(int i = 0; i < scores.size() + 1; i++) {
     	   if(i == 0) {
     		   rank = new JLabel("Rank", SwingConstants.CENTER); 
         	   rank.setAlignmentX(LEFT_ALIGNMENT);
@@ -109,7 +110,7 @@ public class RankingFrame extends JFrame implements ActionListener {
        //Button Panel for return button
        btnPanel = new JPanel();
        btnPanel.setLayout(new BorderLayout(10, 10));
-       btnPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/20));
+       btnPanel.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/30));
        btnPanel.setBackground(new Color(235, 200, 235));  // Set background color
        mainMenu = new JButton("Return to Main Menu");
        mainMenu.setActionCommand("return");
@@ -125,20 +126,21 @@ public class RankingFrame extends JFrame implements ActionListener {
 	}
 	
 	public void fileToSortedArray(String file) {
-		//fills the array with data from file.
 		String line;
 		
+		//Fills ArrayLists with data from file.
 		try {
 			FileReader in = new FileReader(file);
 			BufferedReader reader = new BufferedReader(in);
 			
 			while((line = reader.readLine()) != null) {
+				//Splits read line into two parts.
 				String[] parts = line.split(" ");
 				if(parts.length == 2) {
 					String user = parts[0]; //Usernames
 					int score = Integer.parseInt(parts[1]); //Scores
 					
-					this.sort.add(score); //Add scores into arraylist.
+					//Add scores into ArrayLists.
 					this.scores.add(score);
 					this.users.add(user);
 				}
@@ -155,6 +157,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 			System.out.println("An error has occured.");
 		}
 		
+		//Sorts the users and scores in descending order of the players scores.
 		for(int i = 0; i < scores.size(); i++) {
 			for(int subIndex = i; subIndex < scores.size(); subIndex++) {
 				if (scores.get(subIndex) > scores.get(i)) {
@@ -175,7 +178,6 @@ public class RankingFrame extends JFrame implements ActionListener {
 		String event = e.getActionCommand();
 		
 		if(event.equals("return")) {
-			this.setVisible(false);
 			new MainFrame();
 		}
 	}

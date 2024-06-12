@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 
-
 public class IntroFrame extends JFrame {
     public IntroFrame() {
         setTitle("General Game Rules");
@@ -23,7 +22,7 @@ public class IntroFrame extends JFrame {
         contentPanel.setBackground(new Color(230, 230, 255));
         contentPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Title
+        // Title of the frame
         JLabel title = new JLabel("General Rules of the Game", SwingConstants.CENTER);
         title.setFont(new Font("Serif", Font.BOLD, 45));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -32,7 +31,7 @@ public class IntroFrame extends JFrame {
         // add space between title and text body
         contentPanel.add(Box.createRigidArea(new Dimension(0, 35)));
 
-        // Text body
+        // Text body - instrucgions
         JLabel textbody = new JLabel(
                 "<html>BLOCKS - Press number key '1' on your keyboard, a block can be selected. It blocks enemy's path, and allows you to deploy defense towers. <br> When a deployed blocked is clicked, and there is not tower deployed on top, the block will removed and the cost will be refunded. <br> p.s. you cannot completely seal the path, towerbuilder will NOT respond to your command. <br><br> TOWERS - Keys 2-8 will select corresponding tower. Tower stats displays upon hovering your mouse on them. Similar to blocks, if clicked, <br> tower undeploys and the money refunds. <br> p.s. the towers can only be placed on top of a block. <br><br> GAMEPLAY - Drop-down menu can set the DIFFICULTY of the game. Press start button to start a new game. Once the game starts, the control <br> panel disappears and towers become non-editable. <br> <br> When a wave ends, all enemy will disappear. The total number of waves is dependent on the selcted difficulty. <br> <br> IMPORTANT - In order to quit, click ESC. </html>",
                 SwingConstants.CENTER);
@@ -48,13 +47,15 @@ public class IntroFrame extends JFrame {
         // BufferedImage image = ImageIO.read(new
         // File("bin/Images/gameDisplayImage.png"));
         BufferedImage image = MainFrame.loadImage("scripts/Images/gameDisplayImage.png");
-        // Resize the image
+        
+        // make sure image is in the right size
         int newWidth = image.getWidth() / 2;
         int newHeight = image.getHeight() / 2;
         Image scaledImage = image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
         ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
         imageLabel.setIcon(scaledImageIcon);
 
+        // align image to the center and add image to content panel
         imageLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         contentPanel.add(imageLabel);
 
@@ -86,7 +87,8 @@ public class IntroFrame extends JFrame {
 
         add(mainPanel);
         setVisible(true);
-        // Add KeyListener to handle the ESC key
+
+        // Key listener for detecting escape key
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
