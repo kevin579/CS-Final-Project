@@ -28,7 +28,7 @@ public class Tower extends Rectangle {
         this.freq = MainFrame.towerFreq[type - 1];
         this.damage = MainFrame.towerDamage[type - 1];
         this.range = MainFrame.towerRange[type - 1];
-        this.shootAudio = MainFrame.bulletAudios.get(type-1);
+        this.shootAudio = MainFrame.bulletAudios.get(type - 1);
     }
 
     // Getters and Setters
@@ -168,7 +168,7 @@ public class Tower extends Rectangle {
         this.totalDamage = totalDamage;
     }
 
-    public void playAudio(){
+    public void playAudio() {
         shootAudio.play();
     }
 
@@ -205,13 +205,14 @@ public class Tower extends Rectangle {
                         + this.target.getWidth() / 2 - (this.x + this.width / 2)) / (this.dis);
                 double speedY = this.speed * (this.target.getY() + this.target.getSpeedY() * this.estimateTime
                         + this.target.getHeight() / 2 - (this.y + this.height / 2)) / (this.dis);
-                GameFrame.bullets.add(generateBullet(speedX,speedY));
+                GameFrame.bullets.add(generateBullet(speedX, speedY));
             }
         }
     }
-    public Bullet generateBullet(double speedX,double speedY){
+
+    public Bullet generateBullet(double speedX, double speedY) {
         Bullet bullet = new Bullet(this.px + this.width / 2, this.py + this.height / 2, type,
-                        GameFrame.blockSize / 6, speedX, speedY, damage, this);
+                GameFrame.blockSize / 6, speedX, speedY, damage, this);
         return bullet;
     }
 
@@ -284,10 +285,12 @@ class PenetrateTower extends Tower {
     PenetrateTower(int gridX, int gridY, int type) {
         super(gridX, gridY, type);
     }
+
     @Override
-    public Bullet generateBullet(double speedX,double speedY){
-        Bullet bullet = new PenetrateBullet(this.getPx() + this.width / 2, this.getPy() + this.height / 2, this.getType(),
-                        GameFrame.blockSize / 6, speedX, speedY, this.getDamage(), this);
+    public Bullet generateBullet(double speedX, double speedY) {
+        Bullet bullet = new PenetrateBullet(this.getPx() + this.width / 2, this.getPy() + this.height / 2,
+                this.getType(),
+                GameFrame.blockSize / 6, speedX, speedY, this.getDamage(), this);
         return bullet;
     }
 }
@@ -298,7 +301,8 @@ class RingTower extends Tower {
         super(gridX, gridY, type);
     }
 
-    // Aim at enemy. because it is a ring tower, it does not need to lock the first enemy
+    // Aim at enemy. because it is a ring tower, it does not need to lock the first
+    // enemy
     @Override
     public void aim() {
         for (Enemy enemy : GameFrame.enemys) {
@@ -336,9 +340,9 @@ class BoomTower extends Tower {
 
     // Shoot at enemy
     @Override
-    public Bullet generateBullet(double speedX,double speedY){
+    public Bullet generateBullet(double speedX, double speedY) {
         Bullet bullet = new Boom(this.getPx() + this.width / 2, this.getPy() + this.height / 2, this.getType(),
-                        GameFrame.blockSize / 6, speedX, speedY, this.getDamage(), this);
+                GameFrame.blockSize / 6, speedX, speedY, this.getDamage(), this);
         return bullet;
     }
 }
@@ -351,13 +355,14 @@ class MissileTower extends Tower {
 
     // Shoot at enemy
     @Override
-    public Bullet generateBullet(double speedX,double speedY){
+    public Bullet generateBullet(double speedX, double speedY) {
         Bullet bullet = new Missile(this.getPx() + this.width / 2, this.getPy() + this.height / 2, this.getType(),
-                        GameFrame.blockSize / 6, speedX, speedY, this.getDamage(), this);
+                GameFrame.blockSize / 6, speedX, speedY, this.getDamage(), this);
         return bullet;
     }
 }
 
+//This is the block object;
 class Block extends Rectangle {
     private int gridX, gridY;
     private BufferedImage image;
@@ -396,313 +401,3 @@ class Block extends Rectangle {
     }
 }
 
-// Make tower icons for game frame
-class TowerIcon extends Rectangle {
-    private int type, cost;
-    private String text;
-    private boolean select;
-    private BufferedImage icon;
-
-    public TowerIcon(int type, int cost) {
-        super(MainFrame.panelWidth / 15 * type, GameFrame.buttomY + GameFrame.buttomHeight / 5,
-                (int) (GameFrame.blockSize * 1.5), (int) (GameFrame.blockSize * 1.5));
-        this.type = type;
-        this.cost = cost;
-        this.text = "$" + String.valueOf(cost);
-        this.select = false;
-        this.icon = MainFrame.towerImages.get(type - 1);
-    }
-
-    // Getters and Setters
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public boolean isSelect() {
-        return select;
-    }
-
-    public void setSelect(boolean select) {
-        this.select = select;
-    }
-
-    public BufferedImage getIcon() {
-        return icon;
-    }
-
-    public void setIcon(BufferedImage icon) {
-        this.icon = icon;
-    }
-}
-
-// Class for towers in game
-class TowerPanel extends Rectangle {
-    private int type, gridX, gridY;
-    private SellButton sellButton;
-    private UpgradeButton upgradeButton;
-    private Color color;
-
-    public TowerPanel(int type, int gridX, int gridY) {
-        super((gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin,
-                gridY * GameFrame.blockSize + GameFrame.topMargin,
-                GameFrame.blockSize * 2, GameFrame.blockSize * 3);
-        this.type = type;
-        this.gridX = gridX;
-        this.gridY = gridY;
-        if (this.gridX >= GameFrame.col - 2) {
-            this.x -= 3 * GameFrame.blockSize;
-        }
-        if (this.gridY >= GameFrame.row - 2) {
-            this.y -= 2 * GameFrame.blockSize;
-        }
-        this.sellButton = new SellButton(this.gridX, this.gridY);
-        this.upgradeButton = new UpgradeButton(this.gridX, this.gridY);
-        this.color = Color.WHITE;
-    }
-
-    // Getters and Setters
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public int getGridX() {
-        return gridX;
-    }
-
-    public void setGridX(int gridX) {
-        this.gridX = gridX;
-    }
-
-    public int getGridY() {
-        return gridY;
-    }
-
-    public void setGridY(int gridY) {
-        this.gridY = gridY;
-    }
-
-    public SellButton getSellButton() {
-        return sellButton;
-    }
-
-    public void setSellButton(SellButton sellButton) {
-        this.sellButton = sellButton;
-    }
-
-    public UpgradeButton getUpgradeButton() {
-        return upgradeButton;
-    }
-
-    public void setUpgradeButton(UpgradeButton upgradeButton) {
-        this.upgradeButton = upgradeButton;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public void update(int type, int gridX, int gridY) {
-        this.gridX = gridX;
-        this.gridY = gridY;
-        this.type = type;
-        this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
-        this.y = gridY * GameFrame.blockSize + GameFrame.topMargin;
-        if (this.gridX >= GameFrame.col - 2) {
-            this.x -= 3 * GameFrame.blockSize;
-        }
-        if (this.gridY >= GameFrame.row - 2) {
-            this.y -= 2 * GameFrame.blockSize;
-        }
-        this.sellButton.update(this.gridX, this.gridY);
-        this.upgradeButton.update(this.gridX, this.gridY);
-    }
-}
-
-// Panel for upgrade when clicked on tower
-class UpgradeButton extends Rectangle {
-    private int type, gridX, gridY;
-    private Color color;
-
-    public UpgradeButton(int gridX, int gridY) {
-        super((gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin,
-                (gridY + 1) * GameFrame.blockSize + GameFrame.topMargin,
-                GameFrame.blockSize * 2, GameFrame.blockSize);
-        this.color = new Color(0, 250, 0);
-        if (gridX >= GameFrame.col - 2) {
-            this.x -= 3 * GameFrame.blockSize;
-        }
-        if (gridY >= GameFrame.row - 2) {
-            this.y -= 2 * GameFrame.blockSize;
-        }
-    }
-
-    // Getters and Setters
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public int getGridX() {
-        return gridX;
-    }
-
-    public void setGridX(int gridX) {
-        this.gridX = gridX;
-    }
-
-    public int getGridY() {
-        return gridY;
-    }
-
-    public void setGridY(int gridY) {
-        this.gridY = gridY;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public void update(int gridX, int gridY) {
-        this.gridX = gridX;
-        this.gridY = gridY;
-        this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
-        this.y = (gridY + 1) * GameFrame.blockSize + GameFrame.topMargin;
-        if (this.gridX >= GameFrame.col - 2) {
-            this.x -= 3 * GameFrame.blockSize;
-        }
-        if (this.gridY >= GameFrame.row - 2) {
-            this.y -= 2 * GameFrame.blockSize;
-        }
-    }
-}
-
-// Panel for sell when clicked on tower
-class SellButton extends Rectangle {
-    private int gridX, gridY;
-    private Color color;
-
-    public SellButton(int gridX, int gridY) {
-        super((gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin,
-                (gridY + 2) * GameFrame.blockSize + GameFrame.topMargin,
-                GameFrame.blockSize * 2, GameFrame.blockSize);
-        this.color = new Color(250, 0, 0);
-        if (gridX >= GameFrame.col - 2) {
-            this.x -= 3 * GameFrame.blockSize;
-        }
-        if (gridY >= GameFrame.row - 2) {
-            this.y -= 2 * GameFrame.blockSize;
-        }
-    }
-
-    // Getters and Setters
-    public int getGridX() {
-        return gridX;
-    }
-
-    public void setGridX(int gridX) {
-        this.gridX = gridX;
-    }
-
-    public int getGridY() {
-        return gridY;
-    }
-
-    public void setGridY(int gridY) {
-        this.gridY = gridY;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public void update(int gridX, int gridY) {
-        this.gridX = gridX;
-        this.gridY = gridY;
-        this.x = (gridX + 1) * GameFrame.blockSize + GameFrame.leftMargin;
-        this.y = (gridY + 2) * GameFrame.blockSize + GameFrame.topMargin;
-        if (this.gridX >= GameFrame.col - 2) {
-            this.x -= 3 * GameFrame.blockSize;
-        }
-        if (this.gridY >= GameFrame.row - 2) {
-            this.y -= 2 * GameFrame.blockSize;
-        }
-    }
-}
-
-// An image that shows at the end of every wave
-class WaveEnd extends Rectangle {
-    private double speed = 80;
-    private double acceleration;
-
-    public WaveEnd() {
-        super(-MainFrame.panelWidth / 3, MainFrame.panelHeight / 3, MainFrame.panelWidth / 3,
-                MainFrame.panelHeight / 5);
-        this.acceleration = (this.speed - 8) * (this.speed - 8) / (MainFrame.panelWidth);
-    }
-
-    // Getters and Setters
-    public double getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(double speed) {
-        this.speed = speed;
-    }
-
-    public double getAcceleration() {
-        return acceleration;
-    }
-
-    public void setAcceleration(double acceleration) {
-        this.acceleration = acceleration;
-    }
-
-    public void move() {
-        if (this.x + this.width / 2 < MainFrame.panelWidth / 2) {
-            this.speed -= acceleration;
-        } else {
-            this.speed += acceleration;
-        }
-        this.speed = Math.max(this.speed, 3);
-        this.x += this.speed;
-    }
-}
