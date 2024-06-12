@@ -18,7 +18,7 @@ public class EndFrame extends JFrame implements ActionListener{
         this.setTitle("GameOver");
         this.panelWidth = MainFrame.panelWidth;
         this.panelHeight = MainFrame.panelHeight;
-        endImg = loadImage("scripts/Images/Ender.png");
+        endImg = loadImage("Images/Ender.png");
         scorePanel = new JPanel();
         scorePanel.setPreferredSize(new Dimension(this.panelWidth,this.panelHeight));
         scorePanel.setBackground(Color.BLACK);
