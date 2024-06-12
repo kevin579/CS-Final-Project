@@ -26,6 +26,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 	   this.setTitle("Rankings");
        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+	   this.setUndecorated(true);
 
        //Main Panel
        mainPanel = new JSplitPane();
