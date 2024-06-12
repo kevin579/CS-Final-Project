@@ -1,51 +1,38 @@
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
 import javax.swing.Timer;
 
 public class GameFrame extends JFrame implements ActionListener {
+    // The panel and timer
     GamePanel gamePanel;
     Timer timer;
     static int time = 0;
-    static boolean edit = true;
-    static int mouseX, mouseY;
-    static boolean mouseClick = false;
 
     // Variables for grid and panel
     int panelWidth, panelHeight;
+
+    static int col = 50; // There will be 50 cols, and any row number based on screen size
     static int row;
-    static int col = 50;
-    static int[][] towerGrid;
-    static char[][] pathGrid;
+
+    static int[][] towerGrid; // The towers
+    static char[][] pathGrid; // The enemy's path
     static int blockSize;
     static int titleHeight, buttomHeight, buttomY, gridHeight;
     static int topMargin, leftMargin, rightMargin;
-    static int startX, startY, endX, endY;
-    static int gridX, gridY;
+    static int startX, startY, endX, endY; // The place of start and end
+
     static Color transparentRed = new Color(250, 0, 0, 50);
     static Color transparentOrange = new Color(255, 165, 0, 50);
+
+    static int mouseX, mouseY; // where the mouse click
+    static int gridX, gridY; // which block on the grid is the mouse clicked
+    static boolean mouseClick = false;
+
+    static boolean edit = true; // Game starts at edit mode
 
     // variables for block and tower
     static ArrayList<Block> blocks;
@@ -75,32 +62,36 @@ public class GameFrame extends JFrame implements ActionListener {
     boolean load;
     int scoreRate = 1;
 
-    // panel variables
+    // Tower panel variables. Tower panel is a small panel that will pop up if a
+    // player clicks a tower to display information and perform actions
     static Tower selectedTower;
     static Block selectedBlock;
     static boolean panelOperation;
     String userID;
 
     GameFrame(boolean load) {
+        // Set up the frame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(MAXIMIZED_BOTH);
         this.setUndecorated(true);
-        this.load = load;
 
-        gamePanel = new GamePanel();
+        this.load = load; // Dentermine if load or not
+
+        gamePanel = new GamePanel();// create panel
 
         // add key and mouse inputs
         KeyInput key = new KeyInput();
         MouseInput mouse = new MouseInput();
-
         this.addMouseListener(mouse);
         this.addKeyListener(key);
+
         this.add(gamePanel);
         this.pack();
+
+        this.setup(); // setup the game
         this.setLocationRelativeTo(null);
         this.setVisible(true);
 
-        setup();
     }
 
     public void setup() {
@@ -153,7 +144,7 @@ public class GameFrame extends JFrame implements ActionListener {
         // laod all the enemies that will appear in the game from file to array
         loadWave();
 
-        // Depenfing on the user's choice, create new game or load.
+        // Depending on the user's choice, create new game or load.
         if (this.load) {
             loadGame();
         } else {
@@ -167,18 +158,13 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // Start the timer
         timer = new Timer(8, this);
-        timer.setInitialDelay(1000);
         timer.start();
 
-        MainFrame.bgm.play();
+        MainFrame.bgm.play(); // play bgm
 
     }
 
     public void actionPerformed(ActionEvent e) {
-        // if there a panel for the tower, get select towre
-        getPanelItem();
-        panelOperation = false;
-
         // get which tower the player wants to put
         getSelectedTower();
 
@@ -187,22 +173,27 @@ public class GameFrame extends JFrame implements ActionListener {
 
         // If the game is at edit mode
         if (edit) {
+            // Display a moving pop up message showing game ends and entered edit mod
             if (waveEnd != null) {
                 waveEnd.move();
+                // remove after it leaves the screen
                 if (waveEnd.x > panelWidth) {
                     waveEnd = null;
                 }
             }
+            // creates a special enemy to show the current path way
             Enemy pointer = new Enemy(0, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) * 2));
             enemys.add(pointer);
-            // remove all bullets from previous wave
+
+            // Save the game after any actions is performed
             if (notSave) {
                 saveGame();
                 notSave = false;
             }
-            bullets.clear();
+
             if (mouseClick) {
                 notSave = true;
+
                 // If the player clicked on the game area
                 if (mouseX > leftMargin && mouseX < panelWidth - rightMargin && mouseY > titleHeight
                         && mouseY < buttomY) {
@@ -211,9 +202,11 @@ public class GameFrame extends JFrame implements ActionListener {
                     gridX = (mouseX - leftMargin) / blockSize;
                     gridY = (mouseY - topMargin) / blockSize;
 
-                    // If the user did not click on the tower panel
+                    // If the user did not click on the tower panel in method excutePanelOperation()
                     if (panelOperation == false) {
                         if (towerGrid[gridY][gridX] != 0) {
+                            // If the player clicked on a block or tower, then pop up a tower panel for that
+                            // tower
                             updatePanel();
                         }
                         if (selectNum == 1) {// the player select block
@@ -237,12 +230,17 @@ public class GameFrame extends JFrame implements ActionListener {
             generateEnemy();
 
         }
+        // Enemies move
         excuteEnemyOperations();
+
         // Make the bullets move, track, explode
         excuteBulletOperation();
+
+        // End the game after hp less than 0
         if (playerHP <= 0) {
             endGame();
         }
+
         time++;
         mouseClick = false;
         mouseX = mouseY = 0;
@@ -250,17 +248,19 @@ public class GameFrame extends JFrame implements ActionListener {
 
     }
 
-    // Get which block or tower the panel is on
+    /**
+     * Get which block or tower the panel is on
+     * Get tower have a higher priority than block
+     * Called every time mouse clicked
+     */
     private void getPanelItem() {
         selectedBlock = null;
         selectedTower = null;
         if (towerPanel != null) {
-
             for (Tower tower : towers) {
                 if (tower.getGridX() == towerPanel.getGridX() && tower.getGridY() == towerPanel.getGridY()) {
                     selectedTower = tower;
                     break;
-
                 }
             }
             if (selectedTower == null) {
@@ -268,55 +268,43 @@ public class GameFrame extends JFrame implements ActionListener {
                     if (block.getGridX() == towerPanel.getGridX() && block.getGridY() == towerPanel.getGridY()) {
                         selectedBlock = block;
                         break;
-
                     }
                 }
             }
         }
+        panelOperation = false;
     }
 
     /**
      * adjust the enemy hp and speed based on difficuly choosed
+     * Called only once when game starts
      */
     private void adjustDifficulty() {
-        int[] tempEnemyHPs = new int[8];
-        double[] tempEnemySpeeds = new double[8];
+        // adjust difficulty
         if (this.difficult == 1) {
-            for (int i = 0; i < 8; i++) {
-                tempEnemyHPs[i] = MainFrame.enemyHPs[i] / 2;
+            for (int i = 0; i < 7; i++) {
+                MainFrame.enemyHPs[i] /= 2;
+                MainFrame.enemySpeeds[i] /= 1.5;
             }
-            for (int i = 0; i < 8; i++) {
-                tempEnemySpeeds[i] = MainFrame.enemySpeeds[i] / 2;
-            }
-            MainFrame.enemyHPs = tempEnemyHPs;
-            MainFrame.enemySpeeds = tempEnemySpeeds;
             scoreRate = 1;
         } else if (this.difficult == 2) {
-
-            for (int i = 0; i < 8; i++) {
-                tempEnemyHPs[i] = (int) (MainFrame.enemyHPs[i] / 1.6);
+            for (int i = 0; i < 7; i++) {
+                MainFrame.enemyHPs[i] /= 1.6;
+                MainFrame.enemySpeeds[i] /= 1.33;
             }
-            for (int i = 0; i < 8; i++) {
-                tempEnemySpeeds[i] = MainFrame.enemySpeeds[i] / 1.6;
-            }
-            MainFrame.enemyHPs = tempEnemyHPs;
-            MainFrame.enemySpeeds = tempEnemySpeeds;
             scoreRate = 2;
         } else if (this.difficult == 3) {
-
-            for (int i = 0; i < 8; i++) {
-                tempEnemyHPs[i] = (int) (MainFrame.enemyHPs[i] / 1.33);
+            for (int i = 0; i < 7; i++) {
+                MainFrame.enemyHPs[i] /= 1.33;
+                MainFrame.enemySpeeds[i] /= 1.2;
             }
-            for (int i = 0; i < 8; i++) {
-                tempEnemySpeeds[i] = MainFrame.enemySpeeds[i] / 1.33;
-            }
-            MainFrame.enemyHPs = tempEnemyHPs;
-            MainFrame.enemySpeeds = tempEnemySpeeds;
             scoreRate = 3;
         } else {
             scoreRate = 5;
         }
-        if (waveNum >= 15) {
+
+        // if it is a loaded game and wave number >15, then make everything go faster
+        if (this.load && waveNum >= 15) {
             for (int i = 0; i < 7; i++) {
                 MainFrame.towerSpeed[i] *= 1.5;
                 MainFrame.enemyHPs[i] /= 2;
@@ -325,57 +313,40 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    //Make the game perform the tower panel's action when player clicks
     private void excutePanelOperations() {
-
+        // if there a panel for a tower, get the tower with panel
+        getPanelItem();
         if (towerPanel != null) { // if there is a panel
 
             if (towerPanel.getUpgradeButton().contains(mouseX, mouseY)) { // if upgrade button is clicked
-
-                if (towerPanel.getType() != 1) { // for all towers
-
-                    for (Tower tower : towers) {
-                        if (tower.getGridX() == towerPanel.getGridX() && tower.getGridY() == towerPanel.getGridY()) {
-                            if (cash >= MainFrame.towerCosts[towerPanel.getType() - 1] / 2 && tower.getLevel() < 5) {
-                                // Upgrade the tower selected if cash is sufficient
-                                tower.setLevel(tower.getLevel() + 1);
-                                cash -= MainFrame.towerCosts[towerPanel.getType() - 1] / 2;
-                                tower.upgrade(1);
-                            }
-                            else{
-                                MainFrame.error.play();
-                            }
-                            break;
-                        }
+                if (selectedTower != null) { // for all towers
+                    if (cash >= MainFrame.towerCosts[towerPanel.getType() - 1] / 2 && selectedTower.getLevel() < 5) {
+                        // Upgrade the tower selected if cash is sufficient
+                        selectedTower.setLevel(selectedTower.getLevel() + 1);
+                        cash -= MainFrame.towerCosts[towerPanel.getType() - 1] / 2;
+                        selectedTower.upgrade(1); // upgrade 1 level
+                    } else {
+                        MainFrame.error.play(); // play an error audio to tell the player
                     }
                 }
-                // close the panel
+                // close the panel and show an operation is performed
                 towerPanel = null;
                 panelOperation = true;
             } else if (towerPanel.getSellButton().contains(mouseX, mouseY)) { // if sell button is clicked
 
-                if (towerPanel.getType() == 1) { // Remove the block, update enemy path, and re-gain cash
+                if (selectedBlock != null) { // Remove the block, update enemy path, and re-gain cash
 
-                    ArrayList<Block> tempBlocks = new ArrayList<Block>(blocks);
-                    for (Block block : tempBlocks) {
-                        if (block.getGridX() == towerPanel.getGridX() && block.getGridY() == towerPanel.getGridY()) {
-                            blocks.remove(block);
-                            cash += MainFrame.towerCosts[0];
-                            towerGrid[towerPanel.getGridY()][towerPanel.getGridX()] = 0;
-                            findPath();
-                            break;
-                        }
-                    }
-                } else { // remove the tower, and left an empty block
+                    blocks.remove(selectedBlock);
+                    cash += MainFrame.towerCosts[0];
+                    towerGrid[towerPanel.getGridY()][towerPanel.getGridX()] = 0;
+                    findPath();
 
-                    ArrayList<Tower> tempTowers = new ArrayList<Tower>(towers);
-                    for (Tower tower : tempTowers) {
-                        if (tower.getGridX() == towerPanel.getGridX() && tower.getGridY() == towerPanel.getGridY()) {
-                            towers.remove(tower);
-                            cash += MainFrame.towerCosts[towerPanel.getType() - 1] * (1 + tower.getLevel() / 2.0);
-                            towerGrid[towerPanel.getGridY()][towerPanel.getGridX()] = 1;
-                            break;
-                        }
-                    }
+                } else if (selectedTower != null) { // remove the tower, and left an empty block
+                    towers.remove(selectedTower);
+                    cash += MainFrame.towerCosts[towerPanel.getType() - 1] * (1 + selectedTower.getLevel() / 2.0);
+                    towerGrid[towerPanel.getGridY()][towerPanel.getGridX()] = 1;
+
                 }
                 // close the panel
                 towerPanel = null;
@@ -384,17 +355,19 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Add a block at the cliked place
+     * Will not do so if cash is not enough or completely blocked way
+     */
     private void addBlock() {
         if (towerGrid[gridY][gridX] == 0) {
             towerPanel = null;
             if (cash >= MainFrame.towerCosts[0]) {
-
                 pathGrid = new char[row][col];
 
                 towerGrid[gridY][gridX] = 1;
                 if (findPath()
                         && (gridY != row / 2 || gridX != col / 2 + 1)) {
-
                     cash -= MainFrame.towerCosts[0];
                     Block block = new Block(gridX, gridY);
                     blocks.add(block);
@@ -403,25 +376,24 @@ public class GameFrame extends JFrame implements ActionListener {
                     towerGrid[gridY][gridX] = 0;
                     findPath();
                 }
-            }
-            else{
+            } else {
                 MainFrame.error.play();
             }
         }
     }
 
     private void addTower() {
-        // towerPanel = null;
-        if (towerGrid[gridY][gridX] == 0) {
-            MainFrame.error.play();
+        if (towerGrid[gridY][gridX] == 0) { //clicked on an empty place
+            MainFrame.error.play(); //Require block
             towerPanel = null;
 
-        } else if (towerGrid[gridY][gridX] == 1) {
+        } else if (towerGrid[gridY][gridX] == 1) {//CLicked on a block
             towerPanel = null;
-            if (cash >= MainFrame.towerCosts[selectNum - 1]) {
-
+            if (cash >= MainFrame.towerCosts[selectNum - 1]) {  //Cash sufficient
                 cash -= MainFrame.towerCosts[selectNum - 1];
-                towerGrid[gridY][gridX] = selectNum;
+                towerGrid[gridY][gridX] = selectNum;    //update tower grid
+
+                //create tower
                 Tower tower;
                 if (selectNum == 5) {
                     tower = new PenetrateTower(gridX, gridY, selectNum - 1);
@@ -437,34 +409,35 @@ public class GameFrame extends JFrame implements ActionListener {
                     tower = new Tower(gridX, gridY, selectNum - 1);
                 }
                 towers.add(tower);
-            } else {
+            } else {    //not enough cash
                 MainFrame.error.play();
             }
         }
 
     }
 
+    //When the player clicked another tower and the panel will be updated on that tower
     private void updatePanel() {
-        if (towerPanel == null) {
+        if (towerPanel == null) {   //If no panel, create one
             towerPanel = new TowerPanel(towerGrid[gridY][gridX], gridX, gridY);
 
-        } else {
+        } else {    //if exist, and clicks on same tower, cancel selection
             if (gridX == towerPanel.getGridX() && gridY == towerPanel.getGridY()) {
                 towerPanel = null;
 
-            } else {
+            } else {    //update
                 towerPanel.update(towerGrid[gridY][gridX], gridX, gridY);
             }
 
         }
     }
 
+    //get which tower the player selected
     private void getSelectedTower() {
-
         // Select by mouse click
         for (TowerIcon icon : towerIcons) {
             if (icon.contains(mouseX, mouseY)) {
-                // remove the highlignht of the old selected icon
+                // remove the highlight of the old selected icon
                 for (TowerIcon i : towerIcons) {
                     i.setSelect(false);
                 }
@@ -485,6 +458,10 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Move the bullet
+     * Exlode when intersect and remove
+     */
     private void excuteBulletOperation() {
         ArrayList<Bullet> tempBullets = new ArrayList<Bullet>(bullets);
         for (Bullet bullet : tempBullets) {
@@ -502,9 +479,11 @@ public class GameFrame extends JFrame implements ActionListener {
                     bullets.remove(bullet);
                 }
             }
+            //Update explodeTime for sprite
             if (bullet.getExplodeTime() >= 0) {
                 bullet.setExplodeTime(bullet.getExplodeTime() + 1);
             }
+            //Remove bullet after animation is finished
             if (bullet.getExplodeTime() > 16) {
                 bullets.remove(bullet);
             }
@@ -512,17 +491,23 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    //Create the enemy during each wave
     private void generateEnemy() {
         if (time % (15 + waveNum / 3) == 0 && pointer < wave[waveNum].length) {
-            if (delay > 0) {
+
+            if (delay > 0) {    //if delay, then do nothing
                 delay--;
             } else {
+                //Get the type of action
                 char element = wave[waveNum][pointer];
                 int elementNum = Character.getNumericValue(element);
-                if (elementNum < 10) {
+
+                if (elementNum < 10) {//Add a delay time
                     delay = elementNum;
-                } else {
+
+                } else {//add an enemy based on type
                     Enemy enemy;
+                    //Adjust hp Based on wave number
                     if (waveNum < 5) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) / 2.0));
                     } else if (waveNum >= 5 && waveNum < 10) {
@@ -543,17 +528,21 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             if (pointer == wave[waveNum].length) {
                 allOut = true;
+                //all enemies in this wave is out
             }
 
         }
         if (allOut && enemyNum == 0) {
-            edit = true;
-            cash += (waveNum + 1) * 20;
+            //All enemies are destroyed or enterd base
+            edit = true;    //wave ends
+
+            cash += (waveNum + 1) * 20; //bonous cash and score
             score += (waveNum + 1) * 50 * scoreRate;
-            waveEnd = new WaveEnd();
+            waveEnd = new WaveEnd();    //create the image showing wave end and edit mode on
         }
     }
 
+    //Make towers aim and shoot
     private void excuteTowerOperation() {
         for (Tower tower : towers) {
             tower.aim();
@@ -563,6 +552,11 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Enemies move
+     * Detect bullet collision
+     * Die if hp<0
+     */
     private void excuteEnemyOperations() {
         ArrayList<Enemy> tempEnemys = new ArrayList<Enemy>(enemys);
 
@@ -574,7 +568,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     enemy.setHp(enemy.getHp() - bullet.getDamage());
 
                     if (!bullet.isPenetrate()) {
-                        if (bullet.getExplodeRadius() > 0) {
+                        if (bullet.getExplodeRadius() > 0) {    //if bullet explode
                             bullet.setSpeedX(0);
                             bullet.setSpeedY(0);
                             bullet.explode();
@@ -595,6 +589,7 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    //End the game
     private void endGame() {
         MainFrame.bgm.stop();
         this.setVisible(false);
@@ -602,6 +597,10 @@ public class GameFrame extends JFrame implements ActionListener {
         timer.stop();
     }
 
+    /**
+     * This is the drawing Pannel
+     * All graphics will be drawn here
+     */
     private class GamePanel extends JPanel {
 
         GamePanel() {
@@ -616,27 +615,26 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             drawGrid(gc);
-
             drawEnemy(gc);
             drawTower(gc);
             drawBullet(gc);
-
             drawTowerPanel(gc);
-            if (waveEnd != null) {
+
+            if (waveEnd != null) {  //Draw the wave ending image
                 gc.drawImage(MainFrame.waveEndImage, waveEnd.x, waveEnd.y, waveEnd.width, waveEnd.height, null);
             }
 
         }
 
         public void drawGrid(Graphics2D gc) {
-
-            // Draw the center grid
+            // Draw the grid outline
             gc.setColor(Color.GRAY);
             gc.fillRect(0, titleHeight, leftMargin, gridHeight);
             gc.fillRect(panelWidth - rightMargin, titleHeight, rightMargin, gridHeight);
             gc.fillRect(0, 0, panelWidth, titleHeight);
             gc.fillRect(0, buttomY, panelWidth, buttomHeight);
 
+            //Draw the grid in the center panel
             for (int i = 0; i <= col; i++) {
                 gc.drawLine(i * blockSize + leftMargin, 0, i * blockSize + leftMargin, buttomY);
             }
@@ -644,6 +642,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.drawLine(0, i * blockSize + titleHeight, panelWidth, i * blockSize + titleHeight);
             }
 
+            //Draw the start point and end point
             if (!edit) {
                 gc.drawImage(MainFrame.startImage, (col / 2 - 1) * blockSize + leftMargin,
                         row / 2 * blockSize + topMargin, blockSize,
@@ -652,13 +651,13 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.fillRect((col / 2 - 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin, blockSize,
                         blockSize);
             }
-
             gc.drawImage(MainFrame.endImage, (col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin,
                     blockSize,
                     blockSize, null);
-            gc.setColor(Color.BLACK);
+            
 
             // Draw top panel
+            gc.setColor(Color.BLACK);
             gc.setFont(new Font("Times New Roman", Font.PLAIN, 30));
             gc.drawString("Player: " + userID, 100, titleHeight / 3 * 2);
             if (edit) {
@@ -671,14 +670,12 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.drawString("Score: " + String.valueOf(score), 900, titleHeight / 3 * 2);
 
             // Draw Buttom Panel
-
             for (TowerIcon icon : towerIcons) {
                 gc.setColor(Color.WHITE);
                 if (icon.isSelect()) {
                     gc.fillRect(icon.x - 2, icon.y - 2, icon.width + 4, icon.height + 4);
                 }
-                // gc.setColor(Color.BLACK);
-                // gc.fillRect(icon.x, icon.y, icon.width, icon.height);
+
                 gc.drawImage(icon.getIcon(), icon.x, icon.y, icon.width, icon.height, null);
 
                 gc.setColor(Color.BLACK);
@@ -689,12 +686,19 @@ public class GameFrame extends JFrame implements ActionListener {
 
         }
 
+        /**
+         * draw the towers and blocks
+         * include rotation
+         * @param gc the graphics 2d
+         */
         public void drawTower(Graphics2D gc) {
             for (Block block : blocks) {
+                //draw block
                 gc.drawImage(block.getImage(), block.x, block.y, block.width, block.height, null);
 
             }
             for (Tower tower : towers) {
+                //draw tower
                 int cx = tower.x + blockSize / 2;
                 int cy = tower.y + blockSize / 2;
                 AffineTransform Towertransform = new AffineTransform();
@@ -704,8 +708,8 @@ public class GameFrame extends JFrame implements ActionListener {
                 Towertransform.scale(blockSize / 1500.0, blockSize / 1500.0);
                 gc.drawImage(tower.getImage(), Towertransform, null);
 
+                //draw stars for tower level
                 gc.setColor(Color.YELLOW);
-                // gc.fillRect(tower.x,tower.y,blockSize/5,blockSize/5);
                 for (int i = 0; i < tower.getLevel(); i++) {
                     double centerX = tower.x + blockSize / 5 + blockSize / 5 * i;
                     double centerY = tower.y + blockSize / 5;
@@ -720,7 +724,6 @@ public class GameFrame extends JFrame implements ActionListener {
                         int dy = (int) (centerY - Math.sin(angle) * radius);
                         star.addPoint(dx, dy);
                     }
-
                     gc.fill(star);
 
                 }
@@ -728,14 +731,14 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         }
 
+        /**
+         * Draw the bullets, include explosion for booms and missiles
+         * @param gc graphics 2D
+         */
         public void drawBullet(Graphics2D gc) {
             for (Bullet bullet : bullets) {
                 // draw explsion animation
                 if (bullet.getExplodeRadius() > 0 && bullet.getExplodeTime() >= 0) {
-                    // gc.drawImage(MainFrame.explodeImage, bullet.x - bullet.explodeRadius / 2,
-                    // bullet.y - bullet.explodeRadius / 2,
-                    // bullet.x + bullet.explodeRadius / 2, bullet.y + bullet.explodeRadius / 2,
-                    // bullet.explodeTime * 64, 192, (bullet.explodeTime + 1) * 64, 256, null);
                     gc.drawImage(MainFrame.explodeImage, bullet.x - bullet.getExplodeRadius() / 2,
                             bullet.y - bullet.getExplodeRadius() / 2,
                             bullet.x + bullet.getExplodeRadius() / 2, bullet.y + bullet.getExplodeRadius() / 2,
@@ -751,6 +754,11 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         }
 
+        /**
+         * Draw enemy including rotation
+         * Draw hp bar
+         * @param gc Graphics 2D
+         */
         public void drawEnemy(Graphics2D gc) {
             for (Enemy enemy : enemys) {
                 if (enemy.getType() == 0) {
@@ -772,10 +780,14 @@ public class GameFrame extends JFrame implements ActionListener {
             }
         }
 
+        /**
+         * Draw the tower panels and text on it
+         * @param gc graphics 2D
+         */
         public void drawTowerPanel(Graphics2D gc) {
             if (towerPanel != null) {
                 gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-                if (selectedTower != null) {
+                if (selectedTower != null) {    //Draw panel for tower
                     gc.setColor(Color.BLACK);
                     gc.drawOval(selectedTower.x - selectedTower.getRange() * blockSize + blockSize / 2,
                             selectedTower.y - selectedTower.getRange() * blockSize + blockSize / 2,
@@ -787,10 +799,12 @@ public class GameFrame extends JFrame implements ActionListener {
                     gc.setColor(towerPanel.getColor());
                     gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
                     gc.setColor(towerPanel.getUpgradeButton().getColor());
-                    gc.fillRect(towerPanel.getUpgradeButton().x, towerPanel.getUpgradeButton().y, towerPanel.getUpgradeButton().width,
+                    gc.fillRect(towerPanel.getUpgradeButton().x, towerPanel.getUpgradeButton().y,
+                            towerPanel.getUpgradeButton().width,
                             towerPanel.getUpgradeButton().height);
                     gc.setColor(towerPanel.getSellButton().getColor());
-                    gc.fillRect(towerPanel.getSellButton().x, towerPanel.getSellButton().y, towerPanel.getSellButton().width,
+                    gc.fillRect(towerPanel.getSellButton().x, towerPanel.getSellButton().y,
+                            towerPanel.getSellButton().width,
                             towerPanel.getSellButton().height);
                     gc.setColor(Color.BLACK);
                     gc.drawString("lv " + String.valueOf(selectedTower.getLevel()),
@@ -806,11 +820,12 @@ public class GameFrame extends JFrame implements ActionListener {
                             towerPanel.getSellButton().x,
                             towerPanel.getSellButton().y + blockSize * 2 / 3);
                 }
-                if (selectedBlock != null) {
+                if (selectedBlock != null) {    //Draw panel for block
                     gc.setColor(towerPanel.getColor());
                     gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
                     gc.setColor(towerPanel.getSellButton().getColor());
-                    gc.fillRect(towerPanel.getSellButton().x, towerPanel.getSellButton().y, towerPanel.getSellButton().width,
+                    gc.fillRect(towerPanel.getSellButton().x, towerPanel.getSellButton().y,
+                            towerPanel.getSellButton().width,
                             towerPanel.getSellButton().height);
                     gc.setColor(Color.BLACK);
                     gc.drawString("Cannot",
@@ -826,11 +841,11 @@ public class GameFrame extends JFrame implements ActionListener {
                             towerPanel.getSellButton().y + blockSize * 2 / 3);
 
                 }
-
             }
         }
     }
 
+    //Upload the all the waves from txt file to an array
     static void loadWave() {
         try {
             File file = new File("scripts/wave.txt");
@@ -850,24 +865,38 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Save the game into the corresponding progress file
+     * For tower and blocks uses a 2D array 
+     * 0 for empty, 1 for block, ab for tower, a is tower level, b is tower type
+     * Then record cash, score, hp, difficult, userId each is a line
+     * 
+     * Then update the user's score to the ranking file
+     */
     public void saveGame() {
         try {
+            //Get user's progress file
             String fileName = "scripts/Progress/" + userID + "progress.txt";
             File progressFile = new File(fileName);
+
+            //create if no such file
             if (!progressFile.exists()) {
                 progressFile.createNewFile();
             }
             FileWriter out = new FileWriter(progressFile, false);
             BufferedWriter writer = new BufferedWriter(out);
-            String[][] record = new String[row][col];
 
+            //Turn the tower grid to a string 2d array
+            String[][] record = new String[row][col];
             for (Block block : blocks) {
                 record[block.getGridY()][block.getGridX()] = "1";
             }
             for (Tower tower : towers) {
-                record[tower.getGridY()][tower.getGridX()] = String.valueOf(tower.getLevel()) + String.valueOf(tower.getType() + 1);
+                record[tower.getGridY()][tower.getGridX()] = String.valueOf(tower.getLevel())
+                        + String.valueOf(tower.getType() + 1);
 
             }
+            //write to file
             for (int y = 0; y < row; y++) {
                 for (int x = 0; x < col; x++) {
                     if (record[y][x] == null) {
@@ -896,6 +925,7 @@ public class GameFrame extends JFrame implements ActionListener {
             writer.close();
             out.close();
 
+            //Open ranking file and make a copy of all information in that file
             File rankingFile = new File("scripts/ranking.txt");
             FileReader in = new FileReader(rankingFile);
             String[] users = new String[1000];
@@ -911,6 +941,9 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             reader.close();
             in.close();
+
+            //If the user already have a record, update it if the current score is higher
+            //else add him in
             boolean change = false;
             for (int i = 0; i < index; i++) {
                 if (users[i].equals(userID)) {
@@ -941,14 +974,19 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
+    /**
+     * Load the process
+     */
     public void loadGame() {
-
         try {
+            //Find corresponding progress file of userID
             String fileName = "scripts/Progress/" + MainFrame.userID + "progress.txt";
-
             File progressFile = new File(fileName);
             FileReader in = new FileReader(progressFile);
             BufferedReader reader = new BufferedReader(in);
+
+            //Inverse the process of writing in saveGame
+            //Also create the game objects
             for (int y = 0; y < row; y++) {
                 String row = reader.readLine();
                 if (row == null) {
@@ -992,13 +1030,13 @@ public class GameFrame extends JFrame implements ActionListener {
                         int level = itemNum / 10;
                         tower.setLevel(level);
                         tower.upgrade(level);
-                        
 
                         towers.add(tower);
                     }
 
                 }
             }
+            //update cash, path, and other game variables
             findPath();
             cash = Integer.parseInt(reader.readLine());
             score = Integer.parseInt(reader.readLine());
@@ -1068,6 +1106,7 @@ public class GameFrame extends JFrame implements ActionListener {
         return false;
     }
 
+    //Get key input
     class KeyInput extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
@@ -1085,6 +1124,8 @@ public class GameFrame extends JFrame implements ActionListener {
                 edit = false;
                 pointer = 0;
                 waveNum++;
+                // remove all bullets from previous wave
+                bullets.clear();
                 if (waveNum == 15) {
                     // After wave 15, a wave is too long, so increse enemy speed and decrese their
                     // hp to speed up the game
