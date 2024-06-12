@@ -971,6 +971,8 @@ public class GameFrame extends JFrame implements ActionListener {
 
         } catch (Exception e) {
             System.out.println(e.toString());
+            System.out.println("here is a bugg");
+            
         }
     }
 

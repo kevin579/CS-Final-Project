@@ -36,7 +36,7 @@ public class MainFrame extends JFrame implements ActionListener {
     JPanel mainPanel;
     JTextField textField;
 
-    // game settings 
+    // game settings
     static int panelWidth;
     static int panelHeight;
 
@@ -47,7 +47,7 @@ public class MainFrame extends JFrame implements ActionListener {
     static int dif = 1;
     static BufferedImage pointerUp, pointerDown, pointerLeft, pointerRight;
 
-    // enemy info 
+    // enemy info
     static int[] enemyHPs = { 8, 12, 40, 60, 100, 125, 25, 30 };
     static double[] enemySpeeds = { 1.2, 1.5, 1, 1, 0.8, 0.9, 1.8, 2 };
 
@@ -60,6 +60,8 @@ public class MainFrame extends JFrame implements ActionListener {
     static int[] towerFreq = { 15, 10, 5, 40, 50, 80, 15 };
     static int[] explodeRadius = new int[2];
 
+    static boolean loadAll;//If all images and audios are loaded
+
     static ArrayList<BufferedImage> towerImages;
     static ArrayList<BufferedImage> enemyImages;
     static ArrayList<BufferedImage> bulletImages;
@@ -68,9 +70,10 @@ public class MainFrame extends JFrame implements ActionListener {
     static BufferedImage explodeImage;
     static BufferedImage waveEndImage;
 
-    // variables for sounds 
+    // variables for sounds
     static Audio bgm, error, lossHp, explode;
     static ArrayList<Audio> bulletAudios;
+    
 
     public static void main(String[] args) {
         new MainFrame();
@@ -156,7 +159,7 @@ public class MainFrame extends JFrame implements ActionListener {
         loadButton.addActionListener(this);
         buttonPanel.add(loadButton);
 
-        // display game characteristics for different difficulties 
+        // display game characteristics for different difficulties
         infoText1 = new TextLabel(24, "Enemy hp x1", 0, 50, 0, 0);
         infoText2 = new TextLabel(24, "Enemy speed x1", 0, 50, 0, 0);
         infoText3 = new TextLabel(24, "Score magnification x1", 0, 50, 0, 0);
@@ -266,6 +269,7 @@ public class MainFrame extends JFrame implements ActionListener {
         bulletAudios.add(new Audio("Audios/missleShoot.wav", 0.8f));
         bulletAudios.add(new Audio("Audios/cannonShoot.wav", 0.8f));
         bulletAudios.add(new Audio("Audios/shoot.wav", 0.8f));
+        loadAll = true;
     }
 
     // When the player chooses a diffucult or starts the game
@@ -294,18 +298,20 @@ public class MainFrame extends JFrame implements ActionListener {
         }
         // Load the game when load is pressed
         else if (eventName.equals("load")) {
+            if (loadAll) {  //Assure all images and audios are loaded before game starts
 
-            // Check if the userName have a progress file
-            String fileName = "Progress/" + userID + "progress.txt";
-            File file = new File(fileName);
-            if (!file.exists()) {// Tell the user file not exits
-                JOptionPane.showMessageDialog(null, "No such Archive, please recheck user name", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
+                // Check if the userName have a progress file
+                String fileName = "Progress/" + userID + "progress.txt";
+                File file = new File(fileName);
+                if (!file.exists()) {// Tell the user file not exits
+                    JOptionPane.showMessageDialog(null, "No such Archive, please recheck user name", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                // continues the game.
+                this.setVisible(false);
+                new GameFrame(true);
             }
-            // continues the game.
-            this.setVisible(false);
-            new GameFrame(true);
         }
         // Brings the user to the intro frame
         else if (eventName.equals("intro")) {
