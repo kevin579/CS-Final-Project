@@ -30,6 +30,7 @@ public class EndFrame extends JFrame implements ActionListener{
         
         JLabel text = new JLabel("Your score is " + String.valueOf(GameFrame.score));
         text.setFont(new Font("Serif", Font.PLAIN, 64));
+        text.setForeground(Color.WHITE);
         text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         scorePanel.add(text);
         closeButton = new JButton("close");
