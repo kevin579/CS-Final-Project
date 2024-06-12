@@ -36,7 +36,7 @@ public class RankingFrame extends JFrame implements ActionListener {
        //Rank Panel
        rankPanel = new JPanel();
        rankPanel.setLayout(new BorderLayout());
-       rankPanel.setPreferredSize(new Dimension(1500, 750));
+       //rankPanel.setPreferredSize(new Dimension(1500, 750));
        rankPanel.setBackground(new Color(235, 200, 235)); 
        this.setPreferredSize(new Dimension(MainFrame.panelWidth, MainFrame.panelHeight/30*29));
        
