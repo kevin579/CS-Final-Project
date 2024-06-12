@@ -27,9 +27,9 @@ public class EndFrame extends JFrame implements ActionListener{
         ImagePanel imgPanel = new ImagePanel();
         scorePanel.add(imgPanel);
         scorePanel.setLayout(new BoxLayout(scorePanel, BoxLayout.Y_AXIS));
+        
         JLabel text = new JLabel("Your score is " + String.valueOf(GameFrame.score));
         text.setFont(new Font("Serif", Font.PLAIN, 64));
-        text.setBorder(BorderFactory.createEmptyBorder(0, 100, 100, 100));
         text.setAlignmentX(JLabel.CENTER_ALIGNMENT);
         scorePanel.add(text);
         closeButton = new JButton("close");
@@ -43,7 +43,6 @@ public class EndFrame extends JFrame implements ActionListener{
         returnButton.addActionListener(this);
         scorePanel.add(returnButton);
         JPanel emptyPanel = new JPanel();
-        emptyPanel.setBorder(BorderFactory.createEmptyBorder(0, 100, 400, 100));
         emptyPanel.setBackground(Color.BLACK);
         scorePanel.add(emptyPanel);
         this.add(scorePanel);
@@ -54,12 +53,12 @@ public class EndFrame extends JFrame implements ActionListener{
     }
     private class ImagePanel extends JPanel{
         ImagePanel(){
-            this.setBackground(Color.WHITE);
+            this.setBackground(Color.BLACK);
             this.setPreferredSize(new Dimension(panelWidth, panelHeight/2));
         }
         public void paintComponent(Graphics g){
             super.paintComponent(g);
-            g.drawImage(endImg,0,0,panelWidth,panelHeight/2-100,null);
+            g.drawImage(endImg,0,0,panelWidth,panelHeight/2,null);
         }
     }
     public void actionPerformed(ActionEvent e){
