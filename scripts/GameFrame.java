@@ -151,6 +151,10 @@ public class GameFrame extends JFrame implements ActionListener {
             // get the userId and difficulty that the user chooses if start new game
             this.difficult = MainFrame.dif;
             this.userID = MainFrame.userID;
+            if (this.userID.equals("test")){
+                cash = 1000000;
+                playerHP = 1000000;
+            }
         }
 
         // Depending on the difficulty, set the enemies hp and speed;

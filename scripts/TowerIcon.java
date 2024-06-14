@@ -92,6 +92,7 @@ class WaveEnd extends Rectangle {
         this.acceleration = acceleration;
     }
 
+    //move this image from left to right, with slowing down at the center of screen
     public void move() {
         if (this.x + this.width / 2 < MainFrame.panelWidth / 2) {
             this.speed -= acceleration;

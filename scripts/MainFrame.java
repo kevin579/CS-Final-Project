@@ -1,29 +1,10 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 
 //This is the introduction page of the application
 public class MainFrame extends JFrame implements ActionListener {
@@ -36,7 +17,7 @@ public class MainFrame extends JFrame implements ActionListener {
     JPanel mainPanel;
     JTextField textField;
 
-    // game settings
+    // game size
     static int panelWidth;
     static int panelHeight;
 
@@ -60,7 +41,7 @@ public class MainFrame extends JFrame implements ActionListener {
     static int[] towerFreq = { 15, 10, 5, 40, 50, 80, 15 };
     static int[] explodeRadius = new int[2];
 
-    static boolean loadAll;//If all images and audios are loaded
+    static boolean loadAll;// If all images and audios are loaded
 
     static ArrayList<BufferedImage> towerImages;
     static ArrayList<BufferedImage> enemyImages;
@@ -73,7 +54,6 @@ public class MainFrame extends JFrame implements ActionListener {
     // variables for sounds
     static Audio bgm, error, lossHp, explode;
     static ArrayList<Audio> bulletAudios;
-    
 
     public static void main(String[] args) {
         new MainFrame();
@@ -170,8 +150,7 @@ public class MainFrame extends JFrame implements ActionListener {
         enterPanel.add(infoText3);
         mainPanel.add(enterPanel);
 
-        // Ranking panel, show the top players who played this game. Also empty and not
-        // made.
+        // Ranking panel, show the top players who played this game. 
         JPanel rankingPanel = new JPanel();
         rankingPanel.setBackground(new Color(204, 153, 255));
         rankingPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
@@ -182,7 +161,7 @@ public class MainFrame extends JFrame implements ActionListener {
         rankButton.addActionListener(this);
         rankingPanel.add(rankButton);
 
-        // The bottom panel, with almost information
+        // The bottom panel, with almost no information
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBackground(new Color(152, 251, 152));
         JLabel contact = new JLabel("Contact Kevin: 339624579@gotvdsb.ca");
@@ -269,7 +248,8 @@ public class MainFrame extends JFrame implements ActionListener {
         bulletAudios.add(new Audio("Audios/missleShoot.wav", 0.8f));
         bulletAudios.add(new Audio("Audios/cannonShoot.wav", 0.8f));
         bulletAudios.add(new Audio("Audios/shoot.wav", 0.8f));
-        loadAll = true;
+
+        loadAll = true;//shows that all images and audios are loaded
     }
 
     // When the player chooses a diffucult or starts the game
@@ -298,7 +278,7 @@ public class MainFrame extends JFrame implements ActionListener {
         }
         // Load the game when load is pressed
         else if (eventName.equals("load")) {
-            if (loadAll) {  //Assure all images and audios are loaded before game starts
+            if (loadAll) { // Assure all images and audios are loaded before game starts
 
                 // Check if the userName have a progress file
                 String fileName = "Progress/" + userID + "progress.txt";
@@ -337,12 +317,12 @@ public class MainFrame extends JFrame implements ActionListener {
             } else if (difficult.equals("medium")) {
                 infoText1.setText("Enemy hp x1.25");
                 infoText2.setText("Enemy speed x1.25");
-                infoText3.setText("Score magnification x1.5");
+                infoText3.setText("Score magnification x12");
                 dif = 2;
             } else if (difficult.equals("hard")) {
                 infoText1.setText("Enemy hp x1.5");
                 infoText2.setText("Enemy speed x1.5");
-                infoText3.setText("Score magnification x2");
+                infoText3.setText("Score magnification x3");
                 dif = 3;
             } else if (difficult.equals("impossible")) {
                 infoText1.setText("Enemy hp x2");

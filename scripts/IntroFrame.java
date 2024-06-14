@@ -46,7 +46,7 @@ public class IntroFrame extends JFrame {
         // BufferedImage image = ImageIO.read(new
         // File("bin/Images/gameDisplayImage.png"));
         BufferedImage image = MainFrame.loadImage("Images/gameDisplayImage.png");
-        
+
         // make sure image is in the right size
         int newWidth = image.getWidth() / 2;
         int newHeight = image.getHeight() / 2;
