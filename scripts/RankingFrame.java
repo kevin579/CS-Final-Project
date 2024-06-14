@@ -173,6 +173,7 @@ public class RankingFrame extends JFrame implements ActionListener {
 		
 		if(event.equals("return")) {
 			new MainFrame();
+			this.setVisible(false);
 		}
 	}
 }

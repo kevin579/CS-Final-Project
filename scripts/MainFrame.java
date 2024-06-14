@@ -150,7 +150,7 @@ public class MainFrame extends JFrame implements ActionListener {
         enterPanel.add(infoText3);
         mainPanel.add(enterPanel);
 
-        // Ranking panel, show the top players who played this game. 
+        // Ranking panel, show the top players who played this game.
         JPanel rankingPanel = new JPanel();
         rankingPanel.setBackground(new Color(204, 153, 255));
         rankingPanel.setBorder(BorderFactory.createEmptyBorder(50, 10, 10, 10));
@@ -249,7 +249,7 @@ public class MainFrame extends JFrame implements ActionListener {
         bulletAudios.add(new Audio("Audios/cannonShoot.wav", 0.8f));
         bulletAudios.add(new Audio("Audios/shoot.wav", 0.8f));
 
-        loadAll = true;//shows that all images and audios are loaded
+        loadAll = true;// shows that all images and audios are loaded
     }
 
     // When the player chooses a diffucult or starts the game
@@ -264,16 +264,17 @@ public class MainFrame extends JFrame implements ActionListener {
         // Starts a new game based on the difficult choosed when start button is
         // pressed.
         if (eventName.equals("start")) {
+            if (loadAll) {
+                JOptionPane.showMessageDialog(null,
+                        "Are you sure you want to start new Game? Your previous progress will be coverd. Press esc to cancel ",
+                        "Warning",
+                        JOptionPane.NO_OPTION);
 
-            JOptionPane.showMessageDialog(null,
-                    "Are you sure you want to start new Game? Your previous progress will be coverd. Press esc to cancel ",
-                    "Warning",
-                    JOptionPane.NO_OPTION);
+                this.setVisible(false);
 
-            this.setVisible(false);
-
-            // Create the game frame which is new
-            new GameFrame(false);
+                // Create the game frame which is new
+                new GameFrame(false);
+            }
 
         }
         // Load the game when load is pressed
