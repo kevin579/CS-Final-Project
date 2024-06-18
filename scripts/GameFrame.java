@@ -151,7 +151,7 @@ public class GameFrame extends JFrame implements ActionListener {
             // get the userId and difficulty that the user chooses if start new game
             this.difficult = MainFrame.dif;
             this.userID = MainFrame.userID;
-            if (this.userID.equals("test")){
+            if (this.userID.equals("test")) {
                 cash = 1000000;
                 playerHP = 1000000;
             }
@@ -307,17 +307,23 @@ public class GameFrame extends JFrame implements ActionListener {
             scoreRate = 5;
         }
 
-        // if it is a loaded game and wave number >15, then make everything go faster
-        if (this.load && waveNum >= 15) {
+        // if it is a loaded game and wave number >10 or 20, then make everything go faster
+        if (this.load && waveNum >= 10) {
             for (int i = 0; i < 7; i++) {
                 MainFrame.towerSpeed[i] *= 1.5;
                 MainFrame.enemyHPs[i] /= 2;
                 MainFrame.enemySpeeds[i] *= 2;
             }
         }
+        if (this.load && waveNum >= 20) {
+            for (int i = 0; i < 7; i++) {
+                MainFrame.enemyHPs[i] /= 1.2;
+                MainFrame.enemySpeeds[i] *= 1.2;
+            }
+        }
     }
 
-    //Make the game perform the tower panel's action when player clicks
+    // Make the game perform the tower panel's action when player clicks
     private void excutePanelOperations() {
         // if there a panel for a tower, get the tower with panel
         getPanelItem();
@@ -387,17 +393,17 @@ public class GameFrame extends JFrame implements ActionListener {
     }
 
     private void addTower() {
-        if (towerGrid[gridY][gridX] == 0) { //clicked on an empty place
-            MainFrame.error.play(); //Require block
+        if (towerGrid[gridY][gridX] == 0) { // clicked on an empty place
+            MainFrame.error.play(); // Require block
             towerPanel = null;
 
-        } else if (towerGrid[gridY][gridX] == 1) {//CLicked on a block
+        } else if (towerGrid[gridY][gridX] == 1) {// CLicked on a block
             towerPanel = null;
-            if (cash >= MainFrame.towerCosts[selectNum - 1]) {  //Cash sufficient
+            if (cash >= MainFrame.towerCosts[selectNum - 1]) { // Cash sufficient
                 cash -= MainFrame.towerCosts[selectNum - 1];
-                towerGrid[gridY][gridX] = selectNum;    //update tower grid
+                towerGrid[gridY][gridX] = selectNum; // update tower grid
 
-                //create tower
+                // create tower
                 Tower tower;
                 if (selectNum == 5) {
                     tower = new PenetrateTower(gridX, gridY, selectNum - 1);
@@ -413,30 +419,31 @@ public class GameFrame extends JFrame implements ActionListener {
                     tower = new Tower(gridX, gridY, selectNum - 1);
                 }
                 towers.add(tower);
-            } else {    //not enough cash
+            } else { // not enough cash
                 MainFrame.error.play();
             }
         }
 
     }
 
-    //When the player clicked another tower and the panel will be updated on that tower
+    // When the player clicked another tower and the panel will be updated on that
+    // tower
     private void updatePanel() {
-        if (towerPanel == null) {   //If no panel, create one
+        if (towerPanel == null) { // If no panel, create one
             towerPanel = new TowerPanel(towerGrid[gridY][gridX], gridX, gridY);
 
-        } else {    //if exist, and clicks on same tower, cancel selection
+        } else { // if exist, and clicks on same tower, cancel selection
             if (gridX == towerPanel.getGridX() && gridY == towerPanel.getGridY()) {
                 towerPanel = null;
 
-            } else {    //update
+            } else { // update
                 towerPanel.update(towerGrid[gridY][gridX], gridX, gridY);
             }
 
         }
     }
 
-    //get which tower the player selected
+    // get which tower the player selected
     private void getSelectedTower() {
         // Select by mouse click
         for (TowerIcon icon : towerIcons) {
@@ -483,11 +490,11 @@ public class GameFrame extends JFrame implements ActionListener {
                     bullets.remove(bullet);
                 }
             }
-            //Update explodeTime for sprite
+            // Update explodeTime for sprite
             if (bullet.getExplodeTime() >= 0) {
                 bullet.setExplodeTime(bullet.getExplodeTime() + 1);
             }
-            //Remove bullet after animation is finished
+            // Remove bullet after animation is finished
             if (bullet.getExplodeTime() > 16) {
                 bullets.remove(bullet);
             }
@@ -495,23 +502,23 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
-    //Create the enemy during each wave
+    // Create the enemy during each wave
     private void generateEnemy() {
         if (time % (15 + waveNum / 3) == 0 && pointer < wave[waveNum].length) {
 
-            if (delay > 0) {    //if delay, then do nothing
+            if (delay > 0) { // if delay, then do nothing
                 delay--;
             } else {
-                //Get the type of action
+                // Get the type of action
                 char element = wave[waveNum][pointer];
                 int elementNum = Character.getNumericValue(element);
 
-                if (elementNum < 10) {//Add a delay time
+                if (elementNum < 10) {// Add a delay time
                     delay = elementNum;
 
-                } else {//add an enemy based on type
+                } else {// add an enemy based on type
                     Enemy enemy;
-                    //Adjust hp Based on wave number
+                    // Adjust hp Based on wave number
                     if (waveNum < 5) {
                         enemy = new Enemy(elementNum - 9, 1.0 * (1 + (waveNum + 1) * (waveNum + 1) / 2.0));
                     } else if (waveNum >= 5 && waveNum < 10) {
@@ -532,21 +539,21 @@ public class GameFrame extends JFrame implements ActionListener {
             }
             if (pointer == wave[waveNum].length) {
                 allOut = true;
-                //all enemies in this wave is out
+                // all enemies in this wave is out
             }
 
         }
         if (allOut && enemyNum == 0) {
-            //All enemies are destroyed or enterd base
-            edit = true;    //wave ends
+            // All enemies are destroyed or enterd base
+            edit = true; // wave ends
 
-            cash += (waveNum + 1) * 20; //bonous cash and score
+            cash += (waveNum + 1) * 20; // bonous cash and score
             score += (waveNum + 1) * 50 * scoreRate;
-            waveEnd = new WaveEnd();    //create the image showing wave end and edit mode on
+            waveEnd = new WaveEnd(); // create the image showing wave end and edit mode on
         }
     }
 
-    //Make towers aim and shoot
+    // Make towers aim and shoot
     private void excuteTowerOperation() {
         for (Tower tower : towers) {
             tower.aim();
@@ -572,7 +579,7 @@ public class GameFrame extends JFrame implements ActionListener {
                     enemy.setHp(enemy.getHp() - bullet.getDamage());
 
                     if (!bullet.isPenetrate()) {
-                        if (bullet.getExplodeRadius() > 0) {    //if bullet explode
+                        if (bullet.getExplodeRadius() > 0) { // if bullet explode
                             bullet.setSpeedX(0);
                             bullet.setSpeedY(0);
                             bullet.explode();
@@ -593,7 +600,7 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
-    //End the game
+    // End the game
     private void endGame() {
         MainFrame.bgm.stop();
         this.setVisible(false);
@@ -624,7 +631,7 @@ public class GameFrame extends JFrame implements ActionListener {
             drawBullet(gc);
             drawTowerPanel(gc);
 
-            if (waveEnd != null) {  //Draw the wave ending image
+            if (waveEnd != null) { // Draw the wave ending image
                 gc.drawImage(MainFrame.waveEndImage, waveEnd.x, waveEnd.y, waveEnd.width, waveEnd.height, null);
             }
 
@@ -638,7 +645,7 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.fillRect(0, 0, panelWidth, titleHeight);
             gc.fillRect(0, buttomY, panelWidth, buttomHeight);
 
-            //Draw the grid in the center panel
+            // Draw the grid in the center panel
             for (int i = 0; i <= col; i++) {
                 gc.drawLine(i * blockSize + leftMargin, 0, i * blockSize + leftMargin, buttomY);
             }
@@ -646,7 +653,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 gc.drawLine(0, i * blockSize + titleHeight, panelWidth, i * blockSize + titleHeight);
             }
 
-            //Draw the start point and end point
+            // Draw the start point and end point
             if (!edit) {
                 gc.drawImage(MainFrame.startImage, (col / 2 - 1) * blockSize + leftMargin,
                         row / 2 * blockSize + topMargin, blockSize,
@@ -658,7 +665,6 @@ public class GameFrame extends JFrame implements ActionListener {
             gc.drawImage(MainFrame.endImage, (col / 2 + 1) * blockSize + leftMargin, row / 2 * blockSize + topMargin,
                     blockSize,
                     blockSize, null);
-            
 
             // Draw top panel
             gc.setColor(Color.BLACK);
@@ -693,16 +699,17 @@ public class GameFrame extends JFrame implements ActionListener {
         /**
          * draw the towers and blocks
          * include rotation
+         * 
          * @param gc the graphics 2d
          */
         public void drawTower(Graphics2D gc) {
             for (Block block : blocks) {
-                //draw block
+                // draw block
                 gc.drawImage(block.getImage(), block.x, block.y, block.width, block.height, null);
 
             }
             for (Tower tower : towers) {
-                //draw tower
+                // draw tower
                 int cx = tower.x + blockSize / 2;
                 int cy = tower.y + blockSize / 2;
                 AffineTransform Towertransform = new AffineTransform();
@@ -712,7 +719,7 @@ public class GameFrame extends JFrame implements ActionListener {
                 Towertransform.scale(blockSize / 1500.0, blockSize / 1500.0);
                 gc.drawImage(tower.getImage(), Towertransform, null);
 
-                //draw stars for tower level
+                // draw stars for tower level
                 gc.setColor(Color.YELLOW);
                 for (int i = 0; i < tower.getLevel(); i++) {
                     double centerX = tower.x + blockSize / 5 + blockSize / 5 * i;
@@ -737,6 +744,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
         /**
          * Draw the bullets, include explosion for booms and missiles
+         * 
          * @param gc graphics 2D
          */
         public void drawBullet(Graphics2D gc) {
@@ -761,6 +769,7 @@ public class GameFrame extends JFrame implements ActionListener {
         /**
          * Draw enemy including rotation
          * Draw hp bar
+         * 
          * @param gc Graphics 2D
          */
         public void drawEnemy(Graphics2D gc) {
@@ -786,12 +795,13 @@ public class GameFrame extends JFrame implements ActionListener {
 
         /**
          * Draw the tower panels and text on it
+         * 
          * @param gc graphics 2D
          */
         public void drawTowerPanel(Graphics2D gc) {
             if (towerPanel != null) {
                 gc.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-                if (selectedTower != null) {    //Draw panel for tower
+                if (selectedTower != null) { // Draw panel for tower
                     gc.setColor(Color.BLACK);
                     gc.drawOval(selectedTower.x - selectedTower.getRange() * blockSize + blockSize / 2,
                             selectedTower.y - selectedTower.getRange() * blockSize + blockSize / 2,
@@ -824,7 +834,7 @@ public class GameFrame extends JFrame implements ActionListener {
                             towerPanel.getSellButton().x,
                             towerPanel.getSellButton().y + blockSize * 2 / 3);
                 }
-                if (selectedBlock != null) {    //Draw panel for block
+                if (selectedBlock != null) { // Draw panel for block
                     gc.setColor(towerPanel.getColor());
                     gc.fillRect(towerPanel.x, towerPanel.y, towerPanel.width, towerPanel.height);
                     gc.setColor(towerPanel.getSellButton().getColor());
@@ -849,7 +859,7 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 
-    //Upload the all the waves from txt file to an array
+    // Upload the all the waves from txt file to an array
     static void loadWave() {
         try {
             File file = new File("scripts/wave.txt");
@@ -871,7 +881,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
     /**
      * Save the game into the corresponding progress file
-     * For tower and blocks uses a 2D array 
+     * For tower and blocks uses a 2D array
      * 0 for empty, 1 for block, ab for tower, a is tower level, b is tower type
      * Then record cash, score, hp, difficult, userId each is a line
      * 
@@ -879,18 +889,18 @@ public class GameFrame extends JFrame implements ActionListener {
      */
     public void saveGame() {
         try {
-            //Get user's progress file
+            // Get user's progress file
             String fileName = "Progress/" + userID + "progress.txt";
             File progressFile = new File(fileName);
 
-            //create if no such file
+            // create if no such file
             if (!progressFile.exists()) {
                 progressFile.createNewFile();
             }
             FileWriter out = new FileWriter(progressFile, false);
             BufferedWriter writer = new BufferedWriter(out);
 
-            //Turn the tower grid to a string 2d array
+            // Turn the tower grid to a string 2d array
             String[][] record = new String[row][col];
             for (Block block : blocks) {
                 record[block.getGridY()][block.getGridX()] = "1";
@@ -900,7 +910,7 @@ public class GameFrame extends JFrame implements ActionListener {
                         + String.valueOf(tower.getType() + 1);
 
             }
-            //write to file
+            // write to file
             for (int y = 0; y < row; y++) {
                 for (int x = 0; x < col; x++) {
                     if (record[y][x] == null) {
@@ -929,7 +939,7 @@ public class GameFrame extends JFrame implements ActionListener {
             writer.close();
             out.close();
 
-            //Open ranking file and make a copy of all information in that file
+            // Open ranking file and make a copy of all information in that file
             File rankingFile = new File("scripts/ranking.txt");
             FileReader in = new FileReader(rankingFile);
             String[] users = new String[1000];
@@ -946,8 +956,8 @@ public class GameFrame extends JFrame implements ActionListener {
             reader.close();
             in.close();
 
-            //If the user already have a record, update it if the current score is higher
-            //else add him in
+            // If the user already have a record, update it if the current score is higher
+            // else add him in
             boolean change = false;
             for (int i = 0; i < index; i++) {
                 if (users[i].equals(userID)) {
@@ -976,7 +986,7 @@ public class GameFrame extends JFrame implements ActionListener {
         } catch (Exception e) {
             System.out.println(e.toString());
             System.out.println("here is a bugg");
-            
+
         }
     }
 
@@ -985,14 +995,14 @@ public class GameFrame extends JFrame implements ActionListener {
      */
     public void loadGame() {
         try {
-            //Find corresponding progress file of userID
+            // Find corresponding progress file of userID
             String fileName = "Progress/" + MainFrame.userID + "progress.txt";
             File progressFile = new File(fileName);
             FileReader in = new FileReader(progressFile);
             BufferedReader reader = new BufferedReader(in);
 
-            //Inverse the process of writing in saveGame
-            //Also create the game objects
+            // Inverse the process of writing in saveGame
+            // Also create the game objects
             for (int y = 0; y < row; y++) {
                 String row = reader.readLine();
                 if (row == null) {
@@ -1042,7 +1052,7 @@ public class GameFrame extends JFrame implements ActionListener {
 
                 }
             }
-            //update cash, path, and other game variables
+            // update cash, path, and other game variables
             findPath();
             cash = Integer.parseInt(reader.readLine());
             score = Integer.parseInt(reader.readLine());
@@ -1112,7 +1122,7 @@ public class GameFrame extends JFrame implements ActionListener {
         return false;
     }
 
-    //Get key input
+    // Get key input
     class KeyInput extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
@@ -1132,13 +1142,21 @@ public class GameFrame extends JFrame implements ActionListener {
                 waveNum++;
                 // remove all bullets from previous wave
                 bullets.clear();
-                if (waveNum == 15) {
-                    // After wave 15, a wave is too long, so increse enemy speed and decrese their
+                if (waveNum == 10) {
+                    // After wave 10, a wave is too long, so increse enemy speed and decrese their
                     // hp to speed up the game
                     for (int i = 0; i < 7; i++) {
                         MainFrame.towerSpeed[i] *= 1.5;
                         MainFrame.enemyHPs[i] /= 2;
                         MainFrame.enemySpeeds[i] *= 2;
+                    }
+                }
+                if (waveNum == 20) {
+                    // After wave 20, speed up more
+                    for (int i = 0; i < 7; i++) {
+                        MainFrame.towerSpeed[i] *= 1.2;
+                        MainFrame.enemyHPs[i] /= 1.2;
+                        MainFrame.enemySpeeds[i] *= 1.2;
                     }
                 }
                 if (waveNum == 30) {
@@ -1192,4 +1210,3 @@ public class GameFrame extends JFrame implements ActionListener {
         }
     }
 }
-

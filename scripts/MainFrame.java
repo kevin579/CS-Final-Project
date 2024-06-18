@@ -1,9 +1,9 @@
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.awt.*;
 import java.util.*;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 
 //This is the introduction page of the application
@@ -34,7 +34,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     // tower info
     static int[] towerCosts = { 10, 20, 50, 180, 200, 1000, 1500, 2000 };
-    static int[] towerDamage = { 2, 4, 8, 20, 90, 200, 20 };
+    static int[] towerDamage = { 2, 4, 8, 15, 90, 200, 20 };
     static int[] towerRange = { 5, 6, 7, 5, 50, 8, 3 };
     static int[] towerSpeed = { 5, 6, 7, 5, 8, 10, 3 };
 
@@ -261,14 +261,20 @@ public class MainFrame extends JFrame implements ActionListener {
         if (userID.equals("")) {
             userID = "anonymous";
         }
+        // the corresponding progress file for the user.
+        String fileName = "Progress/" + userID + "progress.txt";
+        File file = new File(fileName);
+
         // Starts a new game based on the difficult choosed when start button is
         // pressed.
         if (eventName.equals("start")) {
             if (loadAll) {
-                JOptionPane.showMessageDialog(null,
-                        "Are you sure you want to start new Game? Your previous progress will be coverd. Press esc to cancel ",
-                        "Warning",
-                        JOptionPane.NO_OPTION);
+                if (file.exists()) {
+                    JOptionPane.showMessageDialog(null,
+                            "Are you sure you want to start new Game? Your previous progress will be coverd. Press esc to cancel",
+                            "Warning",
+                            JOptionPane.NO_OPTION);
+                }
 
                 this.setVisible(false);
 
@@ -282,8 +288,7 @@ public class MainFrame extends JFrame implements ActionListener {
             if (loadAll) { // Assure all images and audios are loaded before game starts
 
                 // Check if the userName have a progress file
-                String fileName = "Progress/" + userID + "progress.txt";
-                File file = new File(fileName);
+
                 if (!file.exists()) {// Tell the user file not exits
                     JOptionPane.showMessageDialog(null, "No such Archive, please recheck user name", "Error",
                             JOptionPane.ERROR_MESSAGE);

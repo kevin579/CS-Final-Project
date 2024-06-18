@@ -173,6 +173,7 @@ public class Tower extends Rectangle {
 
     // Make tower aim at the closest enemy
     public void aim() {
+        this.target = null;
         double largestDis = 0;
         for (Enemy enemy : GameFrame.enemys) {
             this.dis = Math.sqrt(Math.pow((enemy.getX() - this.px), 2) + Math.pow((enemy.getY() - this.py), 2));
@@ -193,11 +194,11 @@ public class Tower extends Rectangle {
 
     // Shoot at enemy
     public void shoot() {
-        if (this.target != null && this.target.getHp() > 0 && this.dis < this.range * GameFrame.blockSize) {
+        if (this.target != null && this.target.getHp() > 0 ) {
             this.dis = Math
                     .sqrt(Math.pow((this.target.getX() - this.px), 2) + Math.pow((this.target.getY() - this.py), 2));
             if (this.dis < this.range * GameFrame.blockSize) {
-
+                
                 playAudio();
 
                 double speedX = this.speed * (this.target.getX() + this.target.getSpeedX() * this.estimateTime

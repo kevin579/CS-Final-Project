@@ -1,8 +1,10 @@
 kevin 648550
-vinter 454150
-leo 6969
-isabelle 100000
+vinter 491850
+leo 83970
+isabelle 14140
 david 18650
 anonymous 760
+tester 0
+test 3960
 Kevin 648550
-test 330
+David 52350
